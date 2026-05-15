@@ -19,6 +19,7 @@ import ClinicalRecords from '@/views/vet/ClinicalRecords.vue';
 import RegisterConsultation from '@/views/vet/RegisterConsultation.vue';
 import VaccineManager from '@/views/vet/VaccineManager.vue';
 import DewormingManager from '@/views/vet/DewormingManager.vue';
+import form from '@/views/form.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -59,6 +60,12 @@ export const router = createRouter({
         { path: 'consultations', component: RegisterConsultation },
         { path: 'vaccines', component: VaccineManager },
         { path: 'dewormings', component: DewormingManager },
+      ],
+    },
+    {
+      path: '/f2',
+      children: [
+        { path: 'form', component: form},
       ],
     },
     { path: '/:pathMatch(.*)*', redirect: '/portal/dashboard' },
