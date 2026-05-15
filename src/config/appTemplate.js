@@ -5,6 +5,7 @@ export const appTemplate = {
     owner: { label: 'Portal Propietario', accent: '#C2A769', light: '#F7F1E6' },
     receptionist: { label: 'Recepción', accent: '#A5BA8E', light: '#F3F6F0' },
     vet: { label: 'Veterinario', accent: '#7D6430', light: '#F7F1E6' },
+    technician: { label: 'Técnico Veterinario', accent: '#7da84e', light: '#F3F6F0'},
   },
   navigation: {
     owner: [
@@ -31,10 +32,14 @@ export const appTemplate = {
       { to: '/vet/vaccines', icon: 'syringe', label: 'Vacunas' },
       { to: '/vet/dewormings', icon: 'worm', label: 'Desparasitaciones' },
     ],
+    technician: [
+      { to: '/technician/inventory', icon: 'clipboard-list', label: 'Catálogo de Insumos' },
+    ]
   },
   roleSwitcher: [
     { key: 'owner', label: 'Propietario', userId: 'o1' },
     { key: 'receptionist', label: 'Recepcionista', userId: '' },
     { key: 'vet', label: 'Veterinario', userId: 'v1' },
+    { key: 'technician', label: 'Técnico Veterinario', userId: '' },
   ],
 };

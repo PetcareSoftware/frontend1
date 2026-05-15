@@ -19,6 +19,7 @@ import ClinicalRecords from '@/views/vet/ClinicalRecords.vue';
 import RegisterConsultation from '@/views/vet/RegisterConsultation.vue';
 import VaccineManager from '@/views/vet/VaccineManager.vue';
 import DewormingManager from '@/views/vet/DewormingManager.vue';
+import InventoryCatalog from '@/views/technician/InventoryCatalog.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -60,6 +61,13 @@ export const router = createRouter({
         { path: 'vaccines', component: VaccineManager },
         { path: 'dewormings', component: DewormingManager },
       ],
+    },
+    {
+      path: '/technician',
+      component: AppLayout,
+      children: [
+        { path: 'inventory', component: InventoryCatalog },
+      ]
     },
     { path: '/:pathMatch(.*)*', redirect: '/portal/dashboard' },
   ],
