@@ -377,6 +377,32 @@ export const consultations = [
     followUpDate: '2026-03-30',
     notes: 'Mejoría esperada en 5-7 días.',
   },
+  {
+    id: 'c3',
+    petId: 'p7',
+    vetId: 'v1',
+    date: '2026-01-10',
+    weight: 9.8,
+    temperature: 38.5,
+    symptoms: 'Chequeo de cachorro',
+    diagnosis: 'Paciente sano',
+    treatment: 'Continuar plan de vacunación',
+    prescriptions: [],
+    notes: 'Primer control de Toby.',
+  },
+  {
+    id: 'c4',
+    petId: 'p3',
+    vetId: 'v2',
+    date: '2026-02-15',
+    weight: 11.5,
+    temperature: 38.6,
+    symptoms: 'Picazón en orejas',
+    diagnosis: 'Otitis externa',
+    treatment: 'Limpieza de oídos y gotas',
+    prescriptions: ['Otiflex - 3 gotas c/12hs por 7 días'],
+    notes: 'Requiere limpieza profunda.',
+  },
 ];
 
 export const vaccines = [
@@ -425,6 +451,24 @@ export const vaccines = [
     nextDate: '2026-05-12',
     appliedBy: 'v2',
     lot: 'LOT2025E',
+  },
+  {
+    id: 'vac6',
+    petId: 'p7',
+    name: 'Puppy',
+    date: '2026-01-10',
+    nextDate: '2026-02-10',
+    appliedBy: 'v1',
+    lot: 'LOT2026X',
+  },
+  {
+    id: 'vac7',
+    petId: 'p8',
+    name: 'Triple Felina',
+    date: '2025-12-01',
+    nextDate: '2026-12-01',
+    appliedBy: 'v3',
+    lot: 'LOT2025F',
   },
 ];
 
