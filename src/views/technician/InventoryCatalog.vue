@@ -1,17 +1,24 @@
 <script setup>
-import { ref } from 'vue';
+import { computed } from 'vue';
 import PageHeader from '@/components/shared/PageHeader.vue';
 import StatusBadge from '@/components/shared/StatusBadge.vue';
 import DashboardCard from '@/components/shared/DashboardCard.vue';
 import { useAppStore } from '@/stores/useAppStore';
 
-const inventory = ref([
+const appStore = useAppStore();
+
+// 2. Si el almacén no tiene datos de inventario todavía, le cargamos tu lista inicial por defecto
+if (!appStore.inventory) {
+  appStore.inventory = [
     { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.50, status: 'approved' },
     { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15.00, status: 'pending' },
     { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved' },
     { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45.00, status: 'cancelled' }
-]);
+  ];
+}
 
+// 3. Transformamos tu variable original en una propiedad computada vinculada al store global
+const inventory = computed(() => appStore.inventory);
 const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', { 
     style: 'currency', 
@@ -40,7 +47,7 @@ const formatCurrency = (value) => {
             <tr v-for="item in inventory" :key="item.id" style="border-bottom: 1px solid #e2e8f0;">
             <td style="padding: 12px 8px; font-weight: 500;">{{ item.name }}</td>
             <td style="padding: 12px 8px;">
-                <!-- <StatusBadge :status="item.status" /> -->
+                <StatusBadge :status="item.status" />
                 <span style="margin-left: 8px;">{{ item.quantity }} uds.</span>
             </td>
             <td style="padding: 12px 8px;">{{ formatCurrency(item.unitCost) }}</td>
