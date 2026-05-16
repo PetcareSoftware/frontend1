@@ -34,6 +34,7 @@ export const appTemplate = {
     ],
     technician: [
       { to: '/technician/inventory', icon: 'clipboard-list', label: 'Catálogo de Insumos' },
+      { to: '/f2/form', icon: 'clipboard-pen-line', label: 'Registrar insumos' },
     ]
   },
   roleSwitcher: [

@@ -68,6 +68,10 @@ const form = ref({
   observaciones: ''
 })
 
+function toggle() {
+  open.value = !open.value
+}
+
 function handleSubmit() {
   alerta.value = '¡registrado con exito!'
   // Aquí podrías limpiar el formulario o hacer submit real
