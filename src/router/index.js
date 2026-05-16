@@ -19,7 +19,8 @@ import ClinicalRecords from '@/views/vet/ClinicalRecords.vue';
 import RegisterConsultation from '@/views/vet/RegisterConsultation.vue';
 import VaccineManager from '@/views/vet/VaccineManager.vue';
 import DewormingManager from '@/views/vet/DewormingManager.vue';
-import form from '@/views/form.vue';
+import FormPage from '@/views/form.vue';
+import InventoryCatalog from '@/views/technician/InventoryCatalog.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -63,10 +64,16 @@ export const router = createRouter({
       ],
     },
     {
-      path: '/f2',
+      path: '/technician',
+      component: AppLayout,
       children: [
-        { path: 'form', component: form},
+        { path: 'inventory', component: InventoryCatalog },
       ],
+    },
+    {
+      path: '/f2',
+      component: AppLayout,
+      children: [{ path: 'form', component: FormPage }],
     },
     { path: '/:pathMatch(.*)*', redirect: '/portal/dashboard' },
   ],
