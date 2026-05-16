@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/components/layout/AppLayout.vue';
+import Login from '@/views/auth/Login.vue';
 import Register from '@/views/auth/Register.vue';
 import OwnerDashboard from '@/views/owner/OwnerDashboard.vue';
 import OwnerAppointments from '@/views/owner/OwnerAppointments.vue';
@@ -23,7 +24,8 @@ import DewormingManager from '@/views/vet/DewormingManager.vue';
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', redirect: '/portal/dashboard' },
+    { path: '/', redirect: '/login' },
+    { path: '/login', component: Login },
     { path: '/register', component: Register },
     {
       path: '/portal',

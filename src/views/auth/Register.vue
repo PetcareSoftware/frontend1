@@ -95,6 +95,12 @@
       </form>
 
       <p class="muted">Al registrarte aceptas los términos y condiciones de PetCare.</p>
+
+      <div class="auth-footer" style="margin-top: 1.5rem; text-align: center;">
+        <p class="muted">¿Ya tienes cuenta? 
+          <router-link to="/login" style="color: var(--primary); text-decoration: none; font-weight: 700;">Inicia sesión</router-link>
+        </p>
+      </div>
     </section>
   </main>
 </template>
