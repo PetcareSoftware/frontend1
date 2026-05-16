@@ -55,15 +55,21 @@
         
         <div class="visual-features">
           <div class="feature-item">
-            <div class="feature-icon">🐾</div>
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.55 3.55 0 0 1 2 13.5 5.5 5.5 0 0 1 9 10Z"/></svg>
+            </div>
             <span>Perfiles de mascotas</span>
           </div>
           <div class="feature-item">
-            <div class="feature-icon">🔔</div>
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            </div>
             <span>Recordatorios y alertas</span>
           </div>
           <div class="feature-item">
-            <div class="feature-icon">📱</div>
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+            </div>
             <span>Acceso 24/7 desde cualquier dispositivo</span>
           </div>
         </div>
@@ -240,6 +246,12 @@
   border-radius: 12px;
   font-size: 1.1rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.feature-icon svg {
+  color: var(--brand-strong);
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .feature-item span {
