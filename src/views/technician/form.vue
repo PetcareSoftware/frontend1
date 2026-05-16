@@ -4,6 +4,8 @@ import PageHeader from '@/components/shared/PageHeader.vue';
 import StatusBadge from '@/components/shared/StatusBadge.vue';
 import DashboardCard from '@/components/shared/DashboardCard.vue';
 import { useAppStore } from '@/stores/useAppStore';
+import { useToastStore } from '@/stores/useToastStore';
+const toastStore = useToastStore();
 const open = ref(true)
 const alerta = ref(null)
 const form = ref({
@@ -16,9 +18,19 @@ const form = ref({
 
 
 function handleSubmit() {
-  alerta.value = '¡registrado con exito!'
-  // Aquí podrías limpiar el formulario o hacer submit real
-  setTimeout(() => (alerta.value = null), 2500)
+   if (useAppStore().inventory) {
+    useAppStore().inventory.push({
+      id: Date.now(), 
+      name: form.value.nombre,
+      quantity: Number(form.value.cantidad),
+      unitCost: Number(form.value.precio), 
+      status: 'approved'
+    });
+  }
+
+  alerta.value = '¡Registrado con éxito!';
+  setTimeout(() => (alerta.value = null), 2500);
+  
   Object.assign(form.value, { nombre: '', tipo: '', cantidad: '', umbral: '', observaciones: '' });
 }
 </script>
@@ -49,13 +61,17 @@ function handleSubmit() {
             <input class="input" id="cantidad" v-model="form.cantidad" type="number" min=1 required placeholder="Cantidad disponible"/>
           </div>
           <div class="field">
+            <label for="precio">precio*</label>
+            <input class="input" id="precio" v-model="form.precio" type="text" required placeholder="costo por unidad"/>
+          </div>
+          <div class="field">
           <label for="umbral">Nivel mínimo de existencias*</label>
           <input
             class="input"
             id="umbral"
             v-model="form.umbral"
             type="number"
-            min="0"
+            min="1"
             required
             placeholder="Ejemplo: 10"
             />

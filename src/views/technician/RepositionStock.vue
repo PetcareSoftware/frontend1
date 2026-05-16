@@ -3,104 +3,139 @@ import { ref, computed } from 'vue'
 import PageHeader from '@/components/shared/PageHeader.vue';
 import StatusBadge from '@/components/shared/StatusBadge.vue';
 import DashboardCard from '@/components/shared/DashboardCard.vue';
-import { useAppStore } from '@/stores/useAppStore';
+import { useAppStore } from '@/stores/useAppStore'; 
 
-import { vaccines, dewormings, consultations } from '@/data/mockData'
+const appStore = useAppStore();
 
-const catalogoInsumos = computed(() => {
-  // Extraemos nombres de vacunas
-  const nombresVacunas = vaccines ? vaccines.map(v => v.name) : []
-  // Extraemos productos de desparasitación
-  const nombresDesparasitantes = dewormings ? dewormings.map(d => d.product) : []
-  // Extraemos nombres de las prescripciones
-  const nombresPrescripciones = consultations ? consultations.flatMap(c => 
-    c.prescriptions ? c.prescriptions.map(p => p.split(' - ')[0]) : []
-  ) : []
-
-  // Unimos todo y quitamos duplicados
-  const listaUnica = [...new Set([...nombresVacunas, ...nombresDesparasitantes, ...nombresPrescripciones])]
-  return listaUnica.sort()
-})
-
-const today = new Date().toISOString().split('T')[0]
-const open = ref(true)
-const alerta = ref(null)
-const form = ref({
-  nombre: '',
-  cantidad: 0,
-  detalles: '',
-  set: '',
-  fechaVencimiento: '',
-  observaciones: ''
-})
-
-function toggle() {
-  open.value = !open.value
+if (!appStore.inventory || appStore.inventory.length === 0) {
+  appStore.inventory = [
+    { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.50, status: 'approved' },
+    { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15.00, status: 'pending' },
+    { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved' },
+    { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45.00, status: 'cancelled' }
+  ];
 }
 
-function handleSubmit() {
-  // Validación de seguridad para el Criterio de Éxito
-  if (form.value.cantidad <= 0) {
-    alert("Por favor, ingrese una cantidad válida.");
+
+// Variables de control en inglés
+const today = new Date().toISOString().split('T')[0];
+const open = ref(true);
+const alertMessage = ref(null);
+
+// Estructura del formulario completamente en inglés
+const form = ref({
+  insumoId: '',
+  quantity: 1,
+  details: '',
+  batch: '',
+  expirationDate: '',
+  observations: ''
+});
+
+// Catálogo dinámico conectado al almacén global de Pinia
+const listaInsumos = computed(() => appStore.inventory || []);
+
+const guardarEntrada = () => {
+  // Validaciones del lado del cliente utilizando las nuevas variables en inglés
+  if (!form.value.insumoId || !form.value.batch || !form.value.expirationDate) {
+    alert("Por favor, complete todos los campos obligatorios.");
+    return;
+  }
+  if (form.value.quantity <= 0) {
+    alert("La cantidad recibida debe ser un número positivo.");
     return;
   }
 
-  console.log('REGISTRO EXITOSO:', JSON.parse(JSON.stringify(form.value)))
-  alerta.value = '¡Reposición registrada en inventario!'
+  // Buscamos el insumo seleccionado en el inventario global
+  const insumoEncontrado = listaInsumos.value.find(item => item.id === form.value.insumoId);
 
-  setTimeout(() => (alerta.value = null), 2500)
+  if (insumoEncontrado) {
+    // 1. Gestión de Estado Global (Pinia): Ambos usan .quantity ahora
+    insumoEncontrado.quantity += Number(form.value.quantity);
 
-  Object.assign(form.value, { 
-    nombre: '', 
-    cantidad: 0, 
-    detalles: '', 
-    set: '', 
-    fechaVencimiento: '', 
-    observaciones: '' 
-  });
-}
+    // 2. Alertas Automáticas (Status en inglés como en InventoryCatalog)
+    if (insumoEncontrado.quantity > 10) {
+      insumoEncontrado.status = 'approved'; 
+    }
+
+    // 3. Reporte de Trazabilidad en Consola
+    console.log("=== TRAZABILIDAD REGISTRADA ===");
+    console.log(`Insumo: ${insumoEncontrado.name} (ID: ${insumoEncontrado.id})`);
+    console.log(`Cantidad Sumada: ${form.value.quantity}`);
+    console.log(`Número de Lote: ${form.value.batch}`);
+    console.log(`Fecha de Vencimiento: ${form.value.expirationDate}`);
+    console.log(`Detalles Técnicos: ${form.value.details}`);
+    console.log(`Observaciones: ${form.value.observations}`);
+    console.log(`Nuevo Stock Total (Pinia): ${insumoEncontrado.quantity}`);
+
+    // Mensaje de éxito visual
+    alertMessage.value = `¡Reposición exitosa! El stock de ${insumoEncontrado.name} ahora es ${insumoEncontrado.quantity}`;
+    setTimeout(() => (alertMessage.value = null), 3500);
+    
+    // Limpieza del formulario restableciendo el estado inicial en inglés
+    form.value = {
+      insumoId: '',
+      quantity: 1,
+      details: '',
+      batch: '',
+      expirationDate: '',
+      observations: ''
+    };
+  }
+};
 </script>
 
 <template>
-    <div class="stack">
+  <div class="stack">
     <PageHeader 
-        title="Reposicion de stock" 
-        subtitle="Registro de entrada de mercancia por lote."
+      title="Reposición de Stock" 
+      subtitle="Registro de entrada de mercancía por lote."
     />
-<DashboardCard title="Solicitud de insumos" icon="notebook-pen">
-        <form v-show="open" class="stack" style="margin-top: 28px;" @submit.prevent="handleSubmit">
-          <div class="field">
-            <label for="name">Insumo/Medicamento del Catálogo*</label>
-            <select class="input" id="name" v-model="form.nombre" required>
-              <option value="" disabled>Seleccione un producto del catálogo...</option>
-              <option v-for="item in catalogoInsumos" :key="item" :value="item">
-                {{ item }}
-              </option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="cant">Cantidad Recibida*</label>
-            <input class="input" id="cant" v-model="form.cantidad" type="number" min="0" required placeholder="0"/>
-          </div>
-          <div class="field">
-            <label for="detail">Detalles Técnicos<*</label>
-            <input class="input" id="detail" v-model="form.detalles" required placeholder="Descripción del insumo" />
-          </div>
-          <div class="field">
-            <label for="set">Número de Lote*</label>
-            <input class="input" id="set" v-model="form.set" required placeholder="Ej: LOT-2026-AF" />
-          </div>
-          <div class="field">
-            <label for="caducidad">Fecha de Vencimiento*</label>
-            <input class="input" id="caducidad" type="date" v-model="form.fechaVencimiento" :min="today" required />
-          </div>
-          <div class="field">
-            <label for="observaciones">Observaciones de Control*</label>
-            <textarea class="textarea" id="observaciones" v-model="form.observaciones" placeholder="Estado del empaque, temperatura, etc."/>
-          </div>
-          <button class="btn btn--primary" type="submit">Registrar Entrada</button>
-        </form>
-        <p v-if="alerta" class="chip chip--success" style="margin-top: 18px; display:inline-block;">{{ alerta }}</p>
-</DashboardCard>
-</div>
+    
+    <DashboardCard title="Solicitud de insumos" icon="notebook-pen">
+      <form v-show="open" class="stack" style="margin-top: 28px;" @submit.prevent="guardarEntrada">
+        
+        <div class="field">
+          <label for="insumo">Seleccionar Insumo del Catálogo*</label>
+          <select id="insumo" v-model="form.insumoId" class="select" required>
+            <option value="" disabled>Seleccione un insumo del catálogo...</option>
+            <option v-for="insumo in listaInsumos" :key="insumo.id" :value="insumo.id">
+              {{ insumo.name }} (Stock actual: {{ insumo.quantity }} uds.)
+            </option>
+          </select>
+        </div>
+        
+        <div class="field">
+          <label for="cant">Cantidad Recibida*</label>
+          <input class="input" id="cant" v-model="form.quantity" type="number" min="1" required placeholder="1"/>
+        </div>
+        
+        <div class="field">
+          <label for="detail">Detalles Técnicos*</label>
+          <input class="input" id="detail" v-model="form.details" required placeholder="Descripción del insumo" />
+        </div>
+        
+        <div class="field">
+          <label for="lote">Número de Lote*</label>
+          <input id="lote" type="text" class="input" v-model="form.batch" placeholder="Ej: LOT-2026-AF" required />
+        </div>
+        
+        <div class="field">
+          <label for="caducidad">Fecha de Vencimiento*</label>
+          <input id="caducidad" type="date" class="input" v-model="form.expirationDate" :min="today" required />
+        </div>
+        
+        <div class="field">
+          <label for="observaciones">Observaciones de Control*</label>
+          <textarea class="textarea" id="observaciones" v-model="form.observations" placeholder="Estado del empaque, temperatura, etc."/>
+        </div>
+        
+        <button class="btn btn--primary" type="submit">Registrar Entrada</button>
+      </form>
+      
+      <p v-if="alertMessage" class="chip chip--success" style="margin-top: 18px; display:inline-block;">
+        {{ alertMessage }}
+      </p>
+    </DashboardCard>
+  </div>
 </template>
