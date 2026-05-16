@@ -1,22 +1,38 @@
+<script setup>
+import { ref } from 'vue';
+import PageHeader from '@/components/shared/PageHeader.vue';
+import StatusBadge from '@/components/shared/StatusBadge.vue';
+import DashboardCard from '@/components/shared/DashboardCard.vue';
+import { useAppStore } from '@/stores/useAppStore';
+const open = ref(true)
+const alerta = ref(null)
+const form = ref({
+  nombre: '',
+  tipo: '',
+  cantidad: '',
+  umbral: '',        
+  observaciones: ''
+})
+
+
+function handleSubmit() {
+  alerta.value = '¡registrado con exito!'
+  // Aquí podrías limpiar el formulario o hacer submit real
+  setTimeout(() => (alerta.value = null), 2500)
+  Object.assign(form.value, { nombre: '', tipo: '', cantidad: '', umbral: '', observaciones: '' });
+}
+</script>
+
 
 <template>
-  <div class="app-shell">
-    <header class="page-header_card" style="margin:30px;">
-        <div>
-          <div class="page-header__title-row">
-            <span class="page-header__accent" style="background: rgb(194, 167, 105); "></span>
-              <h1 class="page-header__title">Registrar Insumos y Medicamentos</h1>
-          </div>
-        <p class="page-header__subtitle">Registro de Insumos para el consultorio.</p>
-      </div>
-    </header>
-    <main>
-      <section class="card" style="max-width: 900px; margin: 40px; align-items: left; justify-content: right;">
-        <div class="section__div" @click="toggle" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
-          <h2 class="section__title">Solicitudes</h2>
-        </div>
-        <form v-show="open" class="stack" style="margin-top: 28px;" @submit.prevent="handleSubmit">
-          <div class="field">
+   <div class="stack">
+    <PageHeader 
+        title="Formulario de insumos" 
+        subtitle="formulario para el stock de insumos y medicamentos."
+    />
+  <DashboardCard title="Solicitud de insumos" icon="notebook-pen">
+    <form v-show="open" class="stack" style="margin-top: 28px;" @submit.prevent="handleSubmit">
+              <div class="field">
             <label for="nombre">Nombre*</label>
             <input class="input" id="nombre" v-model="form.nombre" required placeholder="Nombre del medicamento o insumo" />
           </div>
@@ -51,27 +67,13 @@
           <button class="btn btn--primary" type="submit">Registrar</button>
         </form>
         <p v-if="alerta" class="chip chip--success" style="margin-top: 18px; border-color: #c2a769; display:inline-block;">{{ alerta }}</p>
-      </section>
-    </main>
+  </DashboardCard>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-const open = ref(true)
-const alerta = ref(null)
-const form = ref({
-  nombre: '',
-  tipo: '',
-  cantidad: '',
-  umbral: '',        
-  observaciones: ''
-})
-
-function handleSubmit() {
-  alerta.value = '¡registrado con exito!'
-  // Aquí podrías limpiar el formulario o hacer submit real
-  setTimeout(() => (alerta.value = null), 2500)
-  Object.assign(form.value, { nombre: '', tipo: '', cantidad: '', umbral: '', observaciones: '' });
+<style>
+label{
+  padding: 12px 8px;
 }
-</script>
+
+</style>
