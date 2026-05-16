@@ -15,10 +15,10 @@
 }
 
 .eyebrow {
-  font-size: 0.72rem;
+  font-size: var(--size-xs);
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   color: rgba(61, 61, 61, 0.52);
 }
 
@@ -49,7 +49,7 @@
   border: 0;
   border-radius: 999px;
   padding: 0.8rem 1.15rem;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
 }
 .btn--primary {
   background: linear-gradient(135deg, var(--brand), var(--brand-strong));
@@ -75,7 +75,7 @@
   border: 1px solid transparent;
   padding: 0.4rem 0.8rem;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
 }
 .chip--brand {
   background: rgba(194, 167, 105, 0.14);
@@ -108,8 +108,8 @@
 }
 .field label,
 .field__label {
-  font-size: 0.82rem;
-  font-weight: 700;
+  font-size: var(--size-sm);
+  font-weight: var(--weight-bold);
   color: rgba(61, 61, 61, 0.84);
 }
 .input,
@@ -198,10 +198,10 @@
 }
 .sidebar__label {
   margin: 0;
-  font-size: 0.73rem;
+  font-size: var(--size-xs);
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   color: rgba(61, 61, 61, 0.54);
 }
 .sidebar__module-name {
@@ -315,9 +315,9 @@
 }
 .stat-card__value {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: var(--size-lg);
   line-height: 1;
-  font-weight: 800;
+  font-weight: var(--weight-black);
   color: var(--text-strong);
 }
 .stat-card__label {
@@ -476,8 +476,9 @@
 }
 .hero-intro__title {
   margin: 0;
-  font-size: clamp(1.9rem, 2vw, 2.6rem);
+  font-size: var(--size-hero);
   color: var(--text-strong);
+  font-weight: var(--weight-black);
 }
 .hero-intro__text {
   margin: 0;
