@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue';
 import { ref } from 'vue';
 import PageHeader from '@/components/shared/PageHeader.vue';
 import StatusBadge from '@/components/shared/StatusBadge.vue';
@@ -7,15 +8,21 @@ import { useAppStore } from '@/stores/useAppStore';
 
 const appStore = useAppStore();
 
-// 2. Si el almacén no tiene datos de inventario todavía, le cargamos tu lista inicial por defecto
-if (!appStore.inventory) {
-  appStore.inventory = [
-    { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.50, status: 'approved' },
-    { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15.00, status: 'pending' },
-    { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved' },
-    { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45.00, status: 'cancelled' }
-  ];
+//Si el almacén no tiene datos de inventario todavía, le cargamos tu lista inicial por defecto
+if (!appStore.inventory || appStore.inventory.length === 0) {
+    appStore.inventory = [
+        { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.50, status: 'approved' },
+        { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15.00, status: 'pending' },
+        { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved' },
+        { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45.00, status: 'cancelled' },
+        { 
+            id: 5, name: 'Aceite antipulgas', quantity: 50, unitCost: 45.00, status: 'approved', umbral: 10,
+            batches: [{ batch: 'LOT-DEMO', expirationDate: '2026-05-25' }] // Rojo por vencimiento
+        }
+    ];
 }
+
+const inventory = computed(() => appStore.inventory);
 
 const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', { 
