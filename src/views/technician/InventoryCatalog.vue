@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { ref } from 'vue';
 import PageHeader from '@/components/shared/PageHeader.vue';
 import StatusBadge from '@/components/shared/StatusBadge.vue';
 import DashboardCard from '@/components/shared/DashboardCard.vue';
@@ -8,20 +8,15 @@ import { useAppStore } from '@/stores/useAppStore';
 const appStore = useAppStore();
 
 // 2. Si el almacén no tiene datos de inventario todavía, le cargamos tu lista inicial por defecto
-if (!appStore.inventory || appStore.inventory.length === 0) {
-    appStore.inventory = [
-        { id: 1, name: 'Jeringas 5ml', quantity: 25, unitCost: 0.50, status: 'approved', umbral: 20 }, // Amarillo (Stock bajo)
-        { id: 2, name: 'Vacuna Antirrábica', quantity: 5, unitCost: 15.00, status: 'pending', umbral: 10 }, // Rojo (Crítico)
-        { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved', umbral: 50 }, // Normal
-        { 
-            id: 4, name: 'Anestesia General', quantity: 50, unitCost: 45.00, status: 'approved', umbral: 10,
-            batches: [{ batch: 'LOT-DEMO', expirationDate: '2026-05-25' }] // Rojo (Vence pronto)
-        }
-    ];
+if (!appStore.inventory) {
+  appStore.inventory = [
+    { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.50, status: 'approved' },
+    { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15.00, status: 'pending' },
+    { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved' },
+    { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45.00, status: 'cancelled' }
+  ];
 }
 
-// 3. Transformamos tu variable original en una propiedad computada vinculada al store global
-const inventory = computed(() => appStore.inventory);
 const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', { 
     style: 'currency', 
@@ -120,7 +115,7 @@ const evaluarEstadoProducto = (producto) => {
                 </span>
             </td>
             <td style="padding: 12px 8px;">
-                <StatusBadge :status="item.status" />
+                <!-- <StatusBadge :status="item.status" /> -->
                 <span style="margin-left: 8px;">{{ item.quantity }} uds.</span>
             </td>
             <td style="padding: 12px 8px;">{{ formatCurrency(item.unitCost) }}</td>
