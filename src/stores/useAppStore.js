@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { appTemplate } from '@/config/appTemplate';
+import { normalizeInventory } from '@/utils/inventory';
 import {
   vets as seedVets,
   owners as seedOwners,
@@ -24,11 +25,12 @@ export const useAppStore = defineStore('app', {
     vaccines: clone(seedVaccines),
     dewormings: clone(seedDewormings),
 
-    inventory:[
-      { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.50, status: 'approved' },
-      { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15.00, status: 'pending' },
-      { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved' },
-      { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45.00, status: 'cancelled' } ]
+    inventory: [
+      { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.5, umbral: 10, status: 'approved', batches: [] },
+      { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15, umbral: 10, status: 'pending', batches: [] },
+      { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5, umbral: 10, status: 'approved', batches: [] },
+      { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45, umbral: 10, status: 'cancelled', batches: [] },
+    ],
 
   }),
   getters: {
@@ -82,6 +84,9 @@ export const useAppStore = defineStore('app', {
     },
     addDeworming(deworming) {
       this.dewormings.push(deworming);
+    },
+    normalizeInventory() {
+      normalizeInventory(this.inventory);
     },
   },
 });

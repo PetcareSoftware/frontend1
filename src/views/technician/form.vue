@@ -12,26 +12,39 @@ const form = ref({
   nombre: '',
   tipo: '',
   cantidad: '',
-  umbral: '',        
-  observaciones: ''
-})
+  precio: '',
+  umbral: '',
+  observaciones: '',
+});
 
 
 function handleSubmit() {
-   if (useAppStore().inventory) {
-    useAppStore().inventory.push({
-      id: Date.now(), 
+  const appStore = useAppStore();
+  if (appStore.inventory) {
+    appStore.inventory.push({
+      id: Date.now(),
       name: form.value.nombre,
+      type: form.value.tipo,
       quantity: Number(form.value.cantidad),
-      unitCost: Number(form.value.precio), 
-      status: 'approved'
+      unitCost: Number(form.value.precio),
+      umbral: Number(form.value.umbral),
+      status: 'approved',
+      batches: [],
     });
+    appStore.normalizeInventory();
   }
 
   alerta.value = '¡Registrado con éxito!';
   setTimeout(() => (alerta.value = null), 2500);
   
-  Object.assign(form.value, { nombre: '', tipo: '', cantidad: '', umbral: '', observaciones: '' });
+  Object.assign(form.value, {
+    nombre: '',
+    tipo: '',
+    cantidad: '',
+    precio: '',
+    umbral: '',
+    observaciones: '',
+  });
 }
 </script>
 

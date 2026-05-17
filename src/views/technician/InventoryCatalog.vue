@@ -5,6 +5,7 @@ import PageHeader from '@/components/shared/PageHeader.vue';
 import StatusBadge from '@/components/shared/StatusBadge.vue';
 import DashboardCard from '@/components/shared/DashboardCard.vue';
 import { useAppStore } from '@/stores/useAppStore';
+import { getInventoryUmbral } from '@/utils/inventory';
 
 const appStore = useAppStore();
 
@@ -21,6 +22,8 @@ if (!appStore.inventory || appStore.inventory.length === 0) {
         }
     ];
 }
+
+appStore.normalizeInventory();
 
 const inventory = computed(() => appStore.inventory);
 
@@ -51,7 +54,7 @@ const evaluarEstadoProducto = (producto) => {
 
     //Data en caso de emergencia por el error de la falta de el envio de la fecha de venc a pinia en form (cantidad minima de stock)
     const stock = producto.quantity || 0;
-    const minimo = producto.umbral || 10; 
+    const minimo = getInventoryUmbral(producto); 
 
     //Evaluar Stock
     const limiteAmarilloStock = minimo * 1.5;
@@ -102,6 +105,7 @@ const evaluarEstadoProducto = (producto) => {
             <tr style="border-bottom: 1px solid #e2e8f0;">
             <th style="padding: 12px 8px;">Nombre del Insumo</th>
             <th style="padding: 12px 8px;">Cantidad Disponible</th>
+            <th style="padding: 12px 8px;">Stock mínimo</th>
             <th style="padding: 12px 8px;">Costo Unitario (USD)</th>
             </tr>
         </thead>
@@ -122,8 +126,16 @@ const evaluarEstadoProducto = (producto) => {
                 </span>
             </td>
             <td style="padding: 12px 8px;">
-                <!-- <StatusBadge :status="item.status" /> -->
-                <span style="margin-left: 8px;">{{ item.quantity }} uds.</span>
+                <span>{{ item.quantity }} uds.</span>
+            </td>
+            <td style="padding: 12px 8px;">
+                <input
+                  v-model.number="item.umbral"
+                  type="number"
+                  min="1"
+                  class="input umbral-input"
+                  title="Ajustar nivel mínimo de existencias"
+                />
             </td>
             <td style="padding: 12px 8px;">{{ formatCurrency(item.unitCost) }}</td>
             </tr>
@@ -169,6 +181,11 @@ thead th:last-child {
 .row-normal {
     background-color: transparent;
     border-left: 4px solid transparent;
+}
+
+.umbral-input {
+    width: 4.5rem;
+    padding: 6px 8px;
 }
 
 /* alerta flotante */

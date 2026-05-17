@@ -7,15 +7,17 @@ import { useAppStore } from '@/stores/useAppStore';
 
 const appStore = useAppStore();
 
+appStore.normalizeInventory();
+
 if (!appStore.inventory || appStore.inventory.length === 0) {
   appStore.inventory = [
     { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.50, status: 'approved' },
     { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15.00, status: 'pending' },
     { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved' },
-    { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45.00, status: 'cancelled' }
+    { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45.00, status: 'cancelled' },
   ];
+  appStore.normalizeInventory();
 }
-
 
 // Variables de control en inglés
 const today = new Date().toISOString().split('T')[0];
@@ -46,61 +48,46 @@ const guardarEntrada = () => {
     return;
   }
 
-  // Buscamos el insumo seleccionado en el inventario global
-  const insumoEncontrado = listaInsumos.value.find(item => item.id === form.value.insumoId);
+  const insumoEncontrado = listaInsumos.value.find((item) => item.id === form.value.insumoId);
+  if (!insumoEncontrado) return;
 
-  if (insumoEncontrado) {
-    // 1. Gestión de Estado Global (Pinia): Ambos usan .quantity ahora
-    insumoEncontrado.quantity += Number(form.value.quantity);
+  const entrada = { ...form.value };
+  const cantidad = Number(entrada.quantity);
 
-    if(!insumoEncontrado.batches){
-      insumoEncontrado.batches = [];
-    }
+  insumoEncontrado.quantity += cantidad;
 
-    insumoEncontrado.batches.push({
-      batch: form.value.batch,
-      expirationDate: form.value.expirationDate,
-      quantity: Number(form.value.quantity)
-    });
+  if (!insumoEncontrado.batches) {
+    insumoEncontrado.batches = [];
+  }
 
-    insumoEncontrado.expirationDate = form.value.expirationDate;
-    
-    alertMessage.value = `¡Reposición exitosa! El stock de ${insumoEncontrado.name} ahora es ${insumoEncontrado.quantity}`;
-    setTimeout(() => (alertMessage.value = null), 3500);
-    // 2. Alertas Automáticas (Status en inglés como en InventoryCatalog)
-    form.value = {
+  insumoEncontrado.batches.push({
+    batch: entrada.batch,
+    expirationDate: entrada.expirationDate,
+    quantity: cantidad,
+  });
+
+  insumoEncontrado.expirationDate = entrada.expirationDate;
+
+  console.log('=== TRAZABILIDAD REGISTRADA ===');
+  console.log(`Insumo: ${insumoEncontrado.name} (ID: ${insumoEncontrado.id})`);
+  console.log(`Cantidad Sumada: ${cantidad}`);
+  console.log(`Número de Lote: ${entrada.batch}`);
+  console.log(`Fecha de Vencimiento: ${entrada.expirationDate}`);
+  console.log(`Detalles Técnicos: ${entrada.details}`);
+  console.log(`Observaciones: ${entrada.observations}`);
+  console.log(`Nuevo Stock Total (Pinia): ${insumoEncontrado.quantity}`);
+
+  alertMessage.value = `¡Reposición exitosa! El stock de ${insumoEncontrado.name} ahora es ${insumoEncontrado.quantity}`;
+  setTimeout(() => (alertMessage.value = null), 3500);
+
+  form.value = {
     insumoId: '',
     quantity: 1,
     details: '',
     batch: '',
     expirationDate: '',
-    observations: ''
-    };
-
-    // 3. Reporte de Trazabilidad en Consola
-    console.log("=== TRAZABILIDAD REGISTRADA ===");
-    console.log(`Insumo: ${insumoEncontrado.name} (ID: ${insumoEncontrado.id})`);
-    console.log(`Cantidad Sumada: ${form.value.quantity}`);
-    console.log(`Número de Lote: ${form.value.batch}`);
-    console.log(`Fecha de Vencimiento: ${form.value.expirationDate}`);
-    console.log(`Detalles Técnicos: ${form.value.details}`);
-    console.log(`Observaciones: ${form.value.observations}`);
-    console.log(`Nuevo Stock Total (Pinia): ${insumoEncontrado.quantity}`);
-
-    // Mensaje de éxito visual
-    alertMessage.value = `¡Reposición exitosa! El stock de ${insumoEncontrado.name} ahora es ${insumoEncontrado.quantity}`;
-    setTimeout(() => (alertMessage.value = null), 3500);
-    
-    // Limpieza del formulario restableciendo el estado inicial en inglés
-    form.value = {
-      insumoId: '',
-      quantity: 1,
-      details: '',
-      batch: '',
-      expirationDate: '',
-      observations: ''
-    };
-  }
+    observations: '',
+  };
 };
 </script>
 
