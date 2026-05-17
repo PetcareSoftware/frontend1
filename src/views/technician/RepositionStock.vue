@@ -55,13 +55,6 @@ const guardarEntrada = () => {
 
     if(!insumoEncontrado.batches){
       insumoEncontrado.batches = [];
-
-
-    insumoEncontrado.batches.push({
-      batch: form.value.batch,
-      expirationDate: form.value.expirationDate,
-      quantity: Number(form.value.quantity)
-    });
     }
 
     insumoEncontrado.batches.push({
