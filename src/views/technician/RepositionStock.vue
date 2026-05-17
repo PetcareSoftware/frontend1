@@ -53,10 +53,36 @@ const guardarEntrada = () => {
     // 1. Gestión de Estado Global (Pinia): Ambos usan .quantity ahora
     insumoEncontrado.quantity += Number(form.value.quantity);
 
-    // 2. Alertas Automáticas (Status en inglés como en InventoryCatalog)
-    if (insumoEncontrado.quantity > 10) {
-      insumoEncontrado.status = 'approved'; 
+    if(!insumoEncontrado.batches){
+      insumoEncontrado.batches = [];
+
+
+    insumoEncontrado.batches.push({
+      batch: form.value.batch,
+      expirationDate: form.value.expirationDate,
+      quantity: Number(form.value.quantity)
+    });
     }
+
+    insumoEncontrado.batches.push({
+      batch: form.value.batch,
+      expirationDate: form.value.expirationDate,
+      quantity: Number(form.value.quantity)
+    });
+
+    insumoEncontrado.expirationDate = form.value.expirationDate;
+    
+    alertMessage.value = `¡Reposición exitosa! El stock de ${insumoEncontrado.name} ahora es ${insumoEncontrado.quantity}`;
+    setTimeout(() => (alertMessage.value = null), 3500);
+    // 2. Alertas Automáticas (Status en inglés como en InventoryCatalog)
+    form.value = {
+    insumoId: '',
+    quantity: 1,
+    details: '',
+    batch: '',
+    expirationDate: '',
+    observations: ''
+    };
 
     // 3. Reporte de Trazabilidad en Consola
     console.log("=== TRAZABILIDAD REGISTRADA ===");

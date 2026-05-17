@@ -23,6 +23,13 @@ export const useAppStore = defineStore('app', {
     consultations: clone(seedConsultations),
     vaccines: clone(seedVaccines),
     dewormings: clone(seedDewormings),
+
+    inventory:[
+      { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.50, status: 'approved' },
+      { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15.00, status: 'pending' },
+      { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved' },
+      { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45.00, status: 'cancelled' } ]
+
   }),
   getters: {
     currentOwner(state) {
