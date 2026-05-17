@@ -8,13 +8,16 @@ import { useAppStore } from '@/stores/useAppStore';
 const appStore = useAppStore();
 
 // 2. Si el almacén no tiene datos de inventario todavía, le cargamos tu lista inicial por defecto
-if (!appStore.inventory) {
-  appStore.inventory = [
-    { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.50, status: 'approved' },
-    { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15.00, status: 'pending' },
-    { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved' },
-    { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45.00, status: 'cancelled' }
-  ];
+if (!appStore.inventory || appStore.inventory.length === 0) {
+    appStore.inventory = [
+        { id: 1, name: 'Jeringas 5ml', quantity: 25, unitCost: 0.50, status: 'approved', umbral: 20 }, // Amarillo (Stock bajo)
+        { id: 2, name: 'Vacuna Antirrábica', quantity: 5, unitCost: 15.00, status: 'pending', umbral: 10 }, // Rojo (Crítico)
+        { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5.00, status: 'approved', umbral: 50 }, // Normal
+        { 
+            id: 4, name: 'Anestesia General', quantity: 50, unitCost: 45.00, status: 'approved', umbral: 10,
+            batches: [{ batch: 'LOT-DEMO', expirationDate: '2026-05-25' }] // Rojo (Vence pronto)
+        }
+    ];
 }
 
 // 3. Transformamos tu variable original en una propiedad computada vinculada al store global
@@ -25,6 +28,63 @@ const formatCurrency = (value) => {
     currency: 'USD' 
     }).format(value);
 };
+
+
+//Fecha de vencimiento
+const calcularDiasParaVencer = (fechaVencimiento) => {
+    //Fecha base
+    const hoy = new Date(); 
+    
+    const vencimiento = new Date(fechaVencimiento + 'T00:00:00'); 
+
+    const diferenciaMs = vencimiento - hoy;
+  return Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
+};
+
+
+//Evaluacion de estado de cada producto
+const evaluarEstadoProducto = (producto) => {
+    let estadoVisual = 'normal'; 
+    let mensajesTooltip = [];
+
+    //Data en caso de emergencia por el error de la falta de el envio de la fecha de venc a pinia en form (cantidad minima de stock)
+    const stock = producto.quantity || 0;
+    const minimo = producto.umbral || 10; 
+
+    //Evaluar Stock
+    const limiteAmarilloStock = minimo * 1.5;
+
+    if (stock <= minimo) {
+        estadoVisual = 'critical';
+        mensajesTooltip.push(`Stock crítico: Quedan ${stock} (Mínimo: ${minimo})`);
+    } else if (stock <= limiteAmarilloStock) {
+        estadoVisual = estadoVisual === 'critical' ? 'critical' : 'warning';
+        mensajesTooltip.push(`Stock bajo: Quedan ${stock} (Mínimo: ${minimo})`);
+    }
+
+    //Evaluar Fechas de Vencimiento de los Lotes
+    if (producto.batches && producto.batches.length > 0) {
+        
+        producto.batches.forEach(lote => {
+            const diasRestantes = calcularDiasParaVencer(lote.expirationDate);
+
+            if (diasRestantes <= 15) {
+                estadoVisual = 'critical'; 
+                mensajesTooltip.push(`El Lote #${lote.batch} pasó a estado crítico: Vence en ${diasRestantes} días`);
+            
+            } else if (diasRestantes <= 45) {
+                estadoVisual = estadoVisual === 'critical' ? 'critical' : 'warning';
+                mensajesTooltip.push(`Lote #${lote.batch} está próximo a vencer en ${diasRestantes} días`);
+            }
+        });
+    }
+
+    return {
+        clase: estadoVisual,
+        tooltip: mensajesTooltip.join(' | ')
+    };
+};
+
 </script>
 
 <template>
@@ -44,8 +104,21 @@ const formatCurrency = (value) => {
             </tr>
         </thead>
         <tbody>
-            <tr v-for="item in inventory" :key="item.id" style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 12px 8px; font-weight: 500;">{{ item.name }}</td>
+            <tr 
+                v-for="item in inventory" :key="item.id" 
+                :class="`row-${evaluarEstadoProducto(item).clase}`" 
+                style="border-bottom: 1px solid #e2e8f0;" 
+            >
+            <td style="padding: 12px 8px; font-weight: 500; position: relative;">
+                {{ item.name }}
+                
+                <span 
+                    v-if="evaluarEstadoProducto(item).clase !== 'normal'" 
+                    class="alerta-tooltip"
+                >
+                    {{ evaluarEstadoProducto(item).tooltip }}
+                </span>
+            </td>
             <td style="padding: 12px 8px;">
                 <StatusBadge :status="item.status" />
                 <span style="margin-left: 8px;">{{ item.quantity }} uds.</span>
@@ -77,4 +150,61 @@ thead th:last-child {
     border-top-right-radius: var(--radius-md);
 }
 
+
+/* colores de lineas de avisos */
+.row-critical {
+    background-color: #ffebee; 
+    border-left: 4px solid #f44336; 
+    cursor: help;
+}
+
+.row-warning {
+    background-color: #fff8e1; 
+    border-left: 4px solid #ffc107; 
+    cursor: help;
+}
+
+.row-normal {
+    background-color: transparent;
+    border-left: 4px solid transparent;
+}
+
+/* alerta flotante */
+.alerta-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    
+    background-color: var(--bg);
+    color: var(--text-strong);
+    font-size: 13px;
+    font-weight: 400;
+    padding: 8px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    bottom: 80%;
+    left: 10px;
+    z-index: 50;
+    
+    /* Animación de aparición */
+    transition: opacity 0.2s ease, bottom 0.2s ease;
+    pointer-events: none; 
+}
+
+.alerta-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%; /* Abajo del globo */
+    left: 15px; 
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--bg) transparent transparent transparent;
+}
+
+tr:hover .alerta-tooltip {
+    visibility: visible;
+    opacity: 1;
+    bottom: 100%;
+}
 </style>
