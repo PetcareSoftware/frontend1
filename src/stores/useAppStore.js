@@ -9,6 +9,7 @@ import {
   consultations as seedConsultations,
   vaccines as seedVaccines,
   dewormings as seedDewormings,
+  insumos as seedInsumos,
 } from '@/data/mockData';
 
 const clone = (value) => value.map((item) => ({ ...item }));
@@ -25,12 +26,7 @@ export const useAppStore = defineStore('app', {
     vaccines: clone(seedVaccines),
     dewormings: clone(seedDewormings),
 
-    inventory: [
-      { id: 1, name: 'Jeringas 5ml', quantity: 150, unitCost: 0.5, umbral: 10, status: 'approved', batches: [] },
-      { id: 2, name: 'Vacuna Antirrábica', quantity: 20, unitCost: 15, umbral: 10, status: 'pending', batches: [] },
-      { id: 3, name: 'Gasas Estériles (Caja)', quantity: 300, unitCost: 5, umbral: 10, status: 'approved', batches: [] },
-      { id: 4, name: 'Anestesia General (Frasco)', quantity: 5, unitCost: 45, umbral: 10, status: 'cancelled', batches: [] },
-    ],
+    inventory: clone(seedInsumos),
 
   }),
   getters: {
