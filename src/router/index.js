@@ -22,6 +22,7 @@ import DewormingManager from '@/views/vet/DewormingManager.vue';
 import FormPage from '@/views/technician/form.vue';
 import InventoryCatalog from '@/views/technician/InventoryCatalog.vue';
 import RepositionStock from '@/views/technician/RepositionStock.vue';
+import Interface from '@/views/technician/Interface.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -71,6 +72,7 @@ export const router = createRouter({
         { path: 'inventory', component: InventoryCatalog },
         { path: 'form', component: FormPage },
         { path: 'reposition', component: RepositionStock },
+        { path: 'interface', component: Interface },
       ],
     },
     { path: '/:pathMatch(.*)*', redirect: '/portal/dashboard' },

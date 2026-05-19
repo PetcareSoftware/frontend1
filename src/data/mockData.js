@@ -357,7 +357,6 @@ export const timeSlots = [
 ];
 
 
-
 export const Insumos = [
   {
     id: 1,

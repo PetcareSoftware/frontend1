@@ -9,8 +9,6 @@ const appStore = useAppStore();
 
 appStore.normalizeInventory();
 
-  appStore.normalizeInventory();
-
 // Variables de control 
 const today = new Date().toISOString().split('T')[0];
 const open = ref(true);
