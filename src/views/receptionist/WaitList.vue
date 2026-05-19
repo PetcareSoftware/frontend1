@@ -46,7 +46,7 @@
           </div>
           <div class="toolbar__group">
             <StatusBadge :status="appointment.status" />
-            <button class="btn btn--soft" type="button" @click="moveToFront(appointment)">
+            <button class="btn btn--soft btn--sm" type="button" @click="moveToFront(appointment)">
               Subir
             </button>
           </div>
