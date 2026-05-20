@@ -356,55 +356,36 @@ export const timeSlots = [
   '17:00',
 ];
 
-export const insumos = [
+
+export const Insumos = [
   {
     id: 1,
-    name: 'Jeringas 5ml',
-    type: 'Insumo',
-    quantity: 150,
-    unitCost: 0.5,
+    name: "Paracetamol 500mg",
+    type: "Medicamento",
+    quantity: 50,
+    unitCost: 8.00,
     umbral: 10,
     status: 'approved',
-    batches: [],
+    batches: [{ batch: "Lote A-12", expirationDate: "2026-12-31" }]
   },
   {
     id: 2,
-    name: 'Vacuna Antirrábica',
-    type: 'Medicamento',
-    quantity: 20,
-    unitCost: 15,
-    umbral: 10,
-    status: 'pending',
-    batches: [],
+    name: "Gasa Estéril",
+    type: "Insumo",
+    quantity: 8,
+    unitCost: 1.20,
+    umbral: 15,
+    status: 'approved',
+    batches: [{ batch: "Lote B-24", expirationDate: "2027-01-15" }]
   },
   {
     id: 3,
-    name: 'Gasas Estériles (Caja)',
-    type: 'Insumo',
-    quantity: 300,
-    unitCost: 5,
-    umbral: 10,
+    name: "Acetaminofen",
+    type: "Medicamento",
+    quantity: 19,
+    unitCost: 5.00,
+    umbral: 15,
     status: 'approved',
-    batches: [],
-  },
-  {
-    id: 4,
-    name: 'Anestesia General (Frasco)',
-    type: 'Medicamento',
-    quantity: 5,
-    unitCost: 45,
-    umbral: 10,
-    status: 'cancelled',
-    batches: [],
-  },
-  {
-    id: 5,
-    name: 'Aceite antipulgas',
-    type: 'Medicamento',
-    quantity: 50,
-    unitCost: 45,
-    umbral: 10,
-    status: 'approved',
-    batches: [{ batch: 'LOT-DEMO', expirationDate: '2026-05-25' }],
-  },
+    batches: [{ batch: "Lote B-26", expirationDate: "2027-03-20" }]
+  }
 ];

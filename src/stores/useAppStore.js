@@ -8,8 +8,8 @@ import {
   appointments as seedAppointments,
   consultations as seedConsultations,
   vaccines as seedVaccines,
+  Insumos as seedInsumos,
   dewormings as seedDewormings,
-  insumos as seedInsumos,
 } from '@/data/mockData';
 
 const clone = (value) => value.map((item) => ({ ...item }));
@@ -25,9 +25,8 @@ export const useAppStore = defineStore('app', {
     consultations: clone(seedConsultations),
     vaccines: clone(seedVaccines),
     dewormings: clone(seedDewormings),
-
     inventory: clone(seedInsumos),
-
+    
   }),
   getters: {
     currentOwner(state) {

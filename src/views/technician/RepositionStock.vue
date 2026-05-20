@@ -9,12 +9,12 @@ const appStore = useAppStore();
 
 appStore.normalizeInventory();
 
-// Variables de control
+// Variables de control 
 const today = new Date().toISOString().split('T')[0];
 const open = ref(true);
 const alertMessage = ref(null);
 
-// Estructura del formulario completamente en inglés
+// Estructura del formulario 
 const form = ref({
   insumoId: '',
   quantity: 1,
