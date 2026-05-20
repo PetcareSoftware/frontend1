@@ -111,7 +111,10 @@
           </div>
           
           <div class="field">
-            <label class="field__label">Contraseña</label>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <label class="field__label" style="margin-bottom: 0;">Contraseña</label>
+              <router-link to="/recover-password" class="link" style="font-size: 0.85rem; font-weight: normal;">¿Olvidaste tu contraseña?</router-link>
+            </div>
             <div class="input-wrapper">
               <input v-model="form.password" class="input input--auth" type="password" placeholder="••••••••" />
             </div>
