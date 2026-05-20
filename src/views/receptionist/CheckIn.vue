@@ -55,21 +55,21 @@
             <td>
               <div class="toolbar__group">
                 <button
-                  class="btn btn--soft"
+                  class="btn btn--soft btn--sm"
                   type="button"
                   @click="setStatus(appointment, 'confirmed')"
                 >
                   Confirmar
                 </button>
                 <button
-                  class="btn btn--soft"
+                  class="btn btn--soft btn--sm"
                   type="button"
                   @click="setStatus(appointment, 'in_progress')"
                 >
                   Iniciar
                 </button>
                 <button
-                  class="btn btn--soft"
+                  class="btn btn--soft btn--sm"
                   type="button"
                   @click="setStatus(appointment, 'completed')"
                 >
