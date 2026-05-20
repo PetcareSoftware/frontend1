@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/components/layout/AppLayout.vue';
 import Login from '@/views/auth/Login.vue';
 import Register from '@/views/auth/Register.vue';
+import RecoverPassword from '@/views/auth/RecoverPassword.vue';
 import OwnerDashboard from '@/views/owner/OwnerDashboard.vue';
 import OwnerAppointments from '@/views/owner/OwnerAppointments.vue';
 import OwnerHistory from '@/views/owner/OwnerHistory.vue';
@@ -27,6 +28,7 @@ export const router = createRouter({
     { path: '/', redirect: '/login' },
     { path: '/login', component: Login },
     { path: '/register', component: Register },
+    { path: '/recover-password', component: RecoverPassword },
     {
       path: '/portal',
       component: AppLayout,
