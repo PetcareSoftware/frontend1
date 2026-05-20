@@ -1,8 +1,14 @@
 <script setup>
   import { appTemplate } from '@/config/appTemplate';
   import { useAppStore } from '@/stores/useAppStore';
+  import { useRouter } from 'vue-router';
 
   const appStore = useAppStore();
+  const router = useRouter();
+
+  function logout() {
+    router.push('/login');
+  }
 </script>
 
 <template>
@@ -23,6 +29,15 @@
         @click="appStore.setRole(item.key, item.userId || undefined)"
       >
         {{ item.label }}
+      </button>
+
+      <button
+        type="button"
+        class="role-chip"
+        style="background: rgba(178, 60, 60, 0.12); color: var(--danger); border-color: rgba(178, 60, 60, 0.2);"
+        @click="logout"
+      >
+        Cerrar sesión
       </button>
     </div>
   </aside>

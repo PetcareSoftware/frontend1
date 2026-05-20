@@ -10,36 +10,52 @@
   const router = useRouter();
 
   const form = reactive({
-    name: '',
     email: '',
-    phone: '',
-    address: '',
     password: '',
   });
 
-  function handleRegister() {
-    if (!form.name || !form.email || !form.password) {
-      toastStore.push({ title: 'Completa los campos requeridos', type: 'error' });
+  function handleLogin() {
+    if (!form.email || !form.password) {
+      toastStore.push({ title: 'Completa todos los campos', type: 'error' });
       return;
     }
 
-    const newId = `o${Date.now()}`;
+    // Lógica de simulación de login
+    // En un proyecto real, aquí llamarías a una API
+    
+    // Buscamos si es un dueño
+    const owner = appStore.owners.find(o => o.email === form.email);
+    
+    if (owner) {
+      appStore.setRole('owner', owner.id);
+      toastStore.push({
+        title: `¡Hola de nuevo, ${owner.name.split(' ')[0]}!`,
+        type: 'success',
+      });
+      router.push('/portal/dashboard');
+      return;
+    }
 
-    appStore.addOwner({
-      id: newId,
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
-      address: form.address,
-      createdAt: new Date().toISOString().slice(0, 10),
-    });
-    appStore.setRole('owner', newId);
+    // Simulamos login para otros roles (Veterinario/Recepcionista) por email
+    if (form.email.includes('vet')) {
+      appStore.setRole('vet', 'v1');
+      toastStore.push({ title: 'Sesión iniciada como Veterinario', type: 'success' });
+      router.push('/vet/dashboard');
+      return;
+    }
+
+    if (form.email.includes('reception')) {
+      appStore.setRole('receptionist', 'r1');
+      toastStore.push({ title: 'Sesión iniciada como Recepcionista', type: 'success' });
+      router.push('/reception/dashboard');
+      return;
+    }
+
     toastStore.push({
-      title: `Bienvenido/a, ${form.name.split(' ')[0]}!`,
-      description: 'Tu cuenta fue creada correctamente.',
-      type: 'success',
+      title: 'Credenciales inválidas',
+      description: 'Por favor, verifica tu email y contraseña.',
+      type: 'error',
     });
-    router.push('/portal/dashboard');
   }
 </script>
 
@@ -50,27 +66,27 @@
       <div class="visual-decor visual-decor--2"></div>
       <div class="auth-layout__visual-content">
         <Logo size="lg" />
-        <h2 class="visual-title">Únete a nuestra comunidad</h2>
-        <p class="visual-text">Comienza a gestionar la salud de tus mascotas de manera simple y rápida.</p>
+        <h2 class="visual-title">Gestión Veterinaria de Excelencia</h2>
+        <p class="visual-text">Cuidamos a los que más quieres con tecnología de punta y el mejor equipo de profesionales.</p>
         
         <div class="visual-features">
           <div class="feature-item">
             <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.55 3.55 0 0 1 2 13.5 5.5 5.5 0 0 1 9 10Z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
             </div>
-            <span>Perfiles de mascotas</span>
+            <span>Atención personalizada</span>
           </div>
           <div class="feature-item">
             <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
             </div>
-            <span>Recordatorios y alertas</span>
+            <span>Gestión de turnos ágil</span>
           </div>
           <div class="feature-item">
             <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
             </div>
-            <span>Acceso 24/7 desde cualquier dispositivo</span>
+            <span>Historial clínico detallado</span>
           </div>
         </div>
       </div>
@@ -82,47 +98,41 @@
           <div class="logo-mobile">
             <Logo size="md" />
           </div>
-          <h1 class="auth-title">Crear cuenta</h1>
-          <p class="auth-subtitle">Registrate como propietario y comenzá a gestionar turnos.</p>
+          <h1 class="auth-title">Iniciar sesión</h1>
+          <p class="auth-subtitle">Ingresá tus credenciales para acceder a tu panel.</p>
         </div>
 
-        <form class="auth-form" @submit.prevent="handleRegister">
+        <form class="auth-form" @submit.prevent="handleLogin">
           <div class="field">
-            <label class="field__label">Nombre completo *</label>
-            <input v-model="form.name" class="input input--auth" type="text" placeholder="Ana García" />
-          </div>
-
-          <div class="input-grid">
-            <div class="field">
-              <label class="field__label">Correo electrónico *</label>
-              <input v-model="form.email" class="input input--auth" type="email" placeholder="ana@email.com" />
+            <label class="field__label">Correo electrónico</label>
+            <div class="input-wrapper">
+              <input v-model="form.email" class="input input--auth" type="email" placeholder="ejemplo@email.com" />
             </div>
-            <div class="field">
-              <label class="field__label">Contraseña *</label>
+          </div>
+          
+          <div class="field">
+            <label class="field__label">Contraseña</label>
+            <div class="input-wrapper">
               <input v-model="form.password" class="input input--auth" type="password" placeholder="••••••••" />
             </div>
           </div>
 
-          <div class="input-grid">
-            <div class="field">
-              <label class="field__label">Teléfono</label>
-              <input v-model="form.phone" class="input input--auth" type="text" placeholder="555-0000" />
-            </div>
-            <div class="field">
-              <label class="field__label">Dirección</label>
-              <input v-model="form.address" class="input input--auth" type="text" placeholder="Av. Libertad 123" />
-            </div>
-          </div>
-
-          <button class="btn btn--primary btn--block" type="submit">Crear cuenta</button>
+          <button class="btn btn--primary btn--block" type="submit">Entrar a mi cuenta</button>
         </form>
 
-        <p class="terms muted">Al registrarte aceptas los términos y condiciones de PetCare.</p>
-
         <div class="auth-footer">
-          <p class="muted">¿Ya tienes cuenta? 
-            <router-link to="/login" class="link">Inicia sesión</router-link>
+          <p class="muted">¿No tienes una cuenta? 
+            <router-link to="/register" class="link">Regístrate aquí</router-link>
           </p>
+        </div>
+        
+        <div class="dev-note">
+          <p class="dev-note__title"><strong>Tips para desarrollo:</strong></p>
+          <ul class="dev-note__list">
+            <li>Cualquier email de dueño registrado funciona.</li>
+            <li>Usa "vet@test.com" para entrar como Veterinario.</li>
+            <li>Usa "reception@test.com" para entrar como Recepcionista.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -363,9 +373,26 @@
   text-decoration: underline;
 }
 
-.terms {
-  text-align: center;
+.dev-note {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(165, 186, 142, 0.1);
+  border: 1px dashed rgba(165, 186, 142, 0.4);
+  border-radius: 12px;
   font-size: 0.8rem;
-  margin-top: 1rem;
+}
+
+.dev-note__title {
+  margin: 0 0 0.5rem;
+  color: var(--sage-strong);
+}
+
+.dev-note__list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: rgba(61, 61, 61, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 </style>
