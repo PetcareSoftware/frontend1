@@ -6,6 +6,20 @@
   const appStore = useAppStore();
   const router = useRouter();
 
+  function switchRole(item) {
+    appStore.setRole(item.key, item.userId || undefined);
+    
+    const baseRoutes = {
+      owner: '/portal/dashboard',
+      vet: '/vet/dashboard',
+      receptionist: '/reception/dashboard',
+    };
+    
+    if (baseRoutes[item.key]) {
+      router.push(baseRoutes[item.key]);
+    }
+  }
+
   function logout() {
     router.push('/login');
   }
@@ -26,7 +40,7 @@
             ? { background: appTemplate.roles[item.key].accent }
             : undefined
         "
-        @click="appStore.setRole(item.key, item.userId || undefined)"
+        @click="switchRole(item)"
       >
         {{ item.label }}
       </button>
