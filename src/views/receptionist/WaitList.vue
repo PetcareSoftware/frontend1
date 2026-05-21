@@ -29,13 +29,15 @@
     <section class="card">
       <div class="list">
         <article
-          v-for="appointment in getTodayAppointments(appStore.appointments).filter(
-            (item) => item.status === 'waiting'
+          v-for="(appointment, index) in getTodayAppointments(appStore.appointments).filter(
+            (item) => ['waiting', 'confirmed'].includes(item.status)
           )"
           :key="appointment.id"
           class="list__item"
+          :style="appointment.status === 'confirmed' ? 'border-left: 4px solid var(--color-success);' : ''"
         >
           <div class="toolbar__group">
+            <span class="chip chip--brand">P{{ index + 1 }}</span>
             <PetAvatar :pet="getPet(appStore.pets, appointment.petId)" size="sm" />
             <div class="list__item-main">
               <p class="list__title">{{ getPet(appStore.pets, appointment.petId)?.name }}</p>
@@ -46,7 +48,12 @@
           </div>
           <div class="toolbar__group">
             <StatusBadge :status="appointment.status" />
-            <button class="btn btn--soft btn--sm" type="button" @click="moveToFront(appointment)">
+            <button 
+              v-if="appointment.status !== 'confirmed'"
+              class="btn btn--soft btn--sm" 
+              type="button" 
+              @click="moveToFront(appointment)"
+            >
               Subir
             </button>
           </div>

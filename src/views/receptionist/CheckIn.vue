@@ -4,7 +4,7 @@
   import PetAvatar from '@/components/shared/PetAvatar.vue';
   import { useAppStore } from '@/stores/useAppStore';
   import { useToastStore } from '@/stores/useToastStore';
-  import { getTodayAppointments, getPet, getVet } from '@/lib/petcare';
+  import { getTodayAppointments, getPet, getVet, statusMeta } from '@/lib/petcare';
 
   const appStore = useAppStore();
   const toastStore = useToastStore();
@@ -13,7 +13,7 @@
     appStore.updateAppointment({ ...appointment, status });
     toastStore.push({
       title: 'Estado actualizado',
-      description: `${appointment.reason} cambió a ${status}.`,
+      description: `${appointment.reason} cambió a ${statusMeta[status]?.label.toLowerCase() || status}.`,
       type: 'success',
     });
   }
@@ -54,6 +54,13 @@
             <td><StatusBadge :status="appointment.status" /></td>
             <td>
               <div class="toolbar__group">
+                <button
+                  class="btn btn--soft btn--sm"
+                  type="button"
+                  @click="setStatus(appointment, 'waiting')"
+                >
+                  Registrar llegada
+                </button>
                 <button
                   class="btn btn--soft btn--sm"
                   type="button"
