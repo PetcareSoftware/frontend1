@@ -61,6 +61,9 @@
               <div class="list__item-main">
                 <p class="list__title">
                   {{ appointment.time }} · {{ getPet(appStore.pets, appointment.petId)?.name }}
+                  <span v-if="appointment.type === 'Emergencia'" class="chip chip--danger" style="margin-left: 8px; padding: 0.2rem 0.5rem; font-size: 0.7rem;">
+                    Emergencia ({{ appointment.priority }})
+                  </span>
                 </p>
                 <p class="list__subtitle">
                   {{ appointment.reason }} · {{ getVet(appStore.vets, appointment.vetId)?.name }}
@@ -76,7 +79,7 @@
         <div class="stack">
           <div class="hero-intro">
             <p class="eyebrow">Fecha actual</p>
-            <h2 class="hero-intro__title">{{ formatDate('2026-05-08') }}</h2>
+            <h2 class="hero-intro__title">{{ formatDate(new Date().toISOString().split('T')[0]) }}</h2>
             <p class="hero-intro__text">
               La recepción puede usar esta vista para confirmar citas, atender llegadas y
               administrar la lista de espera.

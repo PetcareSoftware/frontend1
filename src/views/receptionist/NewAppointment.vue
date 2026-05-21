@@ -15,8 +15,10 @@
     ownerId: ownerId.value,
     petId: '',
     vetId: appStore.vets[0]?.id || 'v1',
-    date: '2026-05-12',
+    date: new Date().toISOString().split('T')[0],
     time: '09:00',
+    type: 'Normal',
+    priority: 'Media',
     reason: '',
     notes: '',
   });
@@ -50,6 +52,8 @@
       vetId: form.vetId,
       date: form.date,
       time: form.time,
+      type: form.type,
+      priority: form.type === 'Emergencia' ? form.priority : null,
       reason: form.reason,
       status: 'scheduled',
       notes: form.notes,
@@ -114,6 +118,25 @@
           <label class="field">
             <span>Motivo</span>
             <input v-model="form.reason" class="input" type="text" placeholder="Control anual" />
+          </label>
+        </div>
+
+        <div class="input-grid">
+          <label class="field">
+            <span>Tipo de consulta</span>
+            <select v-model="form.type" class="select">
+              <option value="Normal">Normal</option>
+              <option value="Emergencia">Emergencia</option>
+            </select>
+          </label>
+          <label class="field" v-if="form.type === 'Emergencia'">
+            <span>Prioridad</span>
+            <select v-model="form.priority" class="select">
+              <option value="Baja">Baja</option>
+              <option value="Media">Media</option>
+              <option value="Alta">Alta</option>
+              <option value="Crítica">Crítica</option>
+            </select>
           </label>
         </div>
 
