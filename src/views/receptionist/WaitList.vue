@@ -38,6 +38,13 @@
         >
           <div class="toolbar__group">
             <span class="chip chip--brand">P{{ index + 1 }}</span>
+            <span 
+              v-if="appointment.type === 'Emergencia'" 
+              class="chip chip--danger" 
+              style="font-size: 0.75rem;"
+            >
+              {{ appointment.priority }}
+            </span>
             <PetAvatar :pet="getPet(appStore.pets, appointment.petId)" size="sm" />
             <div class="list__item-main">
               <p class="list__title">{{ getPet(appStore.pets, appointment.petId)?.name }}</p>
