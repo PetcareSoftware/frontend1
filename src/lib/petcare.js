@@ -97,7 +97,13 @@ export function getAppointmentsByDate(appointments, date) {
     .sort(sortAppointments);
 }
 
-export function getTodayAppointments(appointments, date = '2026-05-08') {
+export function getTodayDate() {
+  const today = new Date();
+  today.setHours(12, 0, 0, 0);
+  return today.toISOString().slice(0, 10);
+}
+
+export function getTodayAppointments(appointments, date = getTodayDate()) {
   return getAppointmentsByDate(appointments, date);
 }
 
@@ -113,7 +119,7 @@ export function countByStatus(appointments, status) {
   return appointments.filter((appointment) => appointment.status === status).length;
 }
 
-export function countUpcoming(appointments, today = '2026-05-08') {
+export function countUpcoming(appointments, today = getTodayDate()) {
   return appointments.filter(
     (appointment) => appointment.date >= today && appointment.status !== 'cancelled'
   ).length;
@@ -157,7 +163,8 @@ export function getLatestDeworming(dewormings, petId) {
 }
 
 export function daysFromNow(days) {
-  const date = new Date('2026-05-08T12:00:00');
+  const date = new Date();
+  date.setHours(12, 0, 0, 0);
   date.setDate(date.getDate() + days);
   return date.toISOString().slice(0, 10);
 }
