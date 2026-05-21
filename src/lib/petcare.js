@@ -125,10 +125,6 @@ export function countUpcoming(appointments, today = getTodayDate()) {
     (appointment) => appointment.date >= today && appointment.status !== 'cancelled'
   ).length;
 }
-  return appointments.filter(
-    (appointment) => appointment.date >= currentDate && appointment.status !== 'cancelled'
-  ).length;
-}
 
 export function countCompleted(appointments) {
   return appointments.filter((appointment) => appointment.status === 'completed').length;
