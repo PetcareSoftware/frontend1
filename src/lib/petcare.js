@@ -97,10 +97,16 @@ export function getAppointmentsByDate(appointments, date) {
     .sort(sortAppointments);
 }
 
-export function getTodayAppointments(appointments, date) {
-  const today = new Date().toISOString().split('T')[0];
-  return getAppointmentsByDate(appointments, date || today);
+export function getTodayDate() {
+  const today = new Date();
+  today.setHours(12, 0, 0, 0);
+  return today.toISOString().slice(0, 10);
 }
+
+export function getTodayAppointments(appointments, date = getTodayDate()) {
+  return getAppointmentsByDate(appointments, date);
+}
+
 
 export function sortAppointments(left, right) {
   return `${left.date} ${left.time}`.localeCompare(`${right.date} ${right.time}`);
@@ -114,8 +120,11 @@ export function countByStatus(appointments, status) {
   return appointments.filter((appointment) => appointment.status === status).length;
 }
 
-export function countUpcoming(appointments, today) {
-  const currentDate = today || new Date().toISOString().split('T')[0];
+export function countUpcoming(appointments, today = getTodayDate()) {
+  return appointments.filter(
+    (appointment) => appointment.date >= today && appointment.status !== 'cancelled'
+  ).length;
+}
   return appointments.filter(
     (appointment) => appointment.date >= currentDate && appointment.status !== 'cancelled'
   ).length;
