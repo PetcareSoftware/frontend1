@@ -20,7 +20,7 @@
     getAppointmentsByVet(appStore.appointments, currentVetId.value)
   );
   const todayAppointments = computed(() =>
-    vetAppointments.value.filter((appointment) => appointment.date === '2026-05-08')
+    vetAppointments.value.filter((appointment) => appointment.date === new Date().toISOString().split('T')[0])
   );
   const stats = computed(() => getAppointmentStats(todayAppointments.value));
 </script>
@@ -67,6 +67,9 @@
               <div class="list__item-main">
                 <p class="list__title">
                   {{ appointment.time }} · {{ getPet(appStore.pets, appointment.petId)?.name }}
+                  <span v-if="appointment.type === 'Emergencia'" class="chip chip--danger" style="margin-left: 8px; padding: 0.2rem 0.5rem; font-size: 0.7rem;">
+                    Emergencia ({{ appointment.priority }})
+                  </span>
                 </p>
                 <p class="list__subtitle">{{ appointment.reason }}</p>
               </div>
@@ -98,7 +101,7 @@
             </article>
             <article class="card">
               <p class="eyebrow">Fecha</p>
-              <strong>{{ formatDate('2026-05-08') }}</strong>
+              <strong>{{ formatDate(new Date().toISOString().split('T')[0]) }}</strong>
             </article>
           </div>
         </div>

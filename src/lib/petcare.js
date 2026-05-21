@@ -107,6 +107,7 @@ export function getTodayAppointments(appointments, date = getTodayDate()) {
   return getAppointmentsByDate(appointments, date);
 }
 
+
 export function sortAppointments(left, right) {
   return `${left.date} ${left.time}`.localeCompare(`${right.date} ${right.time}`);
 }
@@ -122,6 +123,10 @@ export function countByStatus(appointments, status) {
 export function countUpcoming(appointments, today = getTodayDate()) {
   return appointments.filter(
     (appointment) => appointment.date >= today && appointment.status !== 'cancelled'
+  ).length;
+}
+  return appointments.filter(
+    (appointment) => appointment.date >= currentDate && appointment.status !== 'cancelled'
   ).length;
 }
 
