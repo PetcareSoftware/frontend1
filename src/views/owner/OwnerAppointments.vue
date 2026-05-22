@@ -2,6 +2,7 @@
   import { computed, ref, reactive } from 'vue';
   import PageHeader from '@/components/shared/PageHeader.vue';
   import StatusBadge from '@/components/shared/StatusBadge.vue';
+  import Modal from '@/components/shared/Modal.vue';
   import { useAppStore } from '@/stores/useAppStore';
   import { useToastStore } from '@/stores/useToastStore';
   import { formatDate, getOwnerAppointments, getPet, getVet, getOwnerPets, timeSlots, getTodayShortDate } from '@/lib/petcare';
@@ -167,10 +168,12 @@
     </section>
 
     <!-- Modal de Agendamiento -->
-    <div v-if="showNewAppointmentModal" class="modal-overlay" @click.self="showNewAppointmentModal = false">
-      <div class="card modal-content stack">
-        <h3 class="modal-title">Agendar Cita</h3>
-        
+    <Modal
+      :isOpen="showNewAppointmentModal"
+      title="Agendar Cita"
+      @close="showNewAppointmentModal = false"
+    >
+      <div class="stack">
         <div class="input-row" style="margin-top: 1rem;">
           <label class="field">
             <span>Selecciona la mascota</span>
@@ -203,12 +206,15 @@
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
 
     <!-- Modal de Cancelación Personalizado -->
-    <div v-if="isCancelModalOpen" class="modal-overlay" @click.self="closeCancelModal">
-      <div class="card modal-content stack">
-        <h3 class="modal-title">Cancelar Cita</h3>
+    <Modal
+      :isOpen="isCancelModalOpen"
+      title="Cancelar Cita"
+      @close="closeCancelModal"
+    >
+      <div class="stack">
         <p class="modal-desc">
           Por favor, indica el motivo de la cancelación para la cita de 
           <strong>{{ getPet(appStore.pets, selectedAppointment?.petId)?.name }}</strong>.
@@ -238,58 +244,15 @@
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   </div>
 </template>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(28, 26, 20, 0.45);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.25s ease-out;
-}
-
-.modal-content {
-  width: 95%;
-  max-width: 480px;
-  background: var(--surface-strong);
-  border: 1px solid var(--border-strong);
-  box-shadow: var(--shadow);
-  padding: 32px;
-  border-radius: var(--radius-lg);
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.modal-title {
-  margin: 0 0 8px 0;
-  font-size: 1.45rem;
-  font-weight: 800;
-  color: var(--text-strong);
-}
-
 .modal-desc {
   color: rgba(61, 61, 61, 0.78);
   font-size: 0.92rem;
   line-height: 1.5;
   margin-bottom: 20px;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
 }
 </style>
