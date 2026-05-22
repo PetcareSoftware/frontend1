@@ -4,7 +4,7 @@
   import PetAvatar from '@/components/shared/PetAvatar.vue';
   import { useAppStore } from '@/stores/useAppStore';
   import { useToastStore } from '@/stores/useToastStore';
-  import { getTodayAppointments, getPet, getVet } from '@/lib/petcare';
+  import { getTodayAppointments, getPet, getVet, statusMeta } from '@/lib/petcare';
 
   const appStore = useAppStore();
   const toastStore = useToastStore();
@@ -13,7 +13,7 @@
     appStore.updateAppointment({ ...appointment, status });
     toastStore.push({
       title: 'Estado actualizado',
-      description: `${appointment.reason} cambió a ${status}.`,
+      description: `${appointment.reason} cambió a ${statusMeta[status]?.label.toLowerCase() || status}.`,
       type: 'success',
     });
   }
@@ -51,7 +51,7 @@
             <td>{{ appointment.time }}</td>
             <td>{{ getVet(appStore.vets, appointment.vetId)?.name }}</td>
             <td>
-              <select class="select" :value="appointment.status" @change="setStatus(appointment, $event.target.value)">
+              <select class="select" style="min-width: 140px; padding: 6px 12px;" :value="appointment.status" @change="setStatus(appointment, $event.target.value)">
                 <option value="scheduled">Programada</option>
                 <option value="waiting">En Espera</option>
                 <option value="confirmed">Confirmada</option>

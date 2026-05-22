@@ -29,13 +29,22 @@
     <section class="card">
       <div class="list">
         <article
-          v-for="appointment in getTodayAppointments(appStore.appointments).filter(
-            (item) => item.status === 'waiting'
+          v-for="(appointment, index) in getTodayAppointments(appStore.appointments).filter(
+            (item) => ['waiting', 'in_progress'].includes(item.status)
           )"
           :key="appointment.id"
           class="list__item"
+          :style="appointment.status === 'confirmed' ? 'border-left: 4px solid var(--color-success);' : ''"
         >
           <div class="toolbar__group">
+            <span class="chip chip--brand">P{{ index + 1 }}</span>
+            <span 
+              v-if="appointment.type === 'Emergencia'" 
+              class="chip chip--danger" 
+              style="font-size: 0.75rem;"
+            >
+              {{ appointment.priority }}
+            </span>
             <PetAvatar :pet="getPet(appStore.pets, appointment.petId)" size="sm" />
             <div class="list__item-main">
               <p class="list__title">{{ getPet(appStore.pets, appointment.petId)?.name }}</p>
@@ -46,8 +55,14 @@
           </div>
           <div class="toolbar__group">
             <StatusBadge :status="appointment.status" />
-            <button class="btn" style="background: none; border: none; padding: 4px; color: var(--brand); cursor: pointer; display: flex; align-items: center;" title="Pasar paciente" type="button" @click="moveToFront(appointment)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            <button 
+              v-if="appointment.status !== 'in_progress'"
+              class="btn btn--soft btn--sm" 
+              style="padding: 6px 12px; font-size: 0.8rem;"
+              type="button" 
+              @click="moveToFront(appointment)"
+            >
+              Pasar a consulta
             </button>
           </div>
         </article>

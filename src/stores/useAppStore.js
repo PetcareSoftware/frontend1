@@ -44,6 +44,7 @@ export const useAppStore = defineStore('app', {
     consultations: clone(seedConsultations),
     vaccines: clone(seedVaccines),
     dewormings: clone(seedDewormings),
+    notifications: [],
   }),
   getters: {
     currentOwner(state) {
@@ -83,10 +84,16 @@ export const useAppStore = defineStore('app', {
         item.id === appointment.id ? appointment : item
       );
     },
-    cancelAppointment(id) {
+    cancelAppointment(id, cancelReason = '') {
       this.appointments = this.appointments.map((item) =>
-        item.id === id ? { ...item, status: 'cancelled' } : item
+        item.id === id ? { ...item, status: 'cancelled', cancelReason } : item
       );
+      this.addNotification({
+        title: 'Cita cancelada',
+        description: `La cita ha sido cancelada${cancelReason ? ' (' + cancelReason + ')' : ''}.`,
+        type: 'info',
+        date: new Date().toISOString()
+      });
     },
     addConsultation(consultation) {
       this.consultations.push(consultation);
@@ -96,6 +103,17 @@ export const useAppStore = defineStore('app', {
     },
     addDeworming(deworming) {
       this.dewormings.push(deworming);
+    },
+    addNotification(notification) {
+      this.notifications.unshift({
+        id: `n${Date.now()}`,
+        read: false,
+        ...notification
+      });
+    },
+    markNotificationAsRead(id) {
+      const notif = this.notifications.find(n => n.id === id);
+      if (notif) notif.read = true;
     },
   },
 });

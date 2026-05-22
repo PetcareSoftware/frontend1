@@ -55,7 +55,7 @@
         :title="formatDate(day.date)"
         icon="calendar-days"
       >
-        <div class="stack" style="gap: 1.5rem">
+   <div class="stack" style="gap: 1.5rem">
           <div v-for="vetSchedule in day.vetsSchedule" :key="vetSchedule.vet.id">
             <h4 style="margin-bottom: 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem;">
               {{ vetSchedule.vet.name }}
@@ -75,10 +75,11 @@
                     <div class="list__item-main">
                       <p class="list__title">
                         {{ getPet(appStore.pets, slot.appointment.petId)?.name }}
+                        <span v-if="slot.appointment.type === 'Emergencia'" class="chip chip--danger" style="margin-left: 8px; padding: 0.2rem 0.5rem; font-size: 0.7rem;">
+                          Emergencia ({{ slot.appointment.priority }})
+                        </span>
                       </p>
-                      <p class="list__subtitle">
-                        {{ slot.appointment.reason }}
-                      </p>
+                      <p class="list__subtitle">{{ slot.appointment.reason }}</p>
                     </div>
                   </template>
                   <template v-else>

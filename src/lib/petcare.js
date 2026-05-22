@@ -107,6 +107,7 @@ export function getTodayAppointments(appointments, date = getTodayDate()) {
   return getAppointmentsByDate(appointments, date);
 }
 
+
 export function sortAppointments(left, right) {
   return `${left.date} ${left.time}`.localeCompare(`${right.date} ${right.time}`);
 }

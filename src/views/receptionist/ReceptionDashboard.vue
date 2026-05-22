@@ -77,6 +77,9 @@
               <div class="list__item-main">
                 <p class="list__title">
                   {{ appointment.time }} · {{ getPet(appStore.pets, appointment.petId)?.name }}
+                  <span v-if="appointment.type === 'Emergencia'" class="chip chip--danger" style="margin-left: 8px; padding: 0.2rem 0.5rem; font-size: 0.7rem;">
+                    Emergencia ({{ appointment.priority }})
+                  </span>
                 </p>
                 <p class="list__subtitle">
                   {{ appointment.reason }} · {{ getVet(appStore.vets, appointment.vetId)?.name }}
@@ -104,7 +107,7 @@
         </div>
       </DashboardCard>
 
-      <div class="stack">
+ <div class="stack">
         <DashboardCard title="Resumen operativo" icon="clipboard-list">
           <div class="stack">
             <div class="hero-intro">

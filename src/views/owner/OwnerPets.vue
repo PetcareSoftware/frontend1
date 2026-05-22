@@ -1,5 +1,6 @@
 <script setup>
   import { computed } from 'vue';
+  import { useRouter } from 'vue-router';
   import PageHeader from '@/components/shared/PageHeader.vue';
   import PetAvatar from '@/components/shared/PetAvatar.vue';
   import DashboardCard from '@/components/shared/DashboardCard.vue';
@@ -12,16 +13,25 @@
   } from '@/lib/petcare';
 
   const appStore = useAppStore();
+  const router = useRouter();
+  
   const pets = computed(() => getOwnerPets(appStore.pets, appStore.currentUserId));
+
+  function viewPet(pet) {
+    router.push(`/portal/pets/${pet.id}`);
+  }
+
+  function editPet(pet) {
+    router.push(`/portal/pets/${pet.id}/edit`);
+  }
 </script>
 
 <template>
   <div class="stack">
-    <PageHeader title="Mis Mascotas" subtitle="Gestión de mascotas vinculadas al propietario." />
-
-    <div class="toolbar" style="margin-bottom: 1rem;">
+    <div class="pets-header">
+      <PageHeader title="Mis Mascotas" subtitle="Gestión de mascotas vinculadas al propietario." />
       <router-link to="/portal/pets/add" class="btn btn--primary">
-        + Agregar mascota
+        + Agregar Mascota
       </router-link>
     </div>
 
@@ -45,11 +55,15 @@
               </div>
             </div>
             <div class="stack pet-status">
-              <span class="chip chip--sage">{{ pet.species }}</span>
+              <span class="chip chip--sage">{{ pet.species === 'dog' ? 'Perro' : pet.species === 'cat' ? 'Gato' : pet.species === 'bird' ? 'Ave' : pet.species === 'rabbit' ? 'Conejo' : 'Otro' }}</span>
               <span class="muted"
                 >Vacunas:
                 {{ getLatestVaccine(appStore.vaccines, pet.id) ? 'Activas' : 'Sin datos' }}</span
               >
+              <div class="pet-actions">
+                <button class="btn btn--soft pet-action-btn" type="button" @click="viewPet(pet)">Ver detalle</button>
+                <button class="btn btn--ghost pet-action-btn" type="button" @click="editPet(pet)">Editar</button>
+              </div>
             </div>
           </article>
           <p v-if="!pets.length" class="muted">Todavía no hay mascotas asociadas.</p>
@@ -60,8 +74,24 @@
 </template>
 
 <style scoped>
+.pets-header {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+}
+
 .pet-status {
   justify-items: end;
   gap: 8px;
+}
+
+.pet-actions {
+  display: flex; 
+  gap: 8px;
+}
+
+.pet-action-btn {
+  padding: 4px 12px; 
+  font-size: 0.8rem;
 }
 </style>

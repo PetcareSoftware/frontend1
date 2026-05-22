@@ -9,6 +9,7 @@ import OwnerAppointments from '@/views/owner/OwnerAppointments.vue';
 import OwnerHistory from '@/views/owner/OwnerHistory.vue';
 import OwnerPets from '@/views/owner/OwnerPets.vue';
 import OwnerPetForm from '@/views/owner/OwnerPetForm.vue';
+import OwnerPetDetail from '@/views/owner/OwnerPetDetail.vue';
 import OwnerProfile from '@/views/owner/OwnerProfile.vue';
 import ReceptionDashboard from '@/views/receptionist/ReceptionDashboard.vue';
 import AppointmentCalendar from '@/views/receptionist/AppointmentCalendar.vue';
@@ -76,6 +77,8 @@ export const router = createRouter({
         { path: 'appointments', component: OwnerAppointments },
         { path: 'pets', component: OwnerPets },
         { path: 'pets/add', component: OwnerPetForm },
+        { path: 'pets/:id', component: OwnerPetDetail },
+        { path: 'pets/:id/edit', component: OwnerPetForm },
         { path: 'history', component: OwnerHistory },
         { path: 'profile', component: OwnerProfile },
       ],

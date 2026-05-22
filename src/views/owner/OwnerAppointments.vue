@@ -4,18 +4,19 @@
   import StatusBadge from '@/components/shared/StatusBadge.vue';
   import { useAppStore } from '@/stores/useAppStore';
   import { useToastStore } from '@/stores/useToastStore';
-  import { formatDate, getOwnerAppointments, getPet, getVet, getOwnerPets, timeSlots } from '@/lib/petcare';
+  import { formatDate, getOwnerAppointments, getPet, getVet, getOwnerPets, timeSlots, getTodayShortDate } from '@/lib/petcare';
 
   const appStore = useAppStore();
   const toastStore = useToastStore();
   const activeFilter = ref('all');
+  
+  // Schedule Modal
   const showNewAppointmentModal = ref(false);
-
   const pets = computed(() => getOwnerPets(appStore.pets, appStore.currentUserId));
 
   const form = reactive({
     petId: '',
-    date: '',
+    date: getTodayShortDate(),
     time: '09:00',
     reason: '',
   });
@@ -43,8 +44,13 @@
     });
     showNewAppointmentModal.value = false;
     form.reason = '';
-    form.date = '';
+    form.date = getTodayShortDate();
   }
+
+  // Cancel Modal
+  const isCancelModalOpen = ref(false);
+  const selectedAppointment = ref(null);
+  const cancelReasonInput = ref('');
 
   const filteredAppointments = computed(() => {
     const appointments = getOwnerAppointments(appStore.appointments, appStore.currentUserId);
@@ -58,22 +64,40 @@
     return appointments.filter((item) => item.status === activeFilter.value);
   });
 
-  function cancelAppointment(appointment) {
-    appStore.cancelAppointment(appointment.id);
+  function openCancelModal(appointment) {
+    selectedAppointment.value = appointment;
+    cancelReasonInput.value = '';
+    isCancelModalOpen.value = true;
+  }
+
+  function closeCancelModal() {
+    isCancelModalOpen.value = false;
+    selectedAppointment.value = null;
+    cancelReasonInput.value = '';
+  }
+
+  function confirmCancellation() {
+    if (!selectedAppointment.value || !cancelReasonInput.value.trim()) return;
+
+    appStore.cancelAppointment(selectedAppointment.value.id, cancelReasonInput.value.trim());
     toastStore.push({
       title: 'Cita cancelada',
-      description: `${appointment.reason} fue cancelada.`,
+      description: `${selectedAppointment.value.reason} fue cancelada.`,
       type: 'info',
     });
+    closeCancelModal();
   }
 </script>
 
 <template>
   <div class="stack">
-    <PageHeader
-      title="Mis Citas"
-      subtitle="Listado de citas del propietario con filtros por estado y acciones rápidas."
-    />
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <PageHeader
+        title="Mis Citas"
+        subtitle="Listado de citas del propietario con filtros por estado y acciones rápidas."
+      />
+      <button class="btn btn--primary" @click="showNewAppointmentModal = true">+ Nueva Cita</button>
+    </div>
 
     <div class="toolbar" style="display: flex; justify-content: space-between;">
       <div class="toolbar__group">
@@ -106,7 +130,6 @@
           Canceladas
         </button>
       </div>
-      <button class="btn btn--primary" @click="showNewAppointmentModal = true">+ Nueva Cita</button>
     </div>
 
     <section class="card table-wrap">
@@ -131,9 +154,9 @@
             <td>
               <button
                 v-if="appointment.status !== 'completed' && appointment.status !== 'cancelled'"
-                class="btn btn--soft"
+                class="btn btn--soft btn--sm"
                 type="button"
-                @click="cancelAppointment(appointment)"
+                @click="openCancelModal(appointment)"
               >
                 Cancelar
               </button>
@@ -143,10 +166,11 @@
       </table>
     </section>
 
-    <dialog class="modal" :open="showNewAppointmentModal">
-      <div class="modal__backdrop" @click="showNewAppointmentModal = false"></div>
-      <div class="modal__content card">
-        <h2 class="section__title">Agendar Cita</h2>
+    <!-- Modal de Agendamiento -->
+    <div v-if="showNewAppointmentModal" class="modal-overlay" @click.self="showNewAppointmentModal = false">
+      <div class="card modal-content stack">
+        <h3 class="modal-title">Agendar Cita</h3>
+        
         <div class="input-row" style="margin-top: 1rem;">
           <label class="field">
             <span>Selecciona la mascota</span>
@@ -172,47 +196,100 @@
             <span>Motivo</span>
             <input v-model="form.reason" class="input" type="text" placeholder="Control anual" />
           </label>
-          <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+          
+          <div class="toolbar" style="margin-top: 20px; justify-content: flex-end; gap: 8px;">
+            <button class="btn btn--ghost" type="button" @click="showNewAppointmentModal = false">Cancelar</button>
             <button class="btn btn--primary" type="button" @click="scheduleAppointment">Confirmar</button>
-            <button class="btn btn--soft" type="button" @click="showNewAppointmentModal = false">Cancelar</button>
           </div>
         </div>
       </div>
-    </dialog>
+    </div>
+
+    <!-- Modal de Cancelación Personalizado -->
+    <div v-if="isCancelModalOpen" class="modal-overlay" @click.self="closeCancelModal">
+      <div class="card modal-content stack">
+        <h3 class="modal-title">Cancelar Cita</h3>
+        <p class="modal-desc">
+          Por favor, indica el motivo de la cancelación para la cita de 
+          <strong>{{ getPet(appStore.pets, selectedAppointment?.petId)?.name }}</strong>.
+        </p>
+        
+        <label class="field" style="margin-top: 12px;">
+          <span>Motivo de cancelación</span>
+          <input
+            v-model="cancelReasonInput"
+            class="input"
+            type="text"
+            placeholder="Ej. Cambio de planes, Mascota recuperada"
+            @keyup.enter="confirmCancellation"
+            style="width: 100%"
+          />
+        </label>
+        
+        <div class="toolbar" style="margin-top: 20px; justify-content: flex-end; gap: 8px;">
+          <button class="btn btn--ghost" type="button" @click="closeCancelModal">Volver</button>
+          <button
+            class="btn btn--primary"
+            type="button"
+            :disabled="!cancelReasonInput.trim()"
+            @click="confirmCancellation"
+          >
+            Confirmar Cancelación
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.modal {
+.modal-overlay {
   position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(28, 26, 20, 0.45);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
-  border: none;
+  z-index: 1000;
+  animation: fadeIn 0.25s ease-out;
 }
-.modal[open] {
-  display: flex;
+
+.modal-content {
+  width: 95%;
+  max-width: 480px;
+  background: var(--surface-strong);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow);
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.modal:not([open]) {
-  display: none;
+
+.modal-title {
+  margin: 0 0 8px 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text-strong);
 }
-.modal__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
+
+.modal-desc {
+  color: rgba(61, 61, 61, 0.78);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
 }
-.modal__content {
-  position: relative;
-  z-index: 101;
-  width: 100%;
-  max-width: 500px;
-  background: var(--surface);
-  padding: 2rem;
-  border-radius: 12px;
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 </style>
