@@ -30,7 +30,7 @@
       <div class="list">
         <article
           v-for="(appointment, index) in getTodayAppointments(appStore.appointments).filter(
-            (item) => ['waiting', 'confirmed'].includes(item.status)
+            (item) => ['waiting', 'in_progress'].includes(item.status)
           )"
           :key="appointment.id"
           class="list__item"
@@ -56,12 +56,13 @@
           <div class="toolbar__group">
             <StatusBadge :status="appointment.status" />
             <button 
-              v-if="appointment.status !== 'confirmed'"
+              v-if="appointment.status !== 'in_progress'"
               class="btn btn--soft btn--sm" 
+              style="padding: 6px 12px; font-size: 0.8rem;"
               type="button" 
               @click="moveToFront(appointment)"
             >
-              Subir
+              Pasar a consulta
             </button>
           </div>
         </article>

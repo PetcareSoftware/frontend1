@@ -20,28 +20,28 @@ function markAsRead(id) {
 
 <template>
   <div class="notifications">
-    <button class="btn btn--ghost notifications__btn" @click="toggle" style="position: relative; padding: 8px;">
+    <button class="btn btn--ghost notifications__btn notifications__btn--trigger" @click="toggle">
       <AppIcon name="bell" :size="20" />
       <span v-if="unreadCount > 0" class="notifications__badge">{{ unreadCount }}</span>
     </button>
     
-    <div v-if="isOpen" class="notifications__dropdown card" style="position: absolute; bottom: 60px; left: 16px; width: 300px; z-index: 100; max-height: 400px; overflow-y: auto;">
-      <div class="toolbar" style="padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="font-size: 14px; margin: 0; font-weight: 600; color: var(--text-strong)">Notificaciones</h3>
+    <div v-if="isOpen" class="notifications__dropdown card notifications__dropdown-panel">
+      <div class="toolbar notifications__toolbar">
+        <h3 class="notifications__header">Notificaciones</h3>
         <button class="icon-btn" @click="toggle" aria-label="Cerrar">
           <AppIcon name="x" :size="16" />
         </button>
       </div>
-      <div v-if="notifications.length === 0" style="text-align: center; padding: 20px; color: var(--color-text-muted); font-size: 13px;">
+      <div v-if="notifications.length === 0" class="notifications__empty">
         No tienes notificaciones
       </div>
-      <div v-else style="display: flex; flex-direction: column; gap: 8px;">
+      <div v-else class="notifications__list">
         <div v-for="notif in notifications" :key="notif.id" 
-             style="padding: 12px; border-radius: 6px; background: var(--surface-soft); font-size: 13px; position: relative;"
+             class="notifications__item"
              :style="{ opacity: notif.read ? 0.6 : 1 }">
-          <p style="font-weight: 600; margin: 0 0 4px; padding-right: 28px; color: var(--text-strong);">{{ notif.title }}</p>
-          <p style="margin: 0; color: var(--text); line-height: 1.4;">{{ notif.message }}</p>
-          <button v-if="!notif.read" @click="markAsRead(notif.id)" class="icon-btn" style="position: absolute; top: 8px; right: 8px;" aria-label="Marcar como leída">
+          <p class="notifications__item-title">{{ notif.title }}</p>
+          <p class="notifications__item-message">{{ notif.description }}</p>
+          <button v-if="!notif.read" @click="markAsRead(notif.id)" class="icon-btn notifications__item-read-btn" aria-label="Marcar como leída">
             <AppIcon name="check" :size="14" />
           </button>
         </div>
@@ -51,6 +51,77 @@ function markAsRead(id) {
 </template>
 
 <style scoped>
+.notifications__btn--trigger {
+  position: relative;
+  padding: 8px;
+}
+
+.notifications__dropdown-panel {
+  position: absolute;
+  bottom: 60px;
+  left: 16px;
+  width: 300px;
+  z-index: 100;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notifications__toolbar {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notifications__header {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.notifications__empty {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-muted, rgba(61, 61, 61, 0.68));
+  font-size: 13px;
+}
+
+.notifications__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notifications__item {
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--surface-soft);
+  font-size: 13px;
+  position: relative;
+}
+
+.notifications__item-title {
+  font-weight: 600;
+  margin: 0 0 4px;
+  padding-right: 28px;
+  color: var(--text-strong);
+}
+
+.notifications__item-message {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.notifications__item-read-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
 .notifications__badge {
   position: absolute;
   top: 0;

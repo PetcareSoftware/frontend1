@@ -1,5 +1,5 @@
 <script setup>
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue';
   import PageHeader from '@/components/shared/PageHeader.vue';
   import StatusBadge from '@/components/shared/StatusBadge.vue';
   import PetAvatar from '@/components/shared/PetAvatar.vue';
@@ -16,6 +16,8 @@
   } from '@/lib/petcare';
 
   const appStore = useAppStore();
+  const showEmptySlots = ref(true);
+
   const dates = computed(() =>
     Array.from({ length: 5 }, (_, index) => {
       const date = daysFromNow(index);
@@ -39,6 +41,13 @@
   <div class="stack">
     <PageHeader title="Calendario" subtitle="Vista de agenda y distribución de citas por fecha." />
 
+    <div class="toolbar" style="margin-bottom: 1rem;">
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" v-model="showEmptySlots" />
+        <span style="font-weight: 500;">Mostrar huecos disponibles</span>
+      </label>
+    </div>
+
     <section class="grid grid--2">
       <DashboardCard
         v-for="day in dates"
@@ -57,6 +66,7 @@
                 :key="slot.time"
                 class="list__item"
                 style="padding: 0.5rem;"
+                v-show="slot.appointment || showEmptySlots"
               >
                 <div class="toolbar__group">
                   <span style="font-weight: 500; min-width: 3rem;">{{ slot.time }}</span>

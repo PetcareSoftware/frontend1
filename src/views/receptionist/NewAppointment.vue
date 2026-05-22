@@ -4,7 +4,7 @@
   import PageHeader from '@/components/shared/PageHeader.vue';
   import { useAppStore } from '@/stores/useAppStore';
   import { useToastStore } from '@/stores/useToastStore';
-  import { timeSlots } from '@/lib/petcare';
+  import { timeSlots, getTodayShortDate } from '@/lib/petcare';
 
   const appStore = useAppStore();
   const toastStore = useToastStore();
@@ -15,7 +15,7 @@
     ownerId: ownerId.value,
     petId: '',
     vetId: appStore.vets[0]?.id || 'v1',
-    date: new Date().toISOString().split('T')[0],
+    date: getTodayShortDate(),
     time: '09:00',
     type: 'Normal',
     priority: 'Media',

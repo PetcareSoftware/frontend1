@@ -12,6 +12,7 @@
     getVet,
     getAppointmentStats,
     formatDate,
+    getTodayShortDate,
   } from '@/lib/petcare';
 
   const appStore = useAppStore();
@@ -20,7 +21,7 @@
     getAppointmentsByVet(appStore.appointments, currentVetId.value)
   );
   const todayAppointments = computed(() =>
-    vetAppointments.value.filter((appointment) => appointment.date === new Date().toISOString().split('T')[0])
+    vetAppointments.value.filter((appointment) => appointment.date === getTodayShortDate())
   );
   const stats = computed(() => getAppointmentStats(todayAppointments.value));
 </script>
@@ -101,7 +102,7 @@
             </article>
             <article class="card">
               <p class="eyebrow">Fecha</p>
-              <strong>{{ formatDate(new Date().toISOString().split('T')[0]) }}</strong>
+              <strong>{{ formatDate(getTodayShortDate()) }}</strong>
             </article>
           </div>
         </div>

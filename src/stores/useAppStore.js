@@ -90,7 +90,7 @@ export const useAppStore = defineStore('app', {
       );
       this.addNotification({
         title: 'Cita cancelada',
-        message: `La cita ha sido cancelada${cancelReason ? ' (' + cancelReason + ')' : ''}.`,
+        description: `La cita ha sido cancelada${cancelReason ? ' (' + cancelReason + ')' : ''}.`,
         type: 'info',
         date: new Date().toISOString()
       });

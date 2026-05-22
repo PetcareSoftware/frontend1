@@ -1,17 +1,54 @@
 <script setup>
-  import { computed, ref } from 'vue';
+  import { computed, ref, reactive } from 'vue';
   import PageHeader from '@/components/shared/PageHeader.vue';
   import StatusBadge from '@/components/shared/StatusBadge.vue';
   import { useAppStore } from '@/stores/useAppStore';
   import { useToastStore } from '@/stores/useToastStore';
-  import { formatDate, getOwnerAppointments, getPet, getVet } from '@/lib/petcare';
+  import { formatDate, getOwnerAppointments, getPet, getVet, getOwnerPets, timeSlots, getTodayShortDate } from '@/lib/petcare';
 
   const appStore = useAppStore();
   const toastStore = useToastStore();
   const activeFilter = ref('all');
+  
+  // Schedule Modal
+  const showNewAppointmentModal = ref(false);
+  const pets = computed(() => getOwnerPets(appStore.pets, appStore.currentUserId));
 
-  // Modal State
-  const isModalOpen = ref(false);
+  const form = reactive({
+    petId: '',
+    date: getTodayShortDate(),
+    time: '09:00',
+    reason: '',
+  });
+
+  function scheduleAppointment() {
+    if (!form.petId || !form.reason || !form.date) {
+      toastStore.push({ title: 'Completa la información requerida', type: 'error' });
+      return;
+    }
+    appStore.addAppointment({
+      id: `a${Date.now()}`,
+      petId: form.petId,
+      ownerId: appStore.currentUserId,
+      vetId: 'v1',
+      date: form.date,
+      time: form.time,
+      reason: form.reason,
+      status: 'scheduled',
+      notes: '',
+    });
+    toastStore.push({
+      title: 'Cita agendada',
+      description: 'La solicitud quedó registrada en el sistema.',
+      type: 'success',
+    });
+    showNewAppointmentModal.value = false;
+    form.reason = '';
+    form.date = getTodayShortDate();
+  }
+
+  // Cancel Modal
+  const isCancelModalOpen = ref(false);
   const selectedAppointment = ref(null);
   const cancelReasonInput = ref('');
 
@@ -30,11 +67,11 @@
   function openCancelModal(appointment) {
     selectedAppointment.value = appointment;
     cancelReasonInput.value = '';
-    isModalOpen.value = true;
+    isCancelModalOpen.value = true;
   }
 
-  function closeModal() {
-    isModalOpen.value = false;
+  function closeCancelModal() {
+    isCancelModalOpen.value = false;
     selectedAppointment.value = null;
     cancelReasonInput.value = '';
   }
@@ -48,18 +85,21 @@
       description: `${selectedAppointment.value.reason} fue cancelada.`,
       type: 'info',
     });
-    closeModal();
+    closeCancelModal();
   }
 </script>
 
 <template>
   <div class="stack">
-    <PageHeader
-      title="Mis Citas"
-      subtitle="Listado de citas del propietario con filtros por estado y acciones rápidas."
-    />
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <PageHeader
+        title="Mis Citas"
+        subtitle="Listado de citas del propietario con filtros por estado y acciones rápidas."
+      />
+      <button class="btn btn--primary" @click="showNewAppointmentModal = true">+ Nueva Cita</button>
+    </div>
 
-    <div class="toolbar">
+    <div class="toolbar" style="display: flex; justify-content: space-between;">
       <div class="toolbar__group">
         <button
           class="btn btn--ghost"
@@ -126,8 +166,47 @@
       </table>
     </section>
 
+    <!-- Modal de Agendamiento -->
+    <div v-if="showNewAppointmentModal" class="modal-overlay" @click.self="showNewAppointmentModal = false">
+      <div class="card modal-content stack">
+        <h3 class="modal-title">Agendar Cita</h3>
+        
+        <div class="input-row" style="margin-top: 1rem;">
+          <label class="field">
+            <span>Selecciona la mascota</span>
+            <select v-model="form.petId" class="select">
+              <option v-for="pet in pets" :key="pet.id" :value="pet.id">
+                {{ pet.name }}
+              </option>
+            </select>
+          </label>
+          <div class="input-grid">
+            <label class="field">
+              <span>Fecha</span>
+              <input v-model="form.date" class="input" type="date" />
+            </label>
+            <label class="field">
+              <span>Hora</span>
+              <select v-model="form.time" class="select">
+                <option v-for="slot in timeSlots" :key="slot" :value="slot">{{ slot }}</option>
+              </select>
+            </label>
+          </div>
+          <label class="field">
+            <span>Motivo</span>
+            <input v-model="form.reason" class="input" type="text" placeholder="Control anual" />
+          </label>
+          
+          <div class="toolbar" style="margin-top: 20px; justify-content: flex-end; gap: 8px;">
+            <button class="btn btn--ghost" type="button" @click="showNewAppointmentModal = false">Cancelar</button>
+            <button class="btn btn--primary" type="button" @click="scheduleAppointment">Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal de Cancelación Personalizado -->
-    <div v-if="isModalOpen" class="modal-overlay" @click.self="closeModal">
+    <div v-if="isCancelModalOpen" class="modal-overlay" @click.self="closeCancelModal">
       <div class="card modal-content stack">
         <h3 class="modal-title">Cancelar Cita</h3>
         <p class="modal-desc">
@@ -143,13 +222,12 @@
             type="text"
             placeholder="Ej. Cambio de planes, Mascota recuperada"
             @keyup.enter="confirmCancellation"
-            ref="reasonInput"
             style="width: 100%"
           />
         </label>
         
         <div class="toolbar" style="margin-top: 20px; justify-content: flex-end; gap: 8px;">
-          <button class="btn btn--ghost" type="button" @click="closeModal">Volver</button>
+          <button class="btn btn--ghost" type="button" @click="closeCancelModal">Volver</button>
           <button
             class="btn btn--primary"
             type="button"

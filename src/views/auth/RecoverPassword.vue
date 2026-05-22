@@ -28,143 +28,36 @@
 </script>
 
 <template>
-  <main class="auth-layout">
-    <div class="auth-layout__visual">
-      <div class="visual-decor visual-decor--1"></div>
-      <div class="visual-decor visual-decor--2"></div>
-      <div class="auth-layout__visual-content">
-        <Logo size="lg" />
-        <h2 class="visual-title">Recupera tu acceso</h2>
-        <p class="visual-text">Sigue conectado con la mejor gestión para tu veterinaria o el cuidado de tu mascota.</p>
+  <div class="auth-container card">
+    <div class="auth-header">
+      <div class="logo-mobile">
+        <Logo size="md" />
       </div>
+      <h1 class="auth-title">Recuperar contraseña</h1>
+      <p class="auth-subtitle" v-if="!isSubmitted">Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.</p>
+      <p class="auth-subtitle" v-else>Hemos enviado un correo a <strong>{{ form.email }}</strong> con instrucciones para recuperar tu contraseña.</p>
     </div>
 
-    <div class="auth-layout__form">
-      <div class="auth-container card">
-        <div class="auth-header">
-          <div class="logo-mobile">
-            <Logo size="md" />
-          </div>
-          <h1 class="auth-title">Recuperar contraseña</h1>
-          <p class="auth-subtitle" v-if="!isSubmitted">Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.</p>
-          <p class="auth-subtitle" v-else>Hemos enviado un correo a <strong>{{ form.email }}</strong> con instrucciones para recuperar tu contraseña.</p>
-        </div>
-
-        <form class="auth-form" @submit.prevent="handleRecover" v-if="!isSubmitted">
-          <div class="field">
-            <label class="field__label">Correo electrónico</label>
-            <div class="input-wrapper">
-              <input v-model="form.email" class="input input--auth" type="email" placeholder="ejemplo@email.com" />
-            </div>
-          </div>
-
-          <button class="btn btn--primary btn--block" type="submit">Enviar instrucciones</button>
-        </form>
-
-        <div class="auth-footer" :style="{ marginTop: isSubmitted ? '2rem' : '1.5rem' }">
-          <p class="muted">
-            <router-link to="/login" class="link" style="margin-left: 0;">Volver al inicio de sesión</router-link>
-          </p>
+    <form class="auth-form" @submit.prevent="handleRecover" v-if="!isSubmitted">
+      <div class="field">
+        <label class="field__label">Correo electrónico</label>
+        <div class="input-wrapper">
+          <input v-model="form.email" class="input input--auth" type="email" placeholder="ejemplo@email.com" />
         </div>
       </div>
+
+      <button class="btn btn--primary btn--block" type="submit">Enviar instrucciones</button>
+    </form>
+
+    <div class="auth-footer" :style="{ marginTop: isSubmitted ? '2rem' : '1.5rem' }">
+      <p class="muted">
+        <router-link to="/login" class="link" style="margin-left: 0;">Volver al inicio de sesión</router-link>
+      </p>
     </div>
-  </main>
+  </div>
 </template>
 
 <style scoped>
-.auth-layout {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr;
-  background: var(--bg);
-}
-
-@media (min-width: 1024px) {
-  .auth-layout {
-    grid-template-columns: 1.2fr 1fr;
-  }
-}
-
-.auth-layout__visual {
-  display: none;
-  background: linear-gradient(135deg, rgba(194, 167, 105, 0.05), rgba(165, 186, 142, 0.15)), var(--surface-soft);
-  position: relative;
-  overflow: hidden;
-  border-right: 1px solid var(--border);
-}
-
-@media (min-width: 1024px) {
-  .auth-layout__visual {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 2.5rem;
-  }
-}
-
-.visual-decor {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.6;
-  z-index: 0;
-}
-
-.visual-decor--1 {
-  top: -10%;
-  left: -10%;
-  width: 500px;
-  height: 500px;
-  background: rgba(194, 167, 105, 0.2);
-  animation: float 10s ease-in-out infinite alternate;
-}
-
-.visual-decor--2 {
-  bottom: -10%;
-  right: -10%;
-  width: 600px;
-  height: 600px;
-  background: rgba(165, 186, 142, 0.2);
-  animation: float 12s ease-in-out infinite alternate-reverse;
-}
-
-@keyframes float {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(30px, 50px) scale(1.1); }
-}
-
-.auth-layout__visual-content {
-  position: relative;
-  z-index: 1;
-  max-width: 520px;
-  margin: 0 auto;
-}
-
-.visual-title {
-  font-size: clamp(2rem, 3.5vw, 2.5rem);
-  margin: 1.5rem 0 1rem;
-  line-height: 1.1;
-  color: var(--text-strong);
-  font-weight: var(--weight-black);
-}
-
-.visual-text {
-  font-size: 1.1rem;
-  color: var(--text);
-  opacity: 0.85;
-  line-height: 1.5;
-  margin-bottom: 2rem;
-}
-
-.auth-layout__form {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem;
-  position: relative;
-  z-index: 1;
-}
 
 .auth-container {
   width: 100%;

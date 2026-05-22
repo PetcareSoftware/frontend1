@@ -31,7 +31,6 @@
             <th>Hora</th>
             <th>Veterinario</th>
             <th>Estado</th>
-            <th />
           </tr>
         </thead>
         <tbody>
@@ -51,38 +50,15 @@
             </td>
             <td>{{ appointment.time }}</td>
             <td>{{ getVet(appStore.vets, appointment.vetId)?.name }}</td>
-            <td><StatusBadge :status="appointment.status" /></td>
             <td>
-              <div class="toolbar__group">
-                <button
-                  class="btn btn--soft btn--sm"
-                  type="button"
-                  @click="setStatus(appointment, 'waiting')"
-                >
-                  Registrar llegada
-                </button>
-                <button
-                  class="btn btn--soft btn--sm"
-                  type="button"
-                  @click="setStatus(appointment, 'confirmed')"
-                >
-                  Confirmar
-                </button>
-                <button
-                  class="btn btn--soft btn--sm"
-                  type="button"
-                  @click="setStatus(appointment, 'in_progress')"
-                >
-                  Iniciar
-                </button>
-                <button
-                  class="btn btn--soft btn--sm"
-                  type="button"
-                  @click="setStatus(appointment, 'completed')"
-                >
-                  Completar
-                </button>
-              </div>
+              <select class="select" style="min-width: 140px; padding: 6px 12px;" :value="appointment.status" @change="setStatus(appointment, $event.target.value)">
+                <option value="scheduled">Programada</option>
+                <option value="waiting">En Espera</option>
+                <option value="confirmed">Confirmada</option>
+                <option value="in_progress">En Consulta</option>
+                <option value="completed">Completada</option>
+                <option value="cancelled">Cancelada</option>
+              </select>
             </td>
           </tr>
         </tbody>
