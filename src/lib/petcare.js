@@ -170,3 +170,21 @@ export function daysFromNow(days) {
 }
 
 export const timeSlots = seedTimeSlots;
+
+export function getTodayShortDate() {
+  return new Date().toISOString().split('T')[0];
+}
+
+export function switchRole(item, appStore, router) {
+  appStore.setRole(item.key, item.userId || undefined);
+  
+  const baseRoutes = {
+    owner: '/portal/dashboard',
+    vet: '/vet/dashboard',
+    receptionist: '/reception/dashboard',
+  };
+  
+  if (baseRoutes[item.key]) {
+    router.push(baseRoutes[item.key]);
+  }
+}

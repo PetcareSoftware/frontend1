@@ -28,47 +28,33 @@
 </script>
 
 <template>
-  <main class="auth-layout">
-    <div class="auth-layout__visual">
-      <div class="visual-decor visual-decor--1"></div>
-      <div class="visual-decor visual-decor--2"></div>
-      <div class="auth-layout__visual-content">
-        <Logo size="lg" />
-        <h2 class="visual-title">Recupera tu acceso</h2>
-        <p class="visual-text">Sigue conectado con la mejor gestión para tu veterinaria o el cuidado de tu mascota.</p>
+  <div class="auth-container card">
+    <div class="auth-header">
+      <div class="logo-mobile">
+        <Logo size="md" />
       </div>
+      <h1 class="auth-title">Recuperar contraseña</h1>
+      <p class="auth-subtitle" v-if="!isSubmitted">Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.</p>
+      <p class="auth-subtitle" v-else>Hemos enviado un correo a <strong>{{ form.email }}</strong> con instrucciones para recuperar tu contraseña.</p>
     </div>
 
-    <div class="auth-layout__form">
-      <div class="auth-container card">
-        <div class="auth-header">
-          <div class="logo-mobile">
-            <Logo size="md" />
-          </div>
-          <h1 class="auth-title">Recuperar contraseña</h1>
-          <p class="auth-subtitle" v-if="!isSubmitted">Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.</p>
-          <p class="auth-subtitle" v-else>Hemos enviado un correo a <strong>{{ form.email }}</strong> con instrucciones para recuperar tu contraseña.</p>
-        </div>
-
-        <form class="auth-form" @submit.prevent="handleRecover" v-if="!isSubmitted">
-          <div class="field">
-            <label class="field__label">Correo electrónico</label>
-            <div class="input-wrapper">
-              <input v-model="form.email" class="input input--auth" type="email" placeholder="ejemplo@email.com" />
-            </div>
-          </div>
-
-          <button class="btn btn--primary btn--block" type="submit">Enviar instrucciones</button>
-        </form>
-
-        <div class="auth-footer" :style="{ marginTop: isSubmitted ? '2rem' : '1.5rem' }">
-          <p class="muted">
-            <router-link to="/login" class="link" style="margin-left: 0;">Volver al inicio de sesión</router-link>
-          </p>
+    <form class="auth-form" @submit.prevent="handleRecover" v-if="!isSubmitted">
+      <div class="field">
+        <label class="field__label">Correo electrónico</label>
+        <div class="input-wrapper">
+          <input v-model="form.email" class="input input--auth" type="email" placeholder="ejemplo@email.com" />
         </div>
       </div>
+
+      <button class="btn btn--primary btn--block" type="submit">Enviar instrucciones</button>
+    </form>
+
+    <div class="auth-footer" :style="{ marginTop: isSubmitted ? '2rem' : '1.5rem' }">
+      <p class="muted">
+        <router-link to="/login" class="link" style="margin-left: 0;">Volver al inicio de sesión</router-link>
+      </p>
     </div>
-  </main>
+  </div>
 </template>
 
 <style scoped>

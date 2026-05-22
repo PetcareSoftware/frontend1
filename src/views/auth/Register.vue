@@ -4,6 +4,7 @@
   import Logo from '@/components/shared/Logo.vue';
   import { useAppStore } from '@/stores/useAppStore';
   import { useToastStore } from '@/stores/useToastStore';
+  import { getTodayShortDate } from '@/lib/petcare';
 
   const appStore = useAppStore();
   const toastStore = useToastStore();
@@ -31,7 +32,7 @@
       email: form.email,
       phone: form.phone,
       address: form.address,
-      createdAt: new Date().toISOString().slice(0, 10),
+      createdAt: getTodayShortDate(),
     });
     appStore.setRole('owner', newId);
     toastStore.push({
@@ -44,89 +45,54 @@
 </script>
 
 <template>
-  <main class="auth-layout">
-    <div class="auth-layout__visual">
-      <div class="visual-decor visual-decor--1"></div>
-      <div class="visual-decor visual-decor--2"></div>
-      <div class="auth-layout__visual-content">
-        <Logo size="lg" />
-        <h2 class="visual-title">Únete a nuestra comunidad</h2>
-        <p class="visual-text">Comienza a gestionar la salud de tus mascotas de manera simple y rápida.</p>
-        
-        <div class="visual-features">
-          <div class="feature-item">
-            <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.55 3.55 0 0 1 2 13.5 5.5 5.5 0 0 1 9 10Z"/></svg>
-            </div>
-            <span>Perfiles de mascotas</span>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-            </div>
-            <span>Recordatorios y alertas</span>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-            </div>
-            <span>Acceso 24/7 desde cualquier dispositivo</span>
-          </div>
-        </div>
+  <div class="auth-container card">
+    <div class="auth-header">
+      <div class="logo-mobile">
+        <Logo size="md" />
       </div>
+      <h1 class="auth-title">Crear cuenta</h1>
+      <p class="auth-subtitle">Registrate como propietario y comenzá a gestionar turnos.</p>
     </div>
 
-    <div class="auth-layout__form">
-      <div class="auth-container card">
-        <div class="auth-header">
-          <div class="logo-mobile">
-            <Logo size="md" />
-          </div>
-          <h1 class="auth-title">Crear cuenta</h1>
-          <p class="auth-subtitle">Registrate como propietario y comenzá a gestionar turnos.</p>
+    <form class="auth-form" @submit.prevent="handleRegister">
+      <div class="field">
+        <label class="field__label">Nombre completo *</label>
+        <input v-model="form.name" class="input input--auth" type="text" placeholder="Ana García" />
+      </div>
+
+      <div class="input-grid">
+        <div class="field">
+          <label class="field__label">Correo electrónico *</label>
+          <input v-model="form.email" class="input input--auth" type="email" placeholder="ana@email.com" />
         </div>
-
-        <form class="auth-form" @submit.prevent="handleRegister">
-          <div class="field">
-            <label class="field__label">Nombre completo *</label>
-            <input v-model="form.name" class="input input--auth" type="text" placeholder="Ana García" />
-          </div>
-
-          <div class="input-grid">
-            <div class="field">
-              <label class="field__label">Correo electrónico *</label>
-              <input v-model="form.email" class="input input--auth" type="email" placeholder="ana@email.com" />
-            </div>
-            <div class="field">
-              <label class="field__label">Contraseña *</label>
-              <input v-model="form.password" class="input input--auth" type="password" placeholder="••••••••" />
-            </div>
-          </div>
-
-          <div class="input-grid">
-            <div class="field">
-              <label class="field__label">Teléfono</label>
-              <input v-model="form.phone" class="input input--auth" type="text" placeholder="555-0000" />
-            </div>
-            <div class="field">
-              <label class="field__label">Dirección</label>
-              <input v-model="form.address" class="input input--auth" type="text" placeholder="Av. Libertad 123" />
-            </div>
-          </div>
-
-          <button class="btn btn--primary btn--block" type="submit">Crear cuenta</button>
-        </form>
-
-        <p class="terms muted">Al registrarte aceptas los términos y condiciones de PetCare.</p>
-
-        <div class="auth-footer">
-          <p class="muted">¿Ya tienes cuenta? 
-            <router-link to="/login" class="link">Inicia sesión</router-link>
-          </p>
+        <div class="field">
+          <label class="field__label">Contraseña *</label>
+          <input v-model="form.password" class="input input--auth" type="password" placeholder="••••••••" />
         </div>
       </div>
+
+      <div class="input-grid">
+        <div class="field">
+          <label class="field__label">Teléfono</label>
+          <input v-model="form.phone" class="input input--auth" type="text" placeholder="555-0000" />
+        </div>
+        <div class="field">
+          <label class="field__label">Dirección</label>
+          <input v-model="form.address" class="input input--auth" type="text" placeholder="Av. Libertad 123" />
+        </div>
+      </div>
+
+      <button class="btn btn--primary btn--block" type="submit">Crear cuenta</button>
+    </form>
+
+    <p class="terms muted">Al registrarte aceptas los términos y condiciones de PetCare.</p>
+
+    <div class="auth-footer">
+      <p class="muted">¿Ya tienes cuenta? 
+        <router-link to="/login" class="link">Inicia sesión</router-link>
+      </p>
     </div>
-  </main>
+  </div>
 </template>
 
 <style scoped>

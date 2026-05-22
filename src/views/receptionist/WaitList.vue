@@ -46,8 +46,8 @@
           </div>
           <div class="toolbar__group">
             <StatusBadge :status="appointment.status" />
-            <button class="btn btn--soft" type="button" @click="moveToFront(appointment)">
-              Subir
+            <button class="btn" style="background: none; border: none; padding: 4px; color: var(--brand); cursor: pointer; display: flex; align-items: center;" title="Pasar paciente" type="button" @click="moveToFront(appointment)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </button>
           </div>
         </article>
