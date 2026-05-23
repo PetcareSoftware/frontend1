@@ -37,7 +37,7 @@ export const appTemplate = {
       { to: '/technician/form', icon: 'clipboard-pen-line', label: 'Registrar Insumos' },
       { to: '/technician/reposition', icon: 'clipboard-plus', label: 'Reposicion de Stock' },
       { to: '/technician/interface', icon: 'clipboard-check', label: 'Reabastecimiento de Clínica' },
-      { to: '/technician/tracking', icon: 'clipboard-plus', label: 'Seguimiento de Solicitudes' },
+      { to: '/technician/tracking', icon: 'calendar-plus', label: 'Seguimiento de Solicitudes' },
     ]
   },
   roleSwitcher: [

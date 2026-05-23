@@ -14,11 +14,9 @@ const filtroEstado = ref('Todos')
 
 // Lógica de filtrado reactivo
 const solicitudesFiltradas = computed(() => {
-  if (filtroEstado.value === 'Todos') {
-    return solicitudes.value
-  }
-  return solicitudes.value.filter(s => s.estado === filtroEstado.value)
-})
+  if (filtroEstado.value === 'Todos') return solicitudes.value;
+  return solicitudes.value.filter(s => s.estado === filtroEstado.value);
+});
 
 // Helper para dar color visual al badge del estado
 const getBadgeClass = (estado) => {
@@ -33,7 +31,7 @@ const getBadgeClass = (estado) => {
   <div class="stack">
     <PageHeader 
       title="Panel de Seguimiento de Solicitudes" 
-      subtitle="Monitorización de peticiones y decisiones de la gerencia (Req. 6.7.2)."
+      subtitle="Monitorización de peticiones."
     />
 
     <DashboardCard title="Historial de Solicitudes Enviadas" icon="clipboard-list">
