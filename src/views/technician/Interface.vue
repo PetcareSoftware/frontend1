@@ -76,25 +76,33 @@ const gastoTotalPrevisto = computed(() => {
 const enviarAlGerente = () => {
   if (itemsSolicitados.value.length === 0) return;
 
+  // Calculamos el total de unidades físicas
+  const totalProductos = itemsSolicitados.value.reduce((acc, item) => acc + item.quantity, 0);
+
   const nuevaSolicitud = {
-    id: Date.now(),
-    fecha: new Date().toLocaleDateString(),
+    id: Math.floor(Math.random() * 90000) + 10000,
+    fecha: new Date().toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
     solicitante: 'Técnico Veterinario',
-    estado: 'Pendiente', // <--- Requisito obligatorio del flujo
+    estado: 'Pendiente', 
     items: [...itemsSolicitados.value],
+    cantidadProductos: totalProductos,
     total: gastoTotalPrevisto.value
   };
 
-  // Guardamos en el estado global de Pinia
-  if (appStore.addRequisition) {
+  // Guardamos en el estado global de Pinia de forma segura
+  if (typeof appStore.addRequisition === 'function') {
     appStore.addRequisition(nuevaSolicitud);
-  } else if (appStore.requisitions) {
+  } else {
+    // Fallback por si la acción no existe
     appStore.requisitions.push(nuevaSolicitud);
   }
 
   // Feedback para el usuario y reset
   alertMessage.value = "Solicitud enviada con éxito. Estado: Pendiente.";
   itemsSolicitados.value = [];
+  
+  // Opcional: Limpiar el mensaje después de unos segundos
+  setTimeout(() => { alertMessage.value = '' }, 3000);
 };
 
 const obtenerPrecioInsumo = (insumo) => {
