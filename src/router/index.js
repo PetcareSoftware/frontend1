@@ -23,6 +23,7 @@ import FormPage from '@/views/technician/form.vue';
 import InventoryCatalog from '@/views/technician/InventoryCatalog.vue';
 import RepositionStock from '@/views/technician/RepositionStock.vue';
 import Interface from '@/views/technician/Interface.vue';
+import RequestDashboard from '@/views/technician/RequestDashboard.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -73,6 +74,7 @@ export const router = createRouter({
         { path: 'form', component: FormPage },
         { path: 'reposition', component: RepositionStock },
         { path: 'interface', component: Interface },
+        { path: 'tracking', component: RequestDashboard },
       ],
     },
     { path: '/:pathMatch(.*)*', redirect: '/portal/dashboard' },

@@ -26,6 +26,7 @@ export const useAppStore = defineStore('app', {
     vaccines: clone(seedVaccines),
     dewormings: clone(seedDewormings),
     inventory: clone(seedInsumos),
+    requisitions: [],
     
   }),
   getters: {
@@ -79,6 +80,12 @@ export const useAppStore = defineStore('app', {
     },
     addDeworming(deworming) {
       this.dewormings.push(deworming);
+    },
+    normalizeInventory() {
+      normalizeInventory(this.inventory);
+    },
+    addRequisition(requisition) {
+      this.requisitions.push(requisition);
     },
     normalizeInventory() {
       normalizeInventory(this.inventory);
