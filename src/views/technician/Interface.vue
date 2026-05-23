@@ -76,31 +76,25 @@ const gastoTotalPrevisto = computed(() => {
 const enviarAlGerente = () => {
   if (itemsSolicitados.value.length === 0) return;
 
-  // Calculamos el total de unidades físicas
-  const totalProductos = itemsSolicitados.value.reduce((acc, item) => acc + item.quantity, 0);
-
+  // 1. Empaquetado: Creación del objeto de trazabilidad
   const nuevaSolicitud = {
-    id: Math.floor(Math.random() * 90000) + 10000,
-    fecha: new Date().toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-    solicitante: 'Técnico Veterinario',
-    estado: 'Pendiente', 
-    items: [...itemsSolicitados.value],
-    cantidadProductos: totalProductos,
-    total: gastoTotalPrevisto.value
+    id: 'REQ-' + Date.now(), // ID único para el historial
+    fecha: new Date().toLocaleDateString(),
+    cantidadProductos: itemsSolicitados.value.reduce((acc, i) => acc + i.quantity, 0),
+    total: gastoTotalPrevisto.value,
+    estado: 'Pendiente', // <--- Requisito: Esta marca inicial activa el workflow
+    items: [...itemsSolicitados.value] // Los datos necesarios para el Gerente
   };
 
-  // Guardamos en el estado global de Pinia de forma segura
-  if (typeof appStore.addRequisition === 'function') {
-    appStore.addRequisition(nuevaSolicitud);
-  } else {
-    // Fallback por si la acción no existe
-    appStore.requisitions.push(nuevaSolicitud);
-  }
+  // 2. Registro: Se envía al store global
+  appStore.addRequisition(nuevaSolicitud);
 
-  // Feedback para el usuario y reset
-  alertMessage.value = "Solicitud enviada con éxito. Estado: Pendiente.";
-  itemsSolicitados.value = [];
+  // 3. Feedback Inmediato: Requisito 11.3
+  alert("Solicitud enviada con éxito. Estado: Pendiente.");
   
+  // 4. Limpieza del formulario
+  itemsSolicitados.value = [];
+
   // Opcional: Limpiar el mensaje después de unos segundos
   setTimeout(() => { alertMessage.value = '' }, 3000);
 };
