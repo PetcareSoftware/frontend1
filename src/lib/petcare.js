@@ -31,11 +31,14 @@ export function formatDateLong(value, locale = 'es-AR') {
   );
 }
 
-export function formatMoney(value) {
-  return new Intl.NumberFormat('es-AR', {
+export function formatMoney(
+  value,
+  { locale = 'es-AR', currency = 'ARS', maximumFractionDigits = 0 } = {}
+) {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'ARS',
-    maximumFractionDigits: 0,
+    currency,
+    maximumFractionDigits,
   }).format(value);
 }
 

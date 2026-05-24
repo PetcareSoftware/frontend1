@@ -1,215 +1,157 @@
 <script setup>
 import { computed } from 'vue';
-import { ref } from 'vue';
 import PageHeader from '@/components/shared/PageHeader.vue';
-import StatusBadge from '@/components/shared/StatusBadge.vue';
 import DashboardCard from '@/components/shared/DashboardCard.vue';
 import { useAppStore } from '@/stores/useAppStore';
-import { getInventoryUmbral } from '@/utils/inventory';
+import { formatMoney } from '@/lib/petcare';
+import { evaluateProductAlertState } from '@/lib/inventory';
 
 const appStore = useAppStore();
-
-appStore.normalizeInventory();
-
 const inventory = computed(() => appStore.inventory);
 
-const formatCurrency = (value) => {
-    return new Intl.NumberFormat('en-US', { 
-    style: 'currency', 
-    currency: 'USD' 
-    }).format(value);
-};
+const formatUnitCost = (value) =>
+  formatMoney(value, { locale: 'en-US', currency: 'USD', maximumFractionDigits: 2 });
 
-
-//Fecha de vencimiento
-const calcularDiasParaVencer = (fechaVencimiento) => {
-    //Fecha base
-    const hoy = new Date(); 
-    
-    const vencimiento = new Date(fechaVencimiento + 'T00:00:00'); 
-
-    const diferenciaMs = vencimiento - hoy;
-  return Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
-};
-
-
-//Evaluacion de estado de cada producto
-const evaluarEstadoProducto = (producto) => {
-    let estadoVisual = 'normal'; 
-    let mensajesTooltip = [];
-
-    //Data en caso de emergencia por el error de la falta de el envio de la fecha de venc a pinia en form (cantidad minima de stock)
-    const stock = producto.quantity || 0;
-    const minimo = getInventoryUmbral(producto); 
-
-    //Evaluar Stock
-    const limiteAmarilloStock = minimo * 1.5;
-
-    if (stock <= minimo) {
-        estadoVisual = 'critical';
-        mensajesTooltip.push(`Stock crítico: Quedan ${stock} (Mínimo: ${minimo})`);
-    } else if (stock <= limiteAmarilloStock) {
-        estadoVisual = estadoVisual === 'critical' ? 'critical' : 'warning';
-        mensajesTooltip.push(`Stock bajo: Quedan ${stock} (Mínimo: ${minimo})`);
-    }
-
-    //Evaluar Fechas de Vencimiento de los Lotes
-    if (producto.batches && producto.batches.length > 0) {
-        
-        producto.batches.forEach(lote => {
-            const diasRestantes = calcularDiasParaVencer(lote.expirationDate);
-
-            if (diasRestantes <= 15) {
-                estadoVisual = 'critical'; 
-                mensajesTooltip.push(`El Lote #${lote.batch} pasó a estado crítico: Vence en ${diasRestantes} días`);
-            
-            } else if (diasRestantes <= 45) {
-                estadoVisual = estadoVisual === 'critical' ? 'critical' : 'warning';
-                mensajesTooltip.push(`Lote #${lote.batch} está próximo a vencer en ${diasRestantes} días`);
-            }
-        });
-    }
-
-    return {
-        clase: estadoVisual,
-        tooltip: mensajesTooltip.join(' | ')
-    };
-};
-
+const alertByItemId = computed(() => {
+  const map = new Map();
+  inventory.value.forEach((item) => {
+    map.set(item.id, evaluateProductAlertState(item));
+  });
+  return map;
+});
 </script>
 
 <template>
-    <div class="stack">
-    <PageHeader 
-        title="Gestión de Insumos" 
-        subtitle="Consulta de existencias y costos unitarios del inventario."
+  <div class="stack">
+    <PageHeader
+      title="Gestión de Insumos"
+      subtitle="Catálogo maestro: existencias, umbrales y alertas de stock o vencimiento."
     />
 
     <DashboardCard title="Vista General del Inventario" icon="syringe">
-        <table style="width: 100%; text-align: left; border-collapse: collapse;">
-        <thead style="background-color: #F7F1E6;">
-            <tr style="border-bottom: 1px solid #e2e8f0;">
-            <th style="padding: 12px 8px;">Nombre del Insumo</th>
-            <th style="padding: 12px 8px;">Cantidad Disponible</th>
-            <th style="padding: 12px 8px;">Stock mínimo</th>
-            <th style="padding: 12px 8px;">Costo Unitario (USD)</th>
+      <section class="table-wrap inventory-table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre del insumo</th>
+              <th>Cantidad disponible</th>
+              <th>Stock mínimo</th>
+              <th>Costo unitario</th>
             </tr>
-        </thead>
-        <tbody>
-            <tr 
-                v-for="item in inventory" :key="item.id" 
-                :class="`row-${evaluarEstadoProducto(item).clase}`" 
-                style="border-bottom: 1px solid #e2e8f0;" 
+          </thead>
+          <tbody>
+            <tr
+              v-for="item in inventory"
+              :key="item.id"
+              class="table__row"
+              :class="`inventory-row--${alertByItemId.get(item.id)?.alertClass ?? 'normal'}`"
             >
-            <td style="padding: 12px 8px; font-weight: 500; position: relative;">
+              <td class="inventory-table__name">
                 {{ item.name }}
-                
-                <span 
-                    v-if="evaluarEstadoProducto(item).clase !== 'normal'" 
-                    class="alerta-tooltip"
+                <span
+                  v-if="alertByItemId.get(item.id)?.messages?.length"
+                  class="inventory-tooltip"
+                  role="tooltip"
                 >
-                    {{ evaluarEstadoProducto(item).tooltip }}
+                  <span
+                    v-for="(line, index) in alertByItemId.get(item.id).messages"
+                    :key="index"
+                    class="inventory-tooltip__line"
+                  >
+                    {{ line }}
+                  </span>
                 </span>
-            </td>
-            <td style="padding: 12px 8px;">
-                <span>{{ item.quantity }} uds.</span>
-            </td>
-            <td style="padding: 12px 8px;">
+              </td>
+              <td>{{ item.quantity }} uds.</td>
+              <td>
                 <input
                   v-model.number="item.umbral"
                   type="number"
                   min="1"
-                  class="input umbral-input"
-                  title="Ajustar nivel mínimo de existencias"
+                  class="input inventory-umbral-input"
+                  title="Nivel mínimo de existencias"
                 />
-            </td>
-            <td style="padding: 12px 8px;">{{ formatCurrency(item.unitCost) }}</td>
+              </td>
+              <td>{{ formatUnitCost(item.unitCost) }}</td>
             </tr>
-        </tbody>
+          </tbody>
         </table>
+      </section>
     </DashboardCard>
-    </div>
+  </div>
 </template>
 
 <style scoped>
-/*Redondeo de los bordes superiores de la tabla*/
-table {
-    border-collapse: separate; 
-    border-spacing: 0;
+.inventory-table-wrap {
+  margin-top: 1.25rem;
 }
 
-thead th {
-    background-color: #F7F1E6;
+.inventory-table__name {
+  position: relative;
+  font-weight: 500;
 }
 
-thead th:first-child {
-    border-top-left-radius: var(--radius-md);
+.inventory-umbral-input {
+  width: 4.5rem;
+  padding: 6px 8px;
 }
 
-thead th:last-child {
-    border-top-right-radius: var(--radius-md);
+.inventory-row--critical td {
+  background-color: #ffebee;
+  border-left: 4px solid #f44336;
 }
 
-
-/* colores de lineas de avisos */
-.row-critical {
-    background-color: #ffebee; 
-    border-left: 4px solid #f44336; 
-    cursor: help;
+.inventory-row--warning td {
+  background-color: #fff8e1;
+  border-left: 4px solid #ffc107;
 }
 
-.row-warning {
-    background-color: #fff8e1; 
-    border-left: 4px solid #ffc107; 
-    cursor: help;
+.inventory-row--critical .inventory-table__name,
+.inventory-row--warning .inventory-table__name {
+  cursor: help;
 }
 
-.row-normal {
-    background-color: transparent;
-    border-left: 4px solid transparent;
+.inventory-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 12rem;
+  max-width: 20rem;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-strong);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  white-space: normal;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  transition: opacity 0.2s ease, bottom 0.2s ease;
 }
 
-.umbral-input {
-    width: 4.5rem;
-    padding: 6px 8px;
+.inventory-tooltip__line {
+  display: block;
 }
 
-/* alerta flotante */
-.alerta-tooltip {
-    visibility: hidden;
-    opacity: 0;
-    
-    background-color: var(--bg);
-    color: var(--text-strong);
-    font-size: 13px;
-    font-weight: 400;
-    padding: 8px 12px;
-    border-radius: 6px;
-    white-space: nowrap;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    position: absolute;
-    bottom: 80%;
-    left: 10px;
-    z-index: 50;
-    
-    /* Animación de aparición */
-    transition: opacity 0.2s ease, bottom 0.2s ease;
-    pointer-events: none; 
+.inventory-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 15px;
+  border: 5px solid transparent;
+  border-top-color: var(--bg);
 }
 
-.alerta-tooltip::after {
-    content: "";
-    position: absolute;
-    top: 100%; /* Abajo del globo */
-    left: 15px; 
-    border-width: 5px;
-    border-style: solid;
-    border-color: var(--bg) transparent transparent transparent;
-}
-
-tr:hover .alerta-tooltip {
-    visibility: visible;
-    opacity: 1;
-    bottom: 100%;
+.inventory-row--critical:hover .inventory-tooltip,
+.inventory-row--warning:hover .inventory-tooltip {
+  visibility: visible;
+  opacity: 1;
 }
 </style>

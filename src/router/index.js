@@ -19,10 +19,10 @@ import ClinicalRecords from '@/views/vet/ClinicalRecords.vue';
 import RegisterConsultation from '@/views/vet/RegisterConsultation.vue';
 import VaccineManager from '@/views/vet/VaccineManager.vue';
 import DewormingManager from '@/views/vet/DewormingManager.vue';
-import FormPage from '@/views/technician/form.vue';
+import RegisterSupply from '@/views/technician/RegisterSupply.vue';
 import InventoryCatalog from '@/views/technician/InventoryCatalog.vue';
 import RepositionStock from '@/views/technician/RepositionStock.vue';
-import Interface from '@/views/technician/Interface.vue';
+import SupplyRequisition from '@/views/technician/SupplyRequisition.vue';
 import RequestDashboard from '@/views/technician/RequestDashboard.vue';
 
 export const router = createRouter({
@@ -71,9 +71,11 @@ export const router = createRouter({
       component: AppLayout,
       children: [
         { path: 'inventory', component: InventoryCatalog },
-        { path: 'form', component: FormPage },
+        { path: 'register-supply', component: RegisterSupply },
+        { path: 'form', redirect: '/technician/register-supply' },
         { path: 'reposition', component: RepositionStock },
-        { path: 'interface', component: Interface },
+        { path: 'supply-requisition', component: SupplyRequisition },
+        { path: 'interface', redirect: '/technician/supply-requisition' },
         { path: 'tracking', component: RequestDashboard },
       ],
     },

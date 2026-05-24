@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { appTemplate } from '@/config/appTemplate';
-import { normalizeInventory } from '@/utils/inventory';
+import { normalizeInventory, normalizeInventoryItem } from '@/lib/inventory';
 import {
   vets as seedVets,
   owners as seedOwners,
@@ -8,7 +8,7 @@ import {
   appointments as seedAppointments,
   consultations as seedConsultations,
   vaccines as seedVaccines,
-  Insumos as seedInsumos,
+  insumos as seedInsumos,
   dewormings as seedDewormings,
 } from '@/data/mockData';
 
@@ -27,7 +27,6 @@ export const useAppStore = defineStore('app', {
     dewormings: clone(seedDewormings),
     inventory: clone(seedInsumos),
     requisitions: [],
-    
   }),
   getters: {
     currentOwner(state) {
@@ -84,11 +83,29 @@ export const useAppStore = defineStore('app', {
     normalizeInventory() {
       normalizeInventory(this.inventory);
     },
+    addSupply(supply) {
+      const item = normalizeInventoryItem({
+        ...supply,
+        batches: supply.batches ?? [],
+      });
+      this.inventory.push(item);
+      return item;
+    },
+    addBatch(supplyId, { batch, expirationDate, quantity }) {
+      const item = this.inventory.find((entry) => Number(entry.id) === Number(supplyId));
+      if (!item) return false;
+
+      const amount = Number(quantity);
+      item.quantity += amount;
+      item.batches.push({
+        batch,
+        expirationDate,
+        quantity: amount,
+      });
+      return true;
+    },
     addRequisition(requisition) {
       this.requisitions.push(requisition);
-    },
-    normalizeInventory() {
-      normalizeInventory(this.inventory);
     },
   },
 });

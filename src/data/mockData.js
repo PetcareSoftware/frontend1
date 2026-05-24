@@ -357,35 +357,32 @@ export const timeSlots = [
 ];
 
 
-export const Insumos = [
+export const insumos = [
   {
     id: 1,
-    name: "Paracetamol 500mg",
-    type: "Medicamento",
+    name: 'Paracetamol 500mg',
+    type: 'Medicamento',
     quantity: 50,
-    unitCost: 8.00,
+    unitCost: 8,
     umbral: 10,
-    status: 'approved',
-    batches: [{ batch: "Lote A-12", expirationDate: "2026-12-31" }]
+    batches: [{ batch: 'Lote A-12', expirationDate: '2026-12-31' }],
   },
   {
     id: 2,
-    name: "Gasa Estéril",
-    type: "Insumo",
+    name: 'Gasa Estéril',
+    type: 'Insumo',
     quantity: 8,
-    unitCost: 1.20,
+    unitCost: 1.2,
     umbral: 15,
-    status: 'approved',
-    batches: [{ batch: "Lote B-24", expirationDate: "2027-01-15" }]
+    batches: [{ batch: 'Lote B-24', expirationDate: '2027-01-15' }],
   },
   {
     id: 3,
-    name: "Acetaminofen",
-    type: "Medicamento",
+    name: 'Acetaminofen',
+    type: 'Medicamento',
     quantity: 19,
-    unitCost: 5.00,
+    unitCost: 5,
     umbral: 15,
-    status: 'approved',
-    batches: [{ batch: "Lote B-26", expirationDate: "2027-03-20" }]
-  }
+    batches: [{ batch: 'Lote B-26', expirationDate: '2027-03-20' }],
+  },
 ];

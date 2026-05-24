@@ -34,9 +34,9 @@ export const appTemplate = {
     ],
     technician: [
       { to: '/technician/inventory', icon: 'clipboard-list', label: 'Catálogo de Insumos' },
-      { to: '/technician/form', icon: 'clipboard-pen-line', label: 'Registrar Insumos' },
+      { to: '/technician/register-supply', icon: 'clipboard-pen-line', label: 'Registrar Insumos' },
       { to: '/technician/reposition', icon: 'clipboard-plus', label: 'Reposicion de Stock' },
-      { to: '/technician/interface', icon: 'clipboard-check', label: 'Reabastecimiento de Clínica' },
+      { to: '/technician/supply-requisition', icon: 'clipboard-check', label: 'Solicitud de Reabastecimiento' },
       { to: '/technician/tracking', icon: 'calendar-plus', label: 'Seguimiento de Solicitudes' },
     ]
   },
