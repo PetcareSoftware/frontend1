@@ -6,6 +6,7 @@ export const appTemplate = {
     receptionist: { label: 'Recepción', accent: '#A5BA8E', light: '#F3F6F0' },
     vet: { label: 'Veterinario', accent: '#7D6430', light: '#F7F1E6' },
     technician: { label: 'Técnico Veterinario', accent: '#7da84e', light: '#F3F6F0'},
+    manager: { label: 'Gerente', accent: '#7aa250', light: '#F7F1E6'},
   },
   navigation: {
     owner: [
@@ -35,9 +36,12 @@ export const appTemplate = {
     technician: [
       { to: '/technician/inventory', icon: 'clipboard-list', label: 'Catálogo de Insumos' },
       { to: '/technician/register-supply', icon: 'clipboard-pen-line', label: 'Registrar Insumos' },
-      { to: '/technician/reposition', icon: 'clipboard-plus', label: 'Reposicion de Stock' },
+      { to: '/technician/reposition', icon: 'notebook-pen', label: 'Reposicion de Stock' },
       { to: '/technician/supply-requisition', icon: 'clipboard-check', label: 'Solicitud de Reabastecimiento' },
       { to: '/technician/tracking', icon: 'calendar-plus', label: 'Seguimiento de Solicitudes' },
+    ],
+    manager: [
+      { to: '/manager/requests', icon: 'clipboard-check', label: 'Solicitudes del Gerente' },
     ]
   },
   roleSwitcher: [
@@ -45,5 +49,6 @@ export const appTemplate = {
     { key: 'receptionist', label: 'Recepcionista', userId: '' },
     { key: 'vet', label: 'Veterinario', userId: 'v1' },
     { key: 'technician', label: 'Técnico Veterinario', userId: '' },
+    { key: 'manager', label: 'Gerente', userId: '' },
   ],
 };

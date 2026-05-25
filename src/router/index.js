@@ -24,6 +24,7 @@ import InventoryCatalog from '@/views/technician/InventoryCatalog.vue';
 import RepositionStock from '@/views/technician/RepositionStock.vue';
 import SupplyRequisition from '@/views/technician/SupplyRequisition.vue';
 import RequestDashboard from '@/views/technician/RequestDashboard.vue';
+import RequestPanel from '@/views/manager/RequestPanel.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -77,6 +78,13 @@ export const router = createRouter({
         { path: 'supply-requisition', component: SupplyRequisition },
         { path: 'interface', redirect: '/technician/supply-requisition' },
         { path: 'tracking', component: RequestDashboard },
+      ],
+    },
+    {
+      path: '/manager',
+      component: AppLayout,
+      children: [
+        { path: 'requests', component:  RequestPanel },
       ],
     },
     { path: '/:pathMatch(.*)*', redirect: '/portal/dashboard' },
