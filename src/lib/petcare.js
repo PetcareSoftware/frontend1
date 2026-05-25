@@ -17,6 +17,19 @@ export const speciesMeta = {
   other: { label: 'Otro', icon: 'paw-print', className: 'chip--brand' },
 };
 
+export function getTodayDate() {
+  const today = new Date();
+  today.setHours(12, 0, 0, 0);
+  return today.toISOString().slice(0, 10);
+}
+
+export function daysFromNow(days) {
+  const date = new Date();
+  date.setHours(12, 0, 0, 0);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
 export function formatDate(value, locale = 'es-AR') {
   return new Intl.DateTimeFormat(locale, {
     day: '2-digit',
@@ -97,11 +110,6 @@ export function getAppointmentsByDate(appointments, date) {
     .sort(sortAppointments);
 }
 
-export function getTodayDate() {
-  const today = new Date();
-  today.setHours(12, 0, 0, 0);
-  return today.toISOString().slice(0, 10);
-}
 
 export function getTodayAppointments(appointments, date = getTodayDate()) {
   return getAppointmentsByDate(appointments, date);
@@ -163,12 +171,6 @@ export function getLatestDeworming(dewormings, petId) {
   return getPetDewormings(dewormings, petId)[0] || null;
 }
 
-export function daysFromNow(days) {
-  const date = new Date();
-  date.setHours(12, 0, 0, 0);
-  date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
-}
 
 export const timeSlots = seedTimeSlots;
 
