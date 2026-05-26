@@ -3,14 +3,14 @@
   import PageHeader from '@/components/shared/PageHeader.vue';
   import { useAppStore } from '@/stores/useAppStore';
   import { useToastStore } from '@/stores/useToastStore';
-  import { formatDate } from '@/lib/petcare';
+  import { formatDate, getTodayShortDate } from '@/lib/petcare';
 
   const appStore = useAppStore();
   const toastStore = useToastStore();
   const form = reactive({
     petId: appStore.pets[0]?.id || '',
     product: '',
-    date: '2026-05-08',
+    date: getTodayShortDate(),
     nextDate: '2026-06-08',
     weight: '',
     notes: '',
