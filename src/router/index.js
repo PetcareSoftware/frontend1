@@ -25,6 +25,7 @@ import RepositionStock from '@/views/technician/RepositionStock.vue';
 import SupplyRequisition from '@/views/technician/SupplyRequisition.vue';
 import RequestDashboard from '@/views/technician/RequestDashboard.vue';
 import RequestPanel from '@/views/manager/RequestPanel.vue';
+import DashboardView from '@/views/manager/DashboardView.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -84,7 +85,8 @@ export const router = createRouter({
       path: '/manager',
       component: AppLayout,
       children: [
-        { path: 'requests', component:  RequestPanel },
+        { path: 'dashboard', name: 'ManagerDashboard', component: DashboardView },
+        { path: 'requests', component: RequestPanel },
       ],
     },
     { path: '/:pathMatch(.*)*', redirect: '/portal/dashboard' },
