@@ -61,6 +61,14 @@ export const owners = [
     address: 'Calle Mitre 789, Mendoza',
     createdAt: '2024-05-10',
   },
+  {
+    id: 'o8',
+  name: 'Eduardo Perez',
+  email: 'eduardo@email.com',
+  phone: '555-0106',
+  address: 'Av. Valencia 678, valencia',
+  createdAt: '2026-05-12',
+  }
 ];
 
 export const pets = [
@@ -148,6 +156,16 @@ export const pets = [
     weight: 4.1,
     color: 'Atigrado naranja',
   },
+  {
+    id: 'p9',
+    ownerId: 'o8',
+    name: 'Bobby',
+    species: 'dog',
+    breed: 'Labrador',
+    birthDate: '2024-07-20',
+    weight: 25,
+    color: 'Negro',
+    }
 ];
 
 export const appointments = [
@@ -341,6 +359,16 @@ export const appointments = [
     reason: 'Vacunación Triple',
     status: 'scheduled',
   },
+  {
+    id: 'a20',
+    petId: 'p9',
+    ownerId: 'o8',
+    vetId: 'v2',
+    date: '2026-05-10',
+    time: '11:00',
+    reason: 'Seguimiento post-operatorio',
+    status: 'scheduled',
+  }
 ];
 
 export const consultations = [
