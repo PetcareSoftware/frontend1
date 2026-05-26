@@ -61,6 +61,14 @@ export const owners = [
     address: 'Calle Mitre 789, Mendoza',
     createdAt: '2024-05-10',
   },
+  {
+    id: 'o8',
+    name: 'Eduardo Perez',
+    email: 'eduardo@email.com',
+    phone: '555-0106',
+    address: 'Av. Valencia 678, valencia',
+    createdAt: '2026-05-12',
+  }
 ];
 
 export const pets = [
@@ -148,6 +156,16 @@ export const pets = [
     weight: 4.1,
     color: 'Atigrado naranja',
   },
+  {
+    id: 'p9',
+    ownerId: 'o8',
+    name: 'Bobby',
+    species: 'dog',
+    breed: 'Labrador',
+    birthDate: '2024-07-20',
+    weight: 25,
+    color: 'Negro',
+  }
 ];
 
 export const appointments = [
@@ -341,6 +359,16 @@ export const appointments = [
     reason: 'Vacunación Triple',
     status: 'scheduled',
   },
+  {
+    id: 'a20',
+    petId: 'p9',
+    ownerId: 'o8',
+    vetId: 'v2',
+    date: '2026-05-10',
+    time: '11:00',
+    reason: 'Seguimiento post-operatorio',
+    status: 'scheduled',
+  }
 ];
 
 export const consultations = [
@@ -376,32 +404,6 @@ export const consultations = [
     prescriptions: ['Tobramicina colirio - 1 gota c/8hs por 10 días'],
     followUpDate: '2026-03-30',
     notes: 'Mejoría esperada en 5-7 días.',
-  },
-  {
-    id: 'c3',
-    petId: 'p7',
-    vetId: 'v1',
-    date: '2026-01-10',
-    weight: 9.8,
-    temperature: 38.5,
-    symptoms: 'Chequeo de cachorro',
-    diagnosis: 'Paciente sano',
-    treatment: 'Continuar plan de vacunación',
-    prescriptions: [],
-    notes: 'Primer control de Toby.',
-  },
-  {
-    id: 'c4',
-    petId: 'p3',
-    vetId: 'v2',
-    date: '2026-02-15',
-    weight: 11.5,
-    temperature: 38.6,
-    symptoms: 'Picazón en orejas',
-    diagnosis: 'Otitis externa',
-    treatment: 'Limpieza de oídos y gotas',
-    prescriptions: ['Otiflex - 3 gotas c/12hs por 7 días'],
-    notes: 'Requiere limpieza profunda.',
   },
 ];
 
@@ -451,24 +453,6 @@ export const vaccines = [
     nextDate: '2026-05-12',
     appliedBy: 'v2',
     lot: 'LOT2025E',
-  },
-  {
-    id: 'vac6',
-    petId: 'p7',
-    name: 'Puppy',
-    date: '2026-01-10',
-    nextDate: '2026-02-10',
-    appliedBy: 'v1',
-    lot: 'LOT2026X',
-  },
-  {
-    id: 'vac7',
-    petId: 'p8',
-    name: 'Triple Felina',
-    date: '2025-12-01',
-    nextDate: '2026-12-01',
-    appliedBy: 'v3',
-    lot: 'LOT2025F',
   },
 ];
 

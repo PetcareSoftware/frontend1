@@ -21,7 +21,10 @@ import {
   UserRound,
   Worm,
   Cat,
-} from 'lucide-vue-next';
+  Bell,
+  X,
+  Check,
+} from '@lucide/vue';
 
 export const iconRegistry = {
   bird: Bird,
@@ -46,6 +49,9 @@ export const iconRegistry = {
   syringe: Syringe,
   'user-round': UserRound,
   worm: Worm,
+  bell: Bell,
+  x: X,
+  check: Check,
 };
 
 export function resolveIcon(name) {

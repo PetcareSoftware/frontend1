@@ -52,13 +52,15 @@
 }
 .section__title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--size-section-title);
+  font-weight: var(--weight-black);
   line-height: 1.1;
   color: var(--text-strong);
 }
 .section__subtitle {
   margin: 6px 0 0;
-  color: rgba(61, 61, 61, 0.7);
+  font-size: var(--size-base);
+  color: var(--text);
 }
 
 .page-header {
