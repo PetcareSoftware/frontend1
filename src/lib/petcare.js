@@ -111,6 +111,8 @@ export function getAppointmentsByDate(appointments, date) {
 }
 
 
+export const getTodayShortDate = getTodayDate;
+
 export function getTodayAppointments(appointments, date = getTodayDate()) {
   return getAppointmentsByDate(appointments, date);
 }
