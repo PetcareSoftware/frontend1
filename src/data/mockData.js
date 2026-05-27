@@ -214,6 +214,16 @@ export const appointments = [
     reason: 'Revisión ojos',
     status: 'completed',
   },
+  {
+    id: 'apt-prueba-hoy',
+    petName: 'Max',
+    ownerName: 'Felipe Ortiz',
+    date: '2026-05-26',
+    time: '10:00',
+    type: 'Consulta General',
+    status: 'completed',
+    vetId: 'v1',
+  },
 ];
 
 export const consultations = [
@@ -385,3 +395,29 @@ export const insumos = [
     batches: [{ batch: 'Lote B-26', expirationDate: '2027-03-20' }],
   },
 ];
+
+export const revenueHistory = {
+  hoy: [
+    { label: '08:00', amount: 0 },
+    { label: '10:00', amount: 150 },
+    { label: '12:00', amount: 300 },
+    { label: '14:00', amount: 150 },
+    { label: '16:00', amount: 450 },
+    { label: '18:00', amount: 0 },
+  ],
+  esta_semana: [
+    { label: 'Lun', amount: 450 },
+    { label: 'Mar', amount: 600 },
+    { label: 'Mié', amount: 300 },
+    { label: 'Jue', amount: 900 },
+    { label: 'Vie', amount: 750 },
+    { label: 'Sáb', amount: 1200 },
+    { label: 'Dom', amount: 0 },
+  ],
+  este_mes: [
+    { label: 'Sem 1', amount: 2100 },
+    { label: 'Sem 2', amount: 3400 },
+    { label: 'Sem 3', amount: 2800 },
+    { label: 'Sem 4', amount: 4200 },
+  ],
+};
