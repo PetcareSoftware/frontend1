@@ -32,15 +32,19 @@
       <p class="text-sm text-gray-500 mt-1">Intenta seleccionando un rango de fechas diferente.</p>
     </div>
 
-    <div v-else class="kpi-grid">
-      <StatCard
-        v-for="kpi in dashboardStore.kpis"
-        :key="kpi.id"
-        :label="kpi.title"
-        :value="kpi.value"
-        :icon="kpi.icon"
-        :toneClass="kpi.status === 'danger' ? 'chip--danger' : 'chip--brand'"
-      />
+    <div v-else>
+      <div class="kpi-grid">
+        <StatCard
+          v-for="kpi in dashboardStore.kpis"
+          :key="kpi.id"
+          :label="kpi.title"
+          :value="kpi.value"
+          :icon="kpi.icon"
+          :toneClass="kpi.status === 'danger' ? 'chip--danger' : 'chip--brand'"
+        />
+      </div>
+
+      <RevenueChart :data="dashboardStore.revenueData" />
     </div>
   </div>
 </template>
@@ -51,7 +55,7 @@
   import PageHeader from '@/components/shared/PageHeader.vue';
   import StatCard from '@/components/shared/StatCard.vue';
   import KpiCardSkeleton from '@/components/dashboard/KpiCardSkeleton.vue';
-
+  import RevenueChart from '@/components/dashboard/RevenueChart.vue';
   const dashboardStore = useDashboardStore();
 
   onMounted(() => {
@@ -60,12 +64,10 @@
 </script>
 
 <style scoped>
-  /* Contenedor principal para darle respiro a toda la pantalla */
   .dashboard-container {
     padding: 1.5rem;
   }
 
-  /* Barra del filtro: Empuja el selector a la derecha y le da espacio arriba y abajo */
   .filter-bar {
     display: flex;
     justify-content: flex-start;
@@ -73,7 +75,6 @@
     margin-bottom: 1.5rem;
   }
 
-  /* Selector estilizado a la fuerza ignorando estilos base */
   .gerencia-select {
     appearance: none;
     background-color: #ffffff;
@@ -97,14 +98,12 @@
     box-shadow: 0 0 0 2px rgba(122, 162, 80, 0.2);
   }
 
-  /* Cuadrícula de tarjetas */
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
   }
 
-  /* Estado vacío centrado */
   .empty-state {
     display: flex;
     flex-direction: column;
