@@ -65,10 +65,13 @@
 
 .page-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 18px;
   padding: 22px 24px;
+}
+.page-header__titles-block {
+  align-self: flex-start;
 }
 .page-header__title-row {
   display: flex;
@@ -92,6 +95,10 @@
   margin: 6px 0 0 28px;
   max-width: 70ch;
   color: rgba(61, 61, 61, 0.68);
+}
+.page-header__actions-group {
+  display: flex;
+  gap: 8px;
 }
 
 .toolbar {

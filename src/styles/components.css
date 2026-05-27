@@ -109,12 +109,17 @@
 .field {
   display: grid;
   gap: 0.45rem;
+  align-content: space-between;
 }
 .field label,
 .field__label {
   font-size: var(--size-sm);
   font-weight: var(--weight-bold);
   color: rgba(61, 61, 61, 0.84);
+}
+.field--required.field__label::after,
+.field--required .field__label::after {
+  content: " *";
 }
 .input,
 .select,

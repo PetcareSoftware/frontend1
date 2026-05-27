@@ -1,4 +1,6 @@
 import { timeSlots as seedTimeSlots } from '@/data/mockData';
+import { ref } from 'vue';
+
 
 export const statusMeta = {
   scheduled: { label: 'Programada', className: 'chip--brand' },
@@ -17,18 +19,46 @@ export const speciesMeta = {
   other: { label: 'Otro', icon: 'paw-print', className: 'chip--brand' },
 };
 
-export function getTodayDate() {
-  const today = new Date();
-  today.setHours(12, 0, 0, 0);
-  return today.toISOString().slice(0, 10);
+export const breedsBySpecies = {
+  dog: ['Golden Retriever', 'Bulldog Francés', 'Pastor Alemán', 'Labrador', 'Boxer', 'Mestizo', 'Otro'],
+  cat: ['Persa', 'Siamés', 'Bengala', 'Mestizo', 'Otro'],
+  bird: ['Canario', 'Loro', 'Otro'],
+  rabbit: ['Enano', 'Belier', 'Otro'],
+  other: ['Otro'],
+};
+
+export const petFormTemplate = {
+  name: '',
+  species: 'dog',
+  breed: 'Golden Retriever',
+  sex: 'M',
+  birthDate: '',
+  weight: '',
+  color: '',
+  notes: '',
+};
+
+export const sexCodeToName = {
+  M: 'Macho',
+  F: 'Hembra',
 }
 
-export function daysFromNow(days) {
+export function getSpeciesLabel(codename) {
+  const species = speciesMeta[codename];
+  return species && species.label || 'Otro';
+}
+
+export function daysFromNow(days = 0) {
   const date = new Date();
-  date.setHours(12, 0, 0, 0);
   date.setDate(date.getDate() + days);
   return date.toISOString().slice(0, 10);
 }
+
+export function getTodayDate() {
+  return daysFromNow(0);
+}
+
+export const getTodayShortDate = getTodayDate;
 
 export function formatDate(value, locale = 'es-AR') {
   return new Intl.DateTimeFormat(locale, {
@@ -171,23 +201,39 @@ export function getLatestDeworming(dewormings, petId) {
   return getPetDewormings(dewormings, petId)[0] || null;
 }
 
-
 export const timeSlots = seedTimeSlots;
-
-export function getTodayShortDate() {
-  return new Date().toISOString().split('T')[0];
-}
 
 export function switchRole(item, appStore, router) {
   appStore.setRole(item.key, item.userId || undefined);
-  
+
   const baseRoutes = {
     owner: '/portal/dashboard',
     vet: '/vet/dashboard',
     receptionist: '/reception/dashboard',
   };
-  
+
   if (baseRoutes[item.key]) {
     router.push(baseRoutes[item.key]);
   }
 }
+
+export function throttle(fn, delay = 250) {
+  let wait = false;
+  return function(...args) {
+    if (!wait) {
+      fn(...args);
+
+      wait = true;
+      setTimeout(() => { wait = false; }, delay);
+    }
+  }
+}
+
+export const viewSize = {
+  width: ref(window.innerWidth),
+  height: ref(window.innerHeight),
+};
+window.addEventListener("resize", throttle(() => {
+  viewSize.width.value = window.innerWidth;
+  viewSize.height.value = window.innerHeight;
+}));
