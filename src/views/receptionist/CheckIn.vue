@@ -4,7 +4,8 @@
   import PetAvatar from '@/components/shared/PetAvatar.vue';
   import { useAppStore } from '@/stores/useAppStore';
   import { useToastStore } from '@/stores/useToastStore';
-  import { getTodayAppointments, getPet, getVet, statusMeta } from '@/lib/petcare';
+  import { getTodayAppointments, getPet, getVet, statusMeta,
+           appointmentTransitions } from '@/lib/petcare';
 
   const appStore = useAppStore();
   const toastStore = useToastStore();
@@ -16,6 +17,10 @@
       description: `${appointment.reason} cambió a ${statusMeta[status]?.label.toLowerCase() || status}.`,
       type: 'success',
     });
+  }
+
+  function getTransitions(status) {
+    return appointmentTransitions[status] || [];
   }
 </script>
 
@@ -57,13 +62,12 @@
             <td>{{ appointment.time }}</td>
             <td>{{ getVet(appStore.vets, appointment.vetId)?.name }}</td>
             <td>
-              <select class="select" style="min-width: 140px; padding: 6px 12px;" :value="appointment.status" @change="setStatus(appointment, $event.target.value)">
-                <option value="scheduled">Programada</option>
-                <option value="waiting">En Espera</option>
-                <option value="confirmed">Confirmada</option>
-                <option value="in_progress">En Consulta</option>
-                <option value="completed">Completada</option>
-                <option value="cancelled">Cancelada</option>
+              <select class="select" style="min-width: 140px; padding: 6px 12px;"
+                :value="appointment.status" @change="setStatus(appointment, $event.target.value)"
+              >
+                <option v-for="(_ignore, newStatus) in appointmentTransitions" :key="newStatus"
+                  :value="newStatus" v-show="getTransitions(appointment.status).includes(newStatus)"
+                >{{ statusMeta[newStatus]?.label || '' }}</option>
               </select>
             </td>
           </tr>

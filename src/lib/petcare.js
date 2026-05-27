@@ -5,10 +5,10 @@ import { ref } from 'vue';
 export const statusMeta = {
   scheduled: { label: 'Programada', className: 'chip--brand' },
   confirmed: { label: 'Confirmada', className: 'chip--success' },
+  waiting: { label: 'En Espera', className: 'chip--cream' },
   in_progress: { label: 'En Consulta', className: 'chip--warning' },
   completed: { label: 'Completada', className: 'chip--sage' },
   cancelled: { label: 'Cancelada', className: 'chip--danger' },
-  waiting: { label: 'En Espera', className: 'chip--cream' },
 };
 
 export const speciesMeta = {
@@ -42,6 +42,15 @@ export const sexCodeToName = {
   M: 'Macho',
   F: 'Hembra',
 }
+
+export const appointmentTransitions = {
+  scheduled: ["scheduled", "confirmed", "waiting", "in_progress", "cancelled"],
+  confirmed: ["scheduled", "confirmed", "waiting", "in_progress", "cancelled"],
+  waiting: ["confirmed", "waiting", "in_progress", "cancelled"],
+  in_progress: ["confirmed", "waiting", "in_progress", "completed", "cancelled"],
+  completed: ["in_progress", "completed"],
+  cancelled: ["scheduled", "in_progress", "cancelled"],
+};
 
 export function getSpeciesLabel(codename) {
   const species = speciesMeta[codename];

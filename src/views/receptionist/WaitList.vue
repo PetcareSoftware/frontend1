@@ -11,7 +11,7 @@
 
   function getAppointments() {
     return getTodayAppointments(appStore.appointments).filter(
-      (item) => ['waiting', 'in_progress'].includes(item.status)
+      (item) => ['waiting' /*, 'in_progress'*/].includes(item.status)
     );
   }
 
@@ -20,7 +20,7 @@
   }
 
   function moveToFront(appointment) {
-    appStore.updateAppointment({ ...appointment, status: 'confirmed' });
+    appStore.updateAppointment({ ...appointment, status: 'in_progress' });
     const petName = getPetSimple(appointment);
     toastStore.push({
       title: 'Paciente atendido',
