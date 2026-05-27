@@ -40,7 +40,7 @@
   );
 
   function saveAppointment() {
-    if (!form.ownerId || !form.petId || !form.reason) {
+    if (!form.ownerId || !form.petId || !form.reason || !form.date || !form.time) {
       toastStore.push({ title: 'Completa los campos requeridos', type: 'error' });
       return;
     }
@@ -102,14 +102,14 @@
               </option>
             </select>
           </label>
-          <label class="field">
+          <label class="field field--required">
             <span class="field__label">Fecha</span>
             <input v-model="form.date" class="input" type="date" />
           </label>
         </div>
 
         <div class="input-grid">
-          <label class="field">
+          <label class="field field--required">
             <span class="field__label">Hora</span>
             <select v-model="form.time" class="select">
               <option v-for="slot in timeSlots" :key="slot" :value="slot">{{ slot }}</option>

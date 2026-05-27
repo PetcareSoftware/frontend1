@@ -16,23 +16,25 @@
   } from '@/lib/petcare';
 
   const appStore = useAppStore();
-  const showEmptySlots = ref(true);
+  const showEmptySlots = ref(false);
 
   const dates = computed(() =>
     Array.from({ length: 5 }, (_, index) => {
       const date = daysFromNow(index);
       const dayAppointments = getAppointmentsByDate(appStore.appointments, date);
-      
+
       const vetsSchedule = appStore.vets.map(vet => {
         const vetAppointments = dayAppointments.filter(a => a.vetId === vet.id);
         const slots = timeSlots.map(time => {
           const appointment = vetAppointments.find(a => a.time === time);
           return { time, appointment };
         });
-        return { vet, slots };
+        const hasAny = slots.some(slot => slot.appointment);
+        return { vet, slots, hasAny };
       });
 
-      return { date, vetsSchedule };
+      const hasAny = vetsSchedule.some(schedule => schedule.hasAny);
+      return { date, vetsSchedule, hasAny };
     })
   );
 </script>
@@ -54,10 +56,12 @@
         :key="day.date"
         :title="formatDate(day.date)"
         icon="calendar-days"
+        v-show="day.hasAny || showEmptySlots"
       >
         <div class="stack" style="gap: 1.5rem">
           <div
             v-for="vetSchedule in day.vetsSchedule" :key="vetSchedule.vet.id"
+            v-show="vetSchedule.hasAny || showEmptySlots"
           >
             <h4 style="margin-bottom: 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem;">
               {{ vetSchedule.vet.name }}
