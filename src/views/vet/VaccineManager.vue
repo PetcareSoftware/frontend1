@@ -49,7 +49,7 @@
   <div class="stack">
     <PageHeader title="Vacunas" subtitle="Gestión y programación de vacunas por mascota." />
 
-    <section class="split">
+    <section class="split split--wide-side">
       <section class="card">
         <div class="input-row">
           <label class="field field--required">

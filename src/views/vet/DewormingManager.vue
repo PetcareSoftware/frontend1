@@ -52,7 +52,7 @@
       subtitle="Registro y seguimiento de desparasitaciones por paciente."
     />
 
-    <section class="split">
+    <section class="split split--wide-side">
       <section class="card">
         <div class="input-row">
           <label class="field field--required">
