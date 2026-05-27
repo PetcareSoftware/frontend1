@@ -3,7 +3,7 @@
   import Logo from '@/components/shared/Logo.vue';
 
   const route = useRoute();
-  
+
   // Opcional: mostrar distintos tips de desarrollo según la ruta
   function getDevTips() {
     return [
@@ -23,7 +23,7 @@
         <Logo size="lg" />
         <h2 class="visual-title">{{ route.meta.title }}</h2>
         <p class="visual-text" v-if="route.meta.text">{{ route.meta.text }}</p>
-        
+
         <div class="visual-features" v-if="route.meta.features && route.meta.features.length">
           <div class="feature-item" v-for="(feature, idx) in route.meta.features" :key="idx">
             <div class="feature-icon">
@@ -37,7 +37,7 @@
 
     <div class="auth-layout__form">
       <router-view></router-view>
-      
+
       <div class="dev-note" v-if="route.path === '/login'">
         <p class="dev-note__title"><strong>Tips para desarrollo:</strong></p>
         <ul class="dev-note__list">

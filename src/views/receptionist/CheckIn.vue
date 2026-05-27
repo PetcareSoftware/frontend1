@@ -25,6 +25,12 @@
 
     <section class="card table-wrap">
       <table class="table">
+        <colgroup>
+          <col>
+          <col>
+          <col>
+          <col style="width: 12rem;">
+        </colgroup>
         <thead>
           <tr>
             <th>Paciente</th>

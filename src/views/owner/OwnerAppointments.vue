@@ -10,7 +10,7 @@
   const appStore = useAppStore();
   const toastStore = useToastStore();
   const activeFilter = ref('all');
-  
+
   // Schedule Modal
   const showNewAppointmentModal = ref(false);
   const pets = computed(() => getOwnerPets(appStore.pets, appStore.currentUserId));
@@ -92,13 +92,14 @@
 
 <template>
   <div class="stack">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <PageHeader
-        title="Mis Citas"
-        subtitle="Listado de citas del propietario con filtros por estado y acciones rápidas."
-      />
-      <button class="btn btn--primary" @click="showNewAppointmentModal = true">+ Nueva Cita</button>
-    </div>
+    <PageHeader
+      title="Mis Citas"
+      subtitle="Listado de citas del propietario con filtros por estado y acciones rápidas."
+    >
+      <template #actions>
+        <button class="btn btn--primary" @click="showNewAppointmentModal = true">+ Nueva Cita</button>
+      </template>
+    </PageHeader>
 
     <div class="toolbar" style="display: flex; justify-content: space-between;">
       <div class="toolbar__group">
@@ -135,6 +136,14 @@
 
     <section class="card table-wrap">
       <table class="table">
+        <colgroup>
+          <col>
+          <col>
+          <col>
+          <col>
+          <col class="table__col--shrink">
+          <col class="table__col--shrink">
+        </colgroup>
         <thead>
           <tr>
             <th>Fecha</th>
@@ -175,8 +184,8 @@
     >
       <div class="stack">
         <div class="input-row" style="margin-top: 1rem;">
-          <label class="field">
-            <span>Selecciona la mascota</span>
+          <label class="field field--required">
+            <span class="field__label">Selecciona la mascota</span>
             <select v-model="form.petId" class="select">
               <option v-for="pet in pets" :key="pet.id" :value="pet.id">
                 {{ pet.name }}
@@ -184,22 +193,22 @@
             </select>
           </label>
           <div class="input-grid">
-            <label class="field">
-              <span>Fecha</span>
+            <label class="field field--required">
+              <span class="field__label">Fecha</span>
               <input v-model="form.date" class="input" type="date" />
             </label>
-            <label class="field">
-              <span>Hora</span>
+            <label class="field field--required">
+              <span class="field__label">Hora</span>
               <select v-model="form.time" class="select">
                 <option v-for="slot in timeSlots" :key="slot" :value="slot">{{ slot }}</option>
               </select>
             </label>
           </div>
-          <label class="field">
-            <span>Motivo</span>
+          <label class="field field--required">
+            <span class="field__label">Motivo</span>
             <input v-model="form.reason" class="input" type="text" placeholder="Control anual" />
           </label>
-          
+
           <div class="toolbar" style="margin-top: 20px; justify-content: flex-end; gap: 8px;">
             <button class="btn btn--ghost" type="button" @click="showNewAppointmentModal = false">Cancelar</button>
             <button class="btn btn--primary" type="button" @click="scheduleAppointment">Confirmar</button>
@@ -216,12 +225,12 @@
     >
       <div class="stack">
         <p class="modal-desc">
-          Por favor, indica el motivo de la cancelación para la cita de 
+          Por favor, indica el motivo de la cancelación para la cita de
           <strong>{{ getPet(appStore.pets, selectedAppointment?.petId)?.name }}</strong>.
         </p>
-        
-        <label class="field" style="margin-top: 12px;">
-          <span>Motivo de cancelación</span>
+
+        <label class="field field--required" style="margin-top: 12px;">
+          <span class="field__label">Motivo de cancelación</span>
           <input
             v-model="cancelReasonInput"
             class="input"
@@ -231,7 +240,7 @@
             style="width: 100%"
           />
         </label>
-        
+
         <div class="toolbar" style="margin-top: 20px; justify-content: flex-end; gap: 8px;">
           <button class="btn btn--ghost" type="button" @click="closeCancelModal">Volver</button>
           <button

@@ -348,6 +348,7 @@ export const appointments = [
     time: '15:30',
     reason: 'Primer control cachorro',
     status: 'scheduled',
+    type: 'Emergencia',
   },
   {
     id: 'a19',

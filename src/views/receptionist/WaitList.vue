@@ -55,11 +55,11 @@
           </div>
           <div class="toolbar__group">
             <StatusBadge :status="appointment.status" />
-            <button 
+            <button
               v-if="appointment.status !== 'in_progress'"
-              class="btn btn--soft btn--sm" 
+              class="btn btn--soft btn--sm"
               style="padding: 6px 12px; font-size: 0.8rem;"
-              type="button" 
+              type="button"
               @click="moveToFront(appointment)"
             >
               Pasar a consulta

@@ -77,8 +77,8 @@
               <div class="list__item-main">
                 <p class="list__title">
                   {{ appointment.time }} · {{ getPet(appStore.pets, appointment.petId)?.name }}
-                  <span v-if="appointment.type === 'Emergencia'" class="chip chip--danger" style="margin-left: 8px; padding: 0.2rem 0.5rem; font-size: 0.7rem;">
-                    Emergencia ({{ appointment.priority }})
+                  <span v-if="appointment.type === 'Emergencia'" class="chip chip--danger chip--sm chip--shift-up" style="margin-left: 8px;">
+                    Emergencia{{appointment.priority ? ` (${appointment.priority})`: ''}}
                   </span>
                 </p>
                 <p class="list__subtitle">
@@ -88,17 +88,17 @@
             </div>
             <div class="toolbar__group" style="gap: 0.5rem">
               <StatusBadge :status="appointment.status" />
-              <button 
-                v-if="appointment.status === 'scheduled'" 
-                @click="appStore.updateAppointment({ ...appointment, status: 'confirmed' })" 
-                class="btn-quick-action btn-confirm"
+              <button
+                v-if="appointment.status === 'scheduled'"
+                @click="appStore.updateAppointment({ ...appointment, status: 'confirmed' })"
+                class="btn btn--sm btn--soft"
               >
                 Confirmar
               </button>
-              <button 
-                v-if="appointment.status === 'confirmed'" 
-                @click="appStore.updateAppointment({ ...appointment, status: 'waiting' })" 
-                class="btn-quick-action btn-checkin"
+              <button
+                v-if="appointment.status === 'confirmed'"
+                @click="appStore.updateAppointment({ ...appointment, status: 'waiting' })"
+                class="btn btn--sm btn--brand"
               >
                 Check-in
               </button>
@@ -119,16 +119,16 @@
               </p>
             </div>
             <div class="summary-grid">
-              <article class="card">
-                <p class="eyebrow">Agenda</p>
+              <article class="summary-grid__item card">
+                <p class="summary-grid__item-title eyebrow">Agenda</p>
                 <strong>{{ todayAppointments.length }}</strong>
               </article>
-              <article class="card">
-                <p class="eyebrow">Pacientes</p>
+              <article class="summary-grid__item card">
+                <p class="summary-grid__item-title eyebrow">Pacientes</p>
                 <strong>{{ todayAppointments.length }}</strong>
               </article>
-              <article class="card">
-                <p class="eyebrow">Consultorios</p>
+              <article class="summary-grid__item card">
+                <p class="summary-grid__item-title eyebrow">Consultorios</p>
                 <strong>3</strong>
               </article>
             </div>
@@ -142,11 +142,11 @@
                 <strong>{{ v.vet.name }}</strong>
                 <span class="chip chip--sage">{{ v.availableSlots.length }} libres</span>
               </div>
-              <div style="display: flex; flex-wrap: wrap; gap: 0.25rem">
-                <span v-for="time in v.availableSlots" :key="time" class="chip chip--outline" style="font-size: 0.75rem">
+              <div class="schedule-grid">
+                <span v-for="time in v.availableSlots" :key="time" class="schedule-grid__slot chip chip--sm">
                   {{ time }}
                 </span>
-                <p v-if="!v.availableSlots.length" class="muted" style="font-size: 0.8rem">Sin turnos disponibles hoy.</p>
+                <p v-if="!v.availableSlots.length" class="schedule-grid__info muted">Sin turnos disponibles hoy.</p>
               </div>
             </article>
           </div>
@@ -157,49 +157,18 @@
 </template>
 
 <style scoped>
-.btn-quick-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.8rem;
+.schedule-grid {
+  display: grid;
+  gap: 0.25rem;
+  justify-content: space-evenly;
+  grid-template-columns: repeat(auto-fill, calc((2px + 0.5rem)*2 + 3.75ch));
+}
+
+.schedule-grid__slot {
   font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.btn-confirm {
-  background: linear-gradient(135deg, #fdfbf7 0%, #fdf5e6 100%);
-  color: #b8860b;
-  border: 1px solid #fce8b2;
-}
-
-.btn-confirm:hover {
-  background: linear-gradient(135deg, #fdf5e6 0%, #fae1a2 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(184, 134, 11, 0.15);
-}
-
-.btn-confirm:active {
-  transform: translateY(0);
-}
-
-.btn-checkin {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  color: #1e40af;
-  border: 1px solid #bfdbfe;
-}
-
-.btn-checkin:hover {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(30, 64, 175, 0.15);
-}
-
-.btn-checkin:active {
-  transform: translateY(0);
+.schedule-grid__info {
+  font-size: 0.8rem;
 }
 </style>

@@ -55,34 +55,37 @@
     <section class="split">
       <section class="card">
         <div class="input-row">
-          <label class="field"
-            ><span>Mascota</span
-            ><select v-model="form.petId" class="select">
+          <label class="field field--required">
+            <span class="field__label">Mascota</span>
+            <select v-model="form.petId" class="select">
               <option v-for="pet in appStore.pets" :key="pet.id" :value="pet.id">
                 {{ pet.name }}
               </option>
-            </select></label
-          >
-          <label class="field"
-            ><span>Producto</span
-            ><input v-model="form.product" class="input" type="text" placeholder="Milbemax"
-          /></label>
+            </select>
+          </label>
+          <label class="field field--required">
+            <span class="field__label">Producto</span>
+            <input v-model="form.product" class="input" type="text" placeholder="Milbemax"/>
+          </label>
           <div class="input-grid">
-            <label class="field"
-              ><span>Fecha</span><input v-model="form.date" class="input" type="date"
-            /></label>
-            <label class="field"
-              ><span>Próxima fecha</span><input v-model="form.nextDate" class="input" type="date"
-            /></label>
+            <label class="field field--required">
+              <span class="field__label">Fecha</span>
+              <input v-model="form.date" class="input" type="date"/>
+            </label>
+            <label class="field field--required">
+              <span class="field__label">Próxima fecha</span>
+              <input v-model="form.nextDate" class="input" type="date"/>
+            </label>
           </div>
           <div class="input-grid">
-            <label class="field"
-              ><span>Peso</span
-              ><input v-model="form.weight" class="input" type="number" min="0" step="0.1"
-            /></label>
-            <label class="field"
-              ><span>Notas</span><input v-model="form.notes" class="input" type="text"
-            /></label>
+            <label class="field">
+              <span class="field__label">Peso</span>
+              <input v-model="form.weight" class="input" type="number" min="0" step="0.1"/>
+            </label>
+            <label class="field">
+              <span class="field__label">Notas</span>
+              <input v-model="form.notes" class="input" type="text"/>
+            </label>
           </div>
           <button class="btn btn--primary" type="button" @click="saveDeworming">
             Guardar desparasitación

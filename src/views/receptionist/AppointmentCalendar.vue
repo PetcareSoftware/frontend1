@@ -41,7 +41,7 @@
   <div class="stack">
     <PageHeader title="Calendario" subtitle="Vista de agenda y distribución de citas por fecha." />
 
-    <div class="toolbar" style="margin-bottom: 1rem;">
+    <div class="toolbar" style="margin-bottom: 0.3rem;">
       <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
         <input type="checkbox" v-model="showEmptySlots" />
         <span style="font-weight: 500;">Mostrar huecos disponibles</span>

@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, watch } from 'vue';
+import AppIcon from './AppIcon.vue';
 
 const props = defineProps({
   isOpen: {
@@ -54,10 +55,7 @@ onUnmounted(() => {
           <div class="modal-header">
             <h3 class="modal-title">{{ title }}</h3>
             <button class="modal-close" @click="close" aria-label="Cerrar">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+              <AppIcon name="x" size="24"/>
             </button>
           </div>
           <div class="modal-body">
@@ -113,7 +111,7 @@ onUnmounted(() => {
 .modal-close {
   background: transparent;
   border: none;
-  color: rgba(61, 61, 61, 0.6);
+  /* color: rgba(61, 61, 61, 0.6); */
   cursor: pointer;
   padding: 8px;
   border-radius: 50%;

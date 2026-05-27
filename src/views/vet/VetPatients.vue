@@ -34,10 +34,10 @@
     if (!selectedAppointment.value) return;
     const currentStatus = selectedAppointment.value.status;
     let newStatus = '';
-    
+
     if (currentStatus === 'confirmed') newStatus = 'in_progress';
     else if (currentStatus === 'in_progress') newStatus = 'completed';
-    
+
     if (newStatus) {
       appStore.updateAppointment({
         ...selectedAppointment.value,

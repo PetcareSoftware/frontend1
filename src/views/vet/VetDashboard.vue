@@ -92,16 +92,16 @@
             </p>
           </div>
           <div class="summary-grid">
-            <article class="card">
-              <p class="eyebrow">Agenda</p>
+            <article class="summary-grid__item card">
+              <p class="summary-grid__item-title eyebrow">Agenda</p>
               <strong>{{ vetAppointments.length }}</strong>
             </article>
-            <article class="card">
-              <p class="eyebrow">Hoy</p>
+            <article class="summary-grid__item card">
+              <p class="summary-grid__item-title eyebrow">Hoy</p>
               <strong>{{ todayAppointments.length }}</strong>
             </article>
-            <article class="card">
-              <p class="eyebrow">Fecha</p>
+            <article class="summary-grid__item card">
+              <p class="summary-grid__item-title eyebrow">Fecha</p>
               <strong>{{ formatDate(getTodayShortDate()) }}</strong>
             </article>
           </div>

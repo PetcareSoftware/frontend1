@@ -203,7 +203,7 @@ export function getLatestDeworming(dewormings, petId) {
 
 export const timeSlots = seedTimeSlots;
 
-export function switchRole(item, appStore, router) {
+export function switchRoleLocal(item, appStore, router) {
   appStore.setRole(item.key, item.userId || undefined);
 
   const baseRoutes = {
