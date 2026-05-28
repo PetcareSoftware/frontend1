@@ -19,6 +19,8 @@
   import { useAppStore } from '@/stores/useAppStore';
 
   onMounted(() => {
-    useAppStore().normalizeInventory();
+    const appStore = useAppStore();
+    appStore.fetchInventory();
+    appStore.fetchRequisitions();
   });
 </script>

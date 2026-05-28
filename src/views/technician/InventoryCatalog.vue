@@ -1,14 +1,23 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
+import { RouterLink } from 'vue-router';
 import PageHeader from '@/components/shared/PageHeader.vue';
 import DashboardCard from '@/components/shared/DashboardCard.vue';
 import { formatMoney } from '@/lib/petcare';
-import { evaluateProductAlertState } from '@/lib/inventory';
+import { evaluateProductAlertState, suggestReorderQuantity } from '@/lib/inventory';
 import { useAppStore } from '@/stores/useAppStore';
 import { exportToExcel, exportToPDF } from '@/lib/export';
 
 const appStore = useAppStore();
 const inventory = computed(() => appStore.inventory);
+const inventoryLoading = computed(() => appStore.inventoryLoading);
+const inventoryError = computed(() => appStore.inventoryError);
+
+onMounted(() => {
+  if (!appStore.inventory.length && !appStore.inventoryLoading) {
+    appStore.fetchInventory();
+  }
+});
 
 const formatUnitCost = (value) =>
   formatMoney(value, { locale: 'en-US', currency: 'USD', maximumFractionDigits: 2 });
@@ -37,6 +46,20 @@ const alertByItemId = computed(() => {
   });
   return map;
 });
+
+const reorderRouteFor = (item) => ({
+  path: '/technician/supply-requisition',
+  query: {
+    insumoId: item.id,
+    quantity: suggestReorderQuantity(item),
+    auto: '1',
+  },
+});
+
+const hasStockAlert = (item) => {
+  const alert = alertByItemId.value.get(item.id);
+  return alert?.alertClass === 'critical' || alert?.alertClass === 'warning';
+};
 </script>
 
 <template>
@@ -47,6 +70,12 @@ const alertByItemId = computed(() => {
     />
 
     <DashboardCard title="Vista General del Inventario" icon="syringe">
+      <p v-if="inventoryLoading" class="inventory-status inventory-status--loading">
+        Cargando catálogo de insumos…
+      </p>
+      <p v-else-if="inventoryError" class="inventory-status inventory-status--warning">
+        {{ inventoryError }} — mostrando datos locales de respaldo.
+      </p>
       <div class="report-actions" style="margin-bottom: 20px; display: flex; gap: 10px;">
         <button class="btn btn--secondary" @click="handleDownloadExcel">
           Exportar a Excel
@@ -55,7 +84,7 @@ const alertByItemId = computed(() => {
           Generar Reporte Formal (PDF)
         </button>
       </div>
-      <section class="table-wrap inventory-table-wrap">
+      <section class="table-wrap inventory-table-wrap" :aria-busy="inventoryLoading">
         <table class="table">
           <thead>
             <tr>
@@ -63,6 +92,7 @@ const alertByItemId = computed(() => {
               <th>Cantidad disponible</th>
               <th>Stock mínimo</th>
               <th>Costo unitario</th>
+              <th>Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -99,6 +129,16 @@ const alertByItemId = computed(() => {
                 />
               </td>
               <td>{{ formatUnitCost(item.unitCost) }}</td>
+              <td>
+                <RouterLink
+                  v-if="hasStockAlert(item)"
+                  :to="reorderRouteFor(item)"
+                  class="inventory-reorder-link"
+                >
+                  Solicitar reposición
+                </RouterLink>
+                <span v-else class="inventory-reorder-placeholder">—</span>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -108,6 +148,19 @@ const alertByItemId = computed(() => {
 </template>
 
 <style scoped>
+.inventory-status {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+}
+
+.inventory-status--loading {
+  color: #64748b;
+}
+
+.inventory-status--warning {
+  color: #b45309;
+}
+
 .inventory-table-wrap {
   margin-top: 1.25rem;
 }
@@ -115,6 +168,22 @@ const alertByItemId = computed(() => {
 .inventory-table__name {
   position: relative;
   font-weight: 500;
+}
+
+.inventory-reorder-link {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--primary, #2563eb);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.inventory-reorder-link:hover {
+  text-decoration: underline;
+}
+
+.inventory-reorder-placeholder {
+  color: #94a3b8;
 }
 
 .inventory-umbral-input {

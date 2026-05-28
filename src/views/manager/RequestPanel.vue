@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useAppStore } from '@/stores/useAppStore';
 import { useToastStore } from '@/stores/useToastStore';
 import PageHeader from '@/components/shared/PageHeader.vue';
@@ -8,6 +8,13 @@ import { formatMoney } from '@/lib/petcare';
 
 const appStore = useAppStore();
 const toastStore = useToastStore();
+
+const requisitionsLoading = computed(() => appStore.requisitionsLoading);
+const purchaseOrderUpdatingId = computed(() => appStore.purchaseOrderUpdatingId);
+
+onMounted(() => {
+  appStore.fetchRequisitions();
+});
 
 // 1. Relación reactiva de solicitudes en el Store
 const solicitudes = computed(() => appStore.requisitions);
@@ -27,17 +34,22 @@ const obtenerNombreInsumo = (insumoId) => {
   return insumo ? insumo.name : `Insumo ID #${insumoId}`;
 };
 
-// 2. Funcionalidad: Modificar estado en Pinia
-const procesarSolicitud = (id, nuevoEstado) => {
-  const solicitud = appStore.requisitions.find(s => s.id === id);
-  if (solicitud) {
-    solicitud.estado = nuevoEstado;
-    
-    // Notificación visual del éxito de la operación financiera
+const procesarSolicitud = async (id, nuevoEstado) => {
+  if (purchaseOrderUpdatingId.value) return;
+
+  try {
+    await appStore.updateRequisitionStatus(id, nuevoEstado);
+
     toastStore.push({
       title: `Solicitud ${nuevoEstado}`,
       description: `La solicitud ${id} ha sido marcada como ${nuevoEstado.toLowerCase()}.`,
       type: nuevoEstado === 'Aprobada' ? 'success' : 'warning',
+    });
+  } catch {
+    toastStore.push({
+      title: 'No se pudo actualizar la solicitud',
+      description: 'Verifique la conexión con el servidor e intente de nuevo.',
+      type: 'error',
     });
   }
 };
@@ -51,7 +63,10 @@ const procesarSolicitud = (id, nuevoEstado) => {
     />
 
     <DashboardCard title="Solicitudes Pendientes de Revisión" icon="clipboard-check">
-      <div v-if="solicitudesPendientes.length > 0" class="manager-grid">
+      <p v-if="requisitionsLoading" class="manager-loading">
+        Cargando solicitudes pendientes…
+      </p>
+      <div v-else-if="solicitudesPendientes.length > 0" class="manager-grid">
         
         <article 
           v-for="solicitud in solicitudesPendientes" 
@@ -86,16 +101,18 @@ const procesarSolicitud = (id, nuevoEstado) => {
               <button 
                 type="button" 
                 class="btn btn--danger-action" 
+                :disabled="purchaseOrderUpdatingId === solicitud.id"
                 @click="procesarSolicitud(solicitud.id, 'Rechazada')"
               >
-                Rechazar
+                {{ purchaseOrderUpdatingId === solicitud.id ? 'Procesando…' : 'Rechazar' }}
               </button>
               <button 
                 type="button" 
                 class="btn btn--success-action" 
+                :disabled="purchaseOrderUpdatingId === solicitud.id"
                 @click="procesarSolicitud(solicitud.id, 'Aprobada')"
               >
-                Aprobar Solicitud
+                {{ purchaseOrderUpdatingId === solicitud.id ? 'Procesando…' : 'Aprobar Solicitud' }}
               </button>
             </div>
           </footer>
@@ -103,7 +120,7 @@ const procesarSolicitud = (id, nuevoEstado) => {
 
       </div>
 
-      <div v-else class="empty-manager-state">
+      <div v-else-if="!requisitionsLoading" class="empty-manager-state">
         <p>No hay solicitudes de reabastecimiento pendientes de revisión financiera.</p>
       </div>
     </DashboardCard>
@@ -111,6 +128,12 @@ const procesarSolicitud = (id, nuevoEstado) => {
 </template>
 
 <style scoped>
+.manager-loading {
+  margin: 1.25rem 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
 .manager-grid {
   display: flex;
   flex-direction: column;

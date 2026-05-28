@@ -1,15 +1,19 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { useAppStore } from '@/stores/useAppStore';
 import { useToastStore } from '@/stores/useToastStore';
 import PageHeader from '@/components/shared/PageHeader.vue';
 import DashboardCard from '@/components/shared/DashboardCard.vue';
 import { formatMoney } from '@/lib/petcare';
+import { suggestReorderQuantity } from '@/lib/inventory';
 
 const appStore = useAppStore();
 const toastStore = useToastStore();
+const route = useRoute();
 
 const listaInsumos = computed(() => appStore.inventory);
+const requisitionSubmitting = computed(() => appStore.requisitionSubmitting);
 
 const form = ref({
   insumoId: '',
@@ -54,27 +58,49 @@ const gastoTotalPrevisto = computed(() =>
   }, 0)
 );
 
-const enviarAlGerente = () => {
-  if (itemsSolicitados.value.length === 0) return;
+const prefillFromCatalogAlert = () => {
+  const insumoId = route.query.insumoId;
+  if (!insumoId) return;
 
-  const nuevaSolicitud = {
-    id: `REQ-${Date.now()}`,
-    fecha: new Date().toLocaleDateString(),
-    cantidadProductos: itemsSolicitados.value.reduce((acc, item) => acc + item.quantity, 0),
-    total: gastoTotalPrevisto.value,
-    estado: 'Pendiente',
-    items: [...itemsSolicitados.value],
-  };
+  const supply = getSupplyById(insumoId);
+  if (!supply) return;
 
-  appStore.addRequisition(nuevaSolicitud);
+  const quantity = route.query.quantity
+    ? Number(route.query.quantity)
+    : suggestReorderQuantity(supply);
 
-  toastStore.push({
-    title: 'Solicitud enviada',
-    description: 'Estado: Pendiente. El gerente podrá revisarla en su bandeja.',
-    type: 'success',
-  });
+  form.value.insumoId = String(supply.id);
+  form.value.quantity = Math.max(quantity, 1);
 
-  itemsSolicitados.value = [];
+  if (route.query.auto === '1') {
+    agregarInsumoALista();
+  }
+};
+
+onMounted(() => {
+  prefillFromCatalogAlert();
+});
+
+const enviarAlGerente = async () => {
+  if (requisitionSubmitting.value || itemsSolicitados.value.length === 0) return;
+
+  try {
+    const created = await appStore.submitRequisition([...itemsSolicitados.value]);
+
+    toastStore.push({
+      title: 'Solicitud enviada',
+      description: `Orden #${created.id} en estado Pendiente. El gerente la verá en su bandeja.`,
+      type: 'success',
+    });
+
+    itemsSolicitados.value = [];
+  } catch {
+    toastStore.push({
+      title: 'No se pudo enviar la solicitud',
+      description: 'Verifique la conexión con el servidor e intente de nuevo.',
+      type: 'error',
+    });
+  }
 };
 </script>
 
@@ -166,8 +192,13 @@ const enviarAlGerente = () => {
           <span class="request-total__value">{{ formatUnitCost(gastoTotalPrevisto) }}</span>
         </div>
 
-        <button class="btn btn--primary request-submit" type="button" @click="enviarAlGerente">
-          Enviar al gerente
+        <button
+          class="btn btn--primary request-submit"
+          type="button"
+          :disabled="requisitionSubmitting"
+          @click="enviarAlGerente"
+        >
+          {{ requisitionSubmitting ? 'Enviando solicitud…' : 'Enviar al gerente' }}
         </button>
       </div>
     </DashboardCard>

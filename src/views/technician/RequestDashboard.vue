@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useAppStore } from '@/stores/useAppStore';
 import PageHeader from '@/components/shared/PageHeader.vue';
 import DashboardCard from '@/components/shared/DashboardCard.vue';
@@ -7,6 +7,11 @@ import { formatMoney } from '@/lib/petcare';
 
 const appStore = useAppStore();
 const solicitudes = computed(() => appStore.requisitions);
+const requisitionsLoading = computed(() => appStore.requisitionsLoading);
+
+onMounted(() => {
+  appStore.fetchRequisitions();
+});
 const filtroEstado = ref('Todos');
 
 const solicitudesFiltradas = computed(() => {
@@ -33,6 +38,9 @@ const getBadgeClass = (estado) => {
     />
 
     <DashboardCard title="Historial de solicitudes enviadas" icon="clipboard-list">
+      <p v-if="requisitionsLoading" class="tracking-loading">
+        Actualizando historial de solicitudes…
+      </p>
       <div class="filter-container">
         <label for="filtro-estado">Filtrar por estado:</label>
         <select id="filtro-estado" v-model="filtroEstado" class="select filter-select">
@@ -43,7 +51,7 @@ const getBadgeClass = (estado) => {
         </select>
       </div>
 
-      <section v-if="solicitudesFiltradas.length > 0" class="table-wrap">
+      <section v-if="!requisitionsLoading && solicitudesFiltradas.length > 0" class="table-wrap">
         <table class="table">
           <thead>
             <tr>
@@ -70,7 +78,7 @@ const getBadgeClass = (estado) => {
         </table>
       </section>
 
-      <p v-else class="empty-state">
+      <p v-else-if="!requisitionsLoading" class="empty-state">
         No se encontraron solicitudes con el estado seleccionado.
       </p>
     </DashboardCard>
@@ -78,6 +86,12 @@ const getBadgeClass = (estado) => {
 </template>
 
 <style scoped>
+.tracking-loading {
+  margin: 0 0 12px;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
 .filter-container {
   display: flex;
   align-items: center;

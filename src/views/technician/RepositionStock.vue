@@ -21,12 +21,15 @@ const open = ref(true);
 const form = ref({ ...EMPTY_FORM });
 
 const listaInsumos = computed(() => appStore.inventory);
+const batchLoading = computed(() => appStore.batchLoading);
 
 const resetForm = () => {
   Object.assign(form.value, EMPTY_FORM);
 };
 
-const guardarEntrada = () => {
+const guardarEntrada = async () => {
+  if (batchLoading.value) return;
+
   if (!form.value.insumoId || !form.value.batch || !form.value.expirationDate) {
     toastStore.push({
       title: 'Complete los campos obligatorios',
@@ -45,32 +48,29 @@ const guardarEntrada = () => {
     return;
   }
 
-  const saved = appStore.addBatch(form.value.insumoId, {
-    batch: form.value.batch,
-    expirationDate: form.value.expirationDate,
-    quantity: form.value.quantity,
-  });
+  const insumoId = form.value.insumoId;
 
-  if (!saved) {
+  try {
+    await appStore.submitBatch({ ...form.value });
+
+    const insumo = listaInsumos.value.find((item) => Number(item.id) === Number(insumoId));
+
     toastStore.push({
-      title: 'Insumo no encontrado',
-      description: 'Seleccione un insumo válido del catálogo.',
+      title: 'Reposición registrada',
+      description: insumo
+        ? `Stock de ${insumo.name}: ${insumo.quantity} uds.`
+        : 'Entrada de mercancía guardada.',
+      type: 'success',
+    });
+
+    resetForm();
+  } catch {
+    toastStore.push({
+      title: 'Error al registrar entrada',
+      description: 'No se pudo guardar el lote. Verifique la conexión con el servidor.',
       type: 'error',
     });
-    return;
   }
-
-  const insumo = listaInsumos.value.find((item) => Number(item.id) === Number(form.value.insumoId));
-
-  toastStore.push({
-    title: 'Reposición registrada',
-    description: insumo
-      ? `Stock de ${insumo.name}: ${insumo.quantity} uds.`
-      : 'Entrada de mercancía guardada.',
-    type: 'success',
-  });
-
-  resetForm();
 };
 </script>
 
@@ -140,7 +140,9 @@ const guardarEntrada = () => {
           />
         </div>
 
-        <button class="btn btn--primary" type="submit">Registrar entrada</button>
+        <button class="btn btn--primary" type="submit" :disabled="batchLoading">
+          {{ batchLoading ? 'Registrando…' : 'Registrar entrada' }}
+        </button>
       </form>
     </DashboardCard>
   </div>

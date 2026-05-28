@@ -2,6 +2,18 @@ import { defineStore } from 'pinia';
 import { appTemplate } from '@/config/appTemplate';
 import { normalizeInventory, normalizeInventoryItem } from '@/lib/inventory';
 import {
+  unwrapList,
+  mapSupplyFromApi,
+  mapPurchaseOrderToRequisition,
+  mapRequisitionStatusToApi,
+} from '@/lib/apiMappers';
+import { listSupplies, createBatch } from '@/services/inventoryService';
+import {
+  listPurchaseOrders,
+  createPurchaseOrder,
+  updatePurchaseOrderStatus,
+} from '@/services/purchaseService';
+import {
   vets as seedVets,
   owners as seedOwners,
   pets as seedPets,
@@ -25,8 +37,14 @@ export const useAppStore = defineStore('app', {
     consultations: clone(seedConsultations),
     vaccines: clone(seedVaccines),
     dewormings: clone(seedDewormings),
-    inventory: clone(seedInsumos),
+    inventory: [],
     requisitions: [],
+    inventoryLoading: false,
+    inventoryError: null,
+    batchLoading: false,
+    requisitionsLoading: false,
+    requisitionSubmitting: false,
+    purchaseOrderUpdatingId: null,
   }),
   getters: {
     currentOwner(state) {
@@ -83,6 +101,24 @@ export const useAppStore = defineStore('app', {
     normalizeInventory() {
       normalizeInventory(this.inventory);
     },
+    _applyInventoryFallback() {
+      this.inventory = clone(seedInsumos);
+      normalizeInventory(this.inventory);
+    },
+    async fetchInventory() {
+      this.inventoryLoading = true;
+      this.inventoryError = null;
+      try {
+        const data = await listSupplies();
+        this.inventory = unwrapList(data).map(mapSupplyFromApi);
+        normalizeInventory(this.inventory);
+      } catch (error) {
+        this.inventoryError = error?.message ?? 'No se pudo cargar el inventario';
+        this._applyInventoryFallback();
+      } finally {
+        this.inventoryLoading = false;
+      }
+    },
     addSupply(supply) {
       const item = normalizeInventoryItem({
         ...supply,
@@ -90,6 +126,22 @@ export const useAppStore = defineStore('app', {
       });
       this.inventory.push(item);
       return item;
+    },
+    async submitBatch({ insumoId, batch, expirationDate, quantity, observations }) {
+      this.batchLoading = true;
+      try {
+        await createBatch({
+          supply_id: Number(insumoId),
+          lot_number: batch,
+          expiry_date: expirationDate,
+          quantity: Number(quantity),
+          observations: observations || undefined,
+        });
+        await this.fetchInventory();
+        return true;
+      } finally {
+        this.batchLoading = false;
+      }
     },
     addBatch(supplyId, { batch, expirationDate, quantity }) {
       const item = this.inventory.find((entry) => Number(entry.id) === Number(supplyId));
@@ -104,8 +156,73 @@ export const useAppStore = defineStore('app', {
       });
       return true;
     },
+    async fetchRequisitions() {
+      this.requisitionsLoading = true;
+      try {
+        const data = await listPurchaseOrders();
+        this.requisitions = unwrapList(data).map(mapPurchaseOrderToRequisition);
+      } catch {
+        // Mantiene solicitudes locales si la API no está disponible
+      } finally {
+        this.requisitionsLoading = false;
+      }
+    },
     addRequisition(requisition) {
       this.requisitions.push(requisition);
+    },
+    _buildPurchaseOrderPayload(items) {
+      const orderItems = items.map((item) => {
+        const supply = this.inventory.find(
+          (entry) => Number(entry.id) === Number(item.insumoId)
+        );
+        const unitCost = supply?.unitCost ?? 0;
+        return {
+          supply_id: Number(item.insumoId),
+          quantity_requested: Number(item.quantity),
+          unit_cost: unitCost,
+        };
+      });
+      const total_cost = orderItems.reduce(
+        (sum, line) => sum + line.quantity_requested * line.unit_cost,
+        0
+      );
+      return {
+        status: 'REQUESTED',
+        total_cost,
+        items: orderItems,
+      };
+    },
+    async submitRequisition(items) {
+      if (!items?.length) {
+        throw new Error('La solicitud debe incluir al menos un insumo');
+      }
+
+      this.requisitionSubmitting = true;
+      try {
+        const created = await createPurchaseOrder(this._buildPurchaseOrderPayload(items));
+        const mapped = mapPurchaseOrderToRequisition(created);
+        const existing = this.requisitions.findIndex((r) => r.id === mapped.id);
+        if (existing >= 0) {
+          this.requisitions[existing] = mapped;
+        } else {
+          this.requisitions.push(mapped);
+        }
+        return mapped;
+      } finally {
+        this.requisitionSubmitting = false;
+      }
+    },
+    async updateRequisitionStatus(orderId, estado) {
+      this.purchaseOrderUpdatingId = orderId;
+      try {
+        await updatePurchaseOrderStatus(orderId, mapRequisitionStatusToApi(estado));
+        const solicitud = this.requisitions.find((s) => s.id === orderId);
+        if (solicitud) {
+          solicitud.estado = estado;
+        }
+      } finally {
+        this.purchaseOrderUpdatingId = null;
+      }
     },
   },
 });

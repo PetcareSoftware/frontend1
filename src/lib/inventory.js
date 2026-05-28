@@ -61,3 +61,17 @@ export function evaluateProductAlertState(product) {
 
   return { alertClass, messages };
 }
+
+/** Cantidad sugerida para una solicitud de compra según stock actual y umbral. */
+export function suggestReorderQuantity(product) {
+  const minimum = getInventoryUmbral(product);
+  const stock = product.quantity || 0;
+  if (stock <= minimum) {
+    return Math.max(minimum * 2 - stock, minimum);
+  }
+  const warningLimit = minimum * 1.5;
+  if (stock <= warningLimit) {
+    return Math.max(Math.ceil(warningLimit - stock), 1);
+  }
+  return minimum;
+}
