@@ -7,12 +7,12 @@ import {
   mapPurchaseOrderToRequisition,
   mapRequisitionStatusToApi,
 } from '@/lib/apiMappers';
-import { listSupplies, createBatch } from '@/services/inventoryService';
+import { listSupplies, createBatch } from '@/services/api/v1/inventoryService';
 import {
   listPurchaseOrders,
   createPurchaseOrder,
   updatePurchaseOrderStatus,
-} from '@/services/purchaseService';
+} from '@/services/api/v1/purchaseService';
 import {
   vets as seedVets,
   owners as seedOwners,

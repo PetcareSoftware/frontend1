@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { AuthenticationService } from '../authService';
 
 const api = axios.create({
   baseURL: '/api/v1/',
@@ -8,6 +9,7 @@ const api = axios.create({
   },
 });
 
+/*
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token');
@@ -18,6 +20,16 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+*/
+
+const authService = new AuthenticationService({ urls: {
+  auth: '/api/v1/auth/login/',
+  refresh: '/api/v1/auth/refresh/',
+}});
+// AuthenticationService.connectTo(api);
+const authenticate = authService.authenticate;
+const destroyAuth = authService.destroy;
+const AuthServiceError = AuthenticationService.AuthServiceError;
 
 api.interceptors.response.use(
   (response) => response,
@@ -47,3 +59,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+export { authenticate, destroyAuth, AuthServiceError };
