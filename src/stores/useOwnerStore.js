@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { useAppStore } from './useAppStore';
-import { OwnerService } from '@/services/ownerService';
+import { OwnerService } from '@/services/api/v1/ownerService';
 import { owners as seedOwners } from '@/data/mockData';
 
 const USE_MOCK_DATA = true;

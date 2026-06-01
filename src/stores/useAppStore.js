@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
 import { appTemplate } from '@/config/appTemplate';
 import { ownerService } from '@/services/owner.service';
-import { vetService } from '@/services/vet.service';
-import { appointmentService } from '@/services/appointment.service';
-import { notificationService } from '@/services/notification.service';
-import { medicalRecordService } from '@/services/medicalRecord.service';
+import { vetService } from '@/services/api/v1/vetService';
+import { appointmentService } from '@/services/api/v1/appointmentService';
+import { notificationService } from '@/services/api/v1/notificationService';
+import { medicalRecordService } from '@/services/api/v1/medicalRecordService';
 import { normalizeInventory, normalizeInventoryItem } from '@/lib/inventory';
 import {
   unwrapList,
