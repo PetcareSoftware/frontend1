@@ -24,20 +24,22 @@ import {
   supplies as seedSupplies,
 } from '@/data/mockData';
 
+const USE_MOCK_DATA = true;
+
 const clone = (value) => value.map((item) => ({ ...item }));
 
 export const useAppStore = defineStore('app', {
   state: () => ({
     role: 'owner',
     currentUserId: 'o1',
-    vets: clone(seedVets),
-    owners: clone(seedOwners),
-    pets: clone(seedPets),
-    appointments: clone(seedAppointments),
-    consultations: clone(seedConsultations),
-    vaccines: clone(seedVaccines),
-    dewormings: clone(seedDewormings),
-    inventory: [],
+    vets: USE_MOCK_DATA ? clone(seedVets) : [],
+    owners: USE_MOCK_DATA ? clone(seedOwners) : [],
+    pets: USE_MOCK_DATA ? clone(seedPets) : [],
+    appointments: USE_MOCK_DATA ? clone(seedAppointments) : [],
+    consultations: USE_MOCK_DATA ? clone(seedConsultations) : [],
+    vaccines: USE_MOCK_DATA ? clone(seedVaccines) : [],
+    dewormings: USE_MOCK_DATA ? clone(seedDewormings) : [],
+    inventory: USE_MOCK_DATA ? clone(seedSupplies) : [],
     requisitions: [],
     status: {
       inventory: { loading: false },
