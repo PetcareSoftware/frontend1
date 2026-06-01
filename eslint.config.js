@@ -17,7 +17,7 @@ export default defineConfig([
     files: ["**/*{js,vue}"],
     extends: pluginVue.configs["flat/essential"],
     rules: {
-      "vue/multi-word-component-names": "warn",
+      "vue/multi-word-component-names": "off",
     }
   },
   {
