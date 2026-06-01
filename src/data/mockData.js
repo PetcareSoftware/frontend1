@@ -366,14 +366,14 @@ export const timeSlots = [
   '17:00',
 ];
 
-export const insumos = [
+export const supplies = [
   {
     id: 1,
     name: 'Paracetamol 500mg',
     type: 'Medicamento',
     quantity: 50,
     unitCost: 8,
-    umbral: 10,
+    minStock: 10,
     batches: [{ batch: 'Lote A-12', expirationDate: '2026-12-31' }],
   },
   {
@@ -382,7 +382,7 @@ export const insumos = [
     type: 'Insumo',
     quantity: 8,
     unitCost: 1.2,
-    umbral: 15,
+    minStock: 15,
     batches: [{ batch: 'Lote B-24', expirationDate: '2027-01-15' }],
   },
   {
@@ -391,13 +391,13 @@ export const insumos = [
     type: 'Medicamento',
     quantity: 19,
     unitCost: 5,
-    umbral: 15,
+    minStock: 15,
     batches: [{ batch: 'Lote B-26', expirationDate: '2027-03-20' }],
   },
 ];
 
 export const revenueHistory = {
-  hoy: [
+  today: [
     { label: '08:00', amount: 0 },
     { label: '10:00', amount: 150 },
     { label: '12:00', amount: 300 },
@@ -405,7 +405,7 @@ export const revenueHistory = {
     { label: '16:00', amount: 450 },
     { label: '18:00', amount: 0 },
   ],
-  esta_semana: [
+  currentWeek: [
     { label: 'Lun', amount: 450 },
     { label: 'Mar', amount: 600 },
     { label: 'Mié', amount: 300 },
@@ -414,7 +414,7 @@ export const revenueHistory = {
     { label: 'Sáb', amount: 1200 },
     { label: 'Dom', amount: 0 },
   ],
-  este_mes: [
+  currentMonth: [
     { label: 'Sem 1', amount: 2100 },
     { label: 'Sem 2', amount: 3400 },
     { label: 'Sem 3', amount: 2800 },

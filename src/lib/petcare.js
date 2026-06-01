@@ -159,6 +159,10 @@ export function getLatestDeworming(dewormings, petId) {
   return getPetDewormings(dewormings, petId)[0] || null;
 }
 
+export function getSupply(supplies, supplyId) {
+  return supplies.find((supply) => supply.id === supplyId);
+}
+
 export function daysFromNow(days) {
   const date = new Date('2026-05-08T12:00:00');
   date.setDate(date.getDate() + days);

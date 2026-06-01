@@ -22,9 +22,9 @@
         @change="(e) => dashboardStore.fetchDashboardData(e.target.value)"
         class="gerencia-select"
       >
-        <option value="este_mes">Período: Este Mes</option>
-        <option value="esta_semana">Período: Esta Semana</option>
-        <option value="hoy">Período: Hoy</option>
+        <option value="currentMonth">Período: Este Mes</option>
+        <option value="currentWeek">Período: Esta Semana</option>
+        <option value="today">Período: Hoy</option>
       </select>
     </div>
 

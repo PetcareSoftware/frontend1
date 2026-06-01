@@ -10,7 +10,7 @@ const EMPTY_FORM = {
   tipo: '',
   cantidad: '',
   precio: '',
-  umbral: '',
+  minStock: '',
   observaciones: '',
 };
 
@@ -30,7 +30,7 @@ function handleSubmit() {
     type: form.value.tipo,
     quantity: Number(form.value.cantidad),
     unitCost: Number(form.value.precio),
-    umbral: Number(form.value.umbral),
+    minStock: Number(form.value.minStock),
     batches: [],
   });
 
@@ -52,41 +52,38 @@ function handleSubmit() {
     />
     <DashboardCard title="Nuevo insumo" icon="notebook-pen">
       <form v-show="open" class="stack form-section" @submit.prevent="handleSubmit">
-        <div class="field">
-          <label for="nombre">Nombre*</label>
+        <label class="field field--required">
+          <span class="field__label">Nombre</span>
           <input
             class="input"
-            id="nombre"
             v-model="form.nombre"
             required
             placeholder="Nombre del medicamento o insumo"
           />
-        </div>
-        <div class="field">
-          <label for="tipo">Tipo*</label>
-          <select class="select" id="tipo" v-model="form.tipo" required>
+        </label>
+        <label class="field field--required">
+          <span class="field__label">Tipo</span>
+          <select class="select" v-model="form.tipo" required>
             <option value="" disabled>Seleccionar...</option>
             <option>Medicamento</option>
             <option>Insumo</option>
           </select>
-        </div>
-        <div class="field">
-          <label for="cantidad">Cantidad*</label>
+        </label>
+        <label class="field field--required">
+          <span class="field__label">Cantidad</span>
           <input
             class="input"
-            id="cantidad"
             v-model="form.cantidad"
             type="number"
             min="1"
             required
             placeholder="Cantidad disponible"
           />
-        </div>
-        <div class="field">
-          <label for="precio">Costo unitario (USD)*</label>
+        </label>
+        <label class="field field--required">
+          <span class="field__label">Costo unitario (USD)</span>
           <input
             class="input"
-            id="precio"
             v-model="form.precio"
             type="number"
             min="0"
@@ -94,28 +91,26 @@ function handleSubmit() {
             required
             placeholder="Costo por unidad"
           />
-        </div>
-        <div class="field">
-          <label for="umbral">Nivel mínimo de existencias*</label>
+        </label>
+        <label class="field field--required">
+          <span class="field__label">Nivel mínimo de existencias</span>
           <input
             class="input"
-            id="umbral"
-            v-model="form.umbral"
+            v-model="form.minStock"
             type="number"
             min="1"
             required
             placeholder="Ejemplo: 10"
           />
-        </div>
-        <div class="field">
-          <label for="observaciones">Observaciones</label>
+        </label>
+        <label class="field">
+          <span class="field__label">Observaciones</span>
           <textarea
             class="textarea"
-            id="observaciones"
             v-model="form.observaciones"
             placeholder="Notas internas del catálogo"
           />
-        </div>
+        </label>
         <button class="btn btn--primary" type="submit">Registrar</button>
       </form>
     </DashboardCard>
