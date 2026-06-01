@@ -69,7 +69,7 @@ export function getTodayDate() {
 
 export const getTodayShortDate = getTodayDate;
 
-export function formatDate(value, locale = 'es-AR') {
+export function formatDate(value, locale = 'es-VE') {
   return new Intl.DateTimeFormat(locale, {
     day: '2-digit',
     month: 'short',
@@ -77,17 +77,20 @@ export function formatDate(value, locale = 'es-AR') {
   }).format(new Date(`${value}T12:00:00`));
 }
 
-export function formatDateLong(value, locale = 'es-AR') {
+export function formatDateLong(value, locale = 'es-VE') {
   return new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' }).format(
     new Date(`${value}T12:00:00`)
   );
 }
 
-export function formatMoney(value) {
-  return new Intl.NumberFormat('es-AR', {
+export function formatMoney(
+  value,
+  { locale = 'en-US', currency = 'USD', maximumFractionDigits = 0 } = {}
+) {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'ARS',
-    maximumFractionDigits: 0,
+    currency,
+    maximumFractionDigits,
   }).format(value);
 }
 
@@ -224,6 +227,10 @@ export function switchRoleLocal(item, appStore, router) {
   if (baseRoutes[item.key]) {
     router.push(baseRoutes[item.key]);
   }
+}
+
+export function getSupply(supplies, supplyId) {
+  return supplies.find((supply) => supply.id === supplyId);
 }
 
 export function throttle(fn, delay = 250) {
