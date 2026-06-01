@@ -17,7 +17,7 @@ export const speciesMeta = {
   other: { label: 'Otro', icon: 'paw-print', className: 'chip--brand' },
 };
 
-export function formatDate(value, locale = 'es-AR') {
+export function formatDate(value, locale = 'es-VE') {
   return new Intl.DateTimeFormat(locale, {
     day: '2-digit',
     month: 'short',
@@ -25,7 +25,7 @@ export function formatDate(value, locale = 'es-AR') {
   }).format(new Date(`${value}T12:00:00`));
 }
 
-export function formatDateLong(value, locale = 'es-AR') {
+export function formatDateLong(value, locale = 'es-VE') {
   return new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' }).format(
     new Date(`${value}T12:00:00`)
   );
@@ -33,7 +33,7 @@ export function formatDateLong(value, locale = 'es-AR') {
 
 export function formatMoney(
   value,
-  { locale = 'es-AR', currency = 'ARS', maximumFractionDigits = 0 } = {}
+  { locale = 'en-US', currency = 'USD', maximumFractionDigits = 0 } = {}
 ) {
   return new Intl.NumberFormat(locale, {
     style: 'currency',

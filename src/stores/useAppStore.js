@@ -120,10 +120,7 @@ export const useAppStore = defineStore('app', {
       }
     },
     addSupply(supply) {
-      const item = normalizeInventoryItem({
-        ...supply,
-        batches: supply.batches ?? [],
-      });
+      const item = normalizeInventoryItem(supply);
       this.inventory.push(item);
       return item;
     },

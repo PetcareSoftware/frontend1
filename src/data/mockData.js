@@ -215,14 +215,14 @@ export const appointments = [
     status: 'completed',
   },
   {
-    id: 'apt-prueba-hoy',
-    petName: 'Max',
-    ownerName: 'Felipe Ortiz',
+    id: 'a11',
+    petId: 'p6',
+    ownerId: 'o5',
+    vetId: 'v1',
     date: '2026-05-26',
     time: '10:00',
-    type: 'Consulta General',
+    reason: 'Consulta general',
     status: 'completed',
-    vetId: 'v1',
   },
 ];
 
