@@ -6,7 +6,7 @@ import { useAppStore } from '@/stores/useAppStore';
 import { useToastStore } from '@/stores/useToastStore';
 
 const EMPTY_FORM = {
-  insumoId: '',
+  supplyId: '',
   quantity: 1,
   batch: '',
   expirationDate: '',
@@ -21,7 +21,7 @@ const open = ref(true);
 const form = ref({ ...EMPTY_FORM });
 
 const listaInsumos = computed(() => appStore.inventory);
-const batchLoading = computed(() => appStore.batchLoading);
+const batchLoading = computed(() => appStore.status.batch.loading);
 
 const resetForm = () => {
   Object.assign(form.value, EMPTY_FORM);
@@ -30,7 +30,7 @@ const resetForm = () => {
 const guardarEntrada = async () => {
   if (batchLoading.value) return;
 
-  if (!form.value.insumoId || !form.value.batch || !form.value.expirationDate) {
+  if (!form.value.supplyId || !form.value.batch || !form.value.expirationDate) {
     toastStore.push({
       title: 'Complete los campos obligatorios',
       description: 'Insumo, lote y fecha de vencimiento son requeridos.',
@@ -48,12 +48,12 @@ const guardarEntrada = async () => {
     return;
   }
 
-  const insumoId = form.value.insumoId;
+  const supplyId = form.value.supplyId;
 
   try {
     await appStore.submitBatch({ ...form.value });
 
-    const insumo = listaInsumos.value.find((item) => Number(item.id) === Number(insumoId));
+    const insumo = listaInsumos.value.find((item) => Number(item.id) === Number(supplyId));
 
     toastStore.push({
       title: 'Reposición registrada',
@@ -83,62 +83,58 @@ const guardarEntrada = async () => {
 
     <DashboardCard title="Entrada por lote" icon="notebook-pen">
       <form v-show="open" class="stack form-section" @submit.prevent="guardarEntrada">
-        <div class="field">
-          <label for="insumo">Seleccionar insumo del catálogo*</label>
-          <select id="insumo" v-model="form.insumoId" class="select" required>
+        <label class="field field--required">
+          <span class="field__label">Seleccionar insumo del catálogo</span>
+          <select v-model="form.supplyId" class="select" required>
             <option value="" disabled>Seleccione un insumo del catálogo...</option>
             <option v-for="insumo in listaInsumos" :key="insumo.id" :value="insumo.id">
               {{ insumo.name }} (Stock actual: {{ insumo.quantity }} uds.)
             </option>
           </select>
-        </div>
+        </label>
 
-        <div class="field">
-          <label for="cant">Cantidad recibida*</label>
+        <label class="field field--required">
+          <span class="field__label">Cantidad recibida</span>
           <input
             class="input"
-            id="cant"
             v-model.number="form.quantity"
             type="number"
             min="1"
             required
             placeholder="1"
           />
-        </div>
+        </label>
 
-        <div class="field">
-          <label for="lote">Número de lote*</label>
+        <label class="field field--required">
+          <span class="field__label">Número de lote</span>
           <input
-            id="lote"
             type="text"
             class="input"
             v-model="form.batch"
             placeholder="Ej: LOT-2026-AF"
             required
           />
-        </div>
+        </label>
 
-        <div class="field">
-          <label for="caducidad">Fecha de vencimiento*</label>
+        <label class="field field--required">
+          <span class="field__label">Fecha de vencimiento</span>
           <input
-            id="caducidad"
             type="date"
             class="input"
             v-model="form.expirationDate"
             :min="today"
             required
           />
-        </div>
+        </label>
 
-        <div class="field">
-          <label for="observaciones">Observaciones</label>
+        <label class="field">
+          <span class="field__label">Observaciones</span>
           <textarea
             class="textarea"
-            id="observaciones"
             v-model="form.observations"
             placeholder="Estado del empaque, temperatura, etc."
           />
-        </div>
+        </label>
 
         <button class="btn btn--primary" type="submit" :disabled="batchLoading">
           {{ batchLoading ? 'Registrando…' : 'Registrar entrada' }}

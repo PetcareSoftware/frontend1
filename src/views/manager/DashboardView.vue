@@ -1,3 +1,18 @@
+<script setup>
+  import { onMounted } from 'vue';
+  import { useKPIStore } from '@/stores/useKPIStore';
+  import PageHeader from '@/components/shared/PageHeader.vue';
+  import StatCard from '@/components/shared/StatCard.vue';
+  import AppIcon from '@/components/shared/AppIcon.vue';
+  import KpiCardSkeleton from '@/components/shared/KpiCardSkeleton.vue';
+  import RevenueChart from '@/components/shared/RevenueChart.vue';
+  const dashboardStore = useKPIStore();
+
+  onMounted(() => {
+    dashboardStore.fetchDashboardData();
+  });
+</script>
+
 <template>
   <div class="dashboard-container">
     <PageHeader title="Tablero Gerencial" subtitle="Situación operativa y táctica de la clínica" />
@@ -7,9 +22,9 @@
         @change="(e) => dashboardStore.fetchDashboardData(e.target.value)"
         class="gerencia-select"
       >
-        <option value="este_mes">Período: Este Mes</option>
-        <option value="esta_semana">Período: Esta Semana</option>
-        <option value="hoy">Período: Hoy</option>
+        <option value="currentMonth">Período: Este Mes</option>
+        <option value="currentWeek">Período: Esta Semana</option>
+        <option value="today">Período: Hoy</option>
       </select>
     </div>
 
@@ -19,14 +34,7 @@
 
     <div v-else-if="!dashboardStore.hasData" class="empty-state">
       <div class="text-gray-400 mb-2">
-        <svg class="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-          />
-        </svg>
+        <AppIcon name="file-text" size="24"/>
       </div>
       <h3 class="text-lg font-medium text-gray-900">Aún no hay actividad registrada</h3>
       <p class="text-sm text-gray-500 mt-1">Intenta seleccionando un rango de fechas diferente.</p>
@@ -48,20 +56,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-  import { onMounted } from 'vue';
-  import { useDashboardStore } from '@/stores/useDashboardStore';
-  import PageHeader from '@/components/shared/PageHeader.vue';
-  import StatCard from '@/components/shared/StatCard.vue';
-  import KpiCardSkeleton from '@/components/dashboard/KpiCardSkeleton.vue';
-  import RevenueChart from '@/components/dashboard/RevenueChart.vue';
-  const dashboardStore = useDashboardStore();
-
-  onMounted(() => {
-    dashboardStore.fetchDashboardData();
-  });
-</script>
 
 <style scoped>
   .dashboard-container {

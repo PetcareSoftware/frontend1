@@ -10,7 +10,7 @@ function toSupplyPayload(supply) {
     name: supply.name,
     description: supply.description ?? null,
     category: supply.category ?? supply.type,
-    min_stock_alert: supply.min_stock_alert ?? supply.umbral ?? 0,
+    min_stock: supply.min_stock ?? supply.minStock ?? 0,
     unit_cost: supply.unit_cost ?? supply.unitCost ?? null,
   };
 }
@@ -18,7 +18,7 @@ function toSupplyPayload(supply) {
 /** Mapeo UI → payload Django para reposición por lote (supply_batches). */
 function toBatchPayload(batch) {
   return {
-    supply_id: batch.supply_id ?? batch.supplyId ?? batch.insumoId,
+    supply_id: batch.supply_id ?? batch.supplyId,
     lot_number: batch.lot_number ?? batch.batchNumber ?? batch.batch,
     expiry_date: batch.expiry_date ?? batch.expiryDate ?? batch.expirationDate,
     quantity: batch.quantity,

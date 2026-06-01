@@ -11,7 +11,7 @@ function toPurchaseOrderPayload(order) {
     status: order.status ?? 'REQUESTED',
     total_cost: order.total_cost ?? order.total ?? 0,
     items: (order.items ?? []).map((item) => ({
-      supply_id: item.supply_id ?? item.supplyId ?? item.insumoId,
+      supply_id: item.supply_id ?? item.supplyId,
       quantity_requested: item.quantity_requested ?? item.quantity,
       unit_cost: item.unit_cost ?? item.unitCost ?? 0,
     })),

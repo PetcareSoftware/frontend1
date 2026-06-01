@@ -7,7 +7,7 @@ import { formatMoney } from '@/lib/petcare';
 
 const appStore = useAppStore();
 const solicitudes = computed(() => appStore.requisitions);
-const requisitionsLoading = computed(() => appStore.requisitionsLoading);
+const requisitionsLoading = computed(() => appStore.status.requisition.loading);
 
 onMounted(() => {
   appStore.fetchRequisitions();
@@ -20,7 +20,7 @@ const solicitudesFiltradas = computed(() => {
 });
 
 const formatTotal = (value) =>
-  formatMoney(value, { locale: 'en-US', currency: 'USD', maximumFractionDigits: 2 });
+  formatMoney(value, { maximumFractionDigits: 2 });
 
 const getBadgeClass = (estado) => {
   if (estado === 'Pendiente') return 'badge--warning';
@@ -41,15 +41,15 @@ const getBadgeClass = (estado) => {
       <p v-if="requisitionsLoading" class="tracking-loading">
         Actualizando historial de solicitudes…
       </p>
-      <div class="filter-container">
-        <label for="filtro-estado">Filtrar por estado:</label>
-        <select id="filtro-estado" v-model="filtroEstado" class="select filter-select">
+      <label class="filter-container">
+        <span>Filtrar por estado:</span>
+        <select v-model="filtroEstado" class="select filter-select">
           <option value="Todos">Mostrar todas</option>
           <option value="Pendiente">Pendiente</option>
           <option value="Aprobada">Aprobada</option>
           <option value="Rechazada">Rechazada</option>
         </select>
-      </div>
+      </label>
 
       <section v-if="!requisitionsLoading && solicitudesFiltradas.length > 0" class="table-wrap">
         <table class="table">

@@ -10,11 +10,11 @@ import { exportToExcel, exportToPDF } from '@/lib/export';
 
 const appStore = useAppStore();
 const inventory = computed(() => appStore.inventory);
-const inventoryLoading = computed(() => appStore.inventoryLoading);
-const inventoryError = computed(() => appStore.inventoryError);
+const inventoryLoading = computed(() => appStore.status.inventory.loading);
+const inventoryError = computed(() => appStore.errors.inventory);
 
 onMounted(() => {
-  if (!appStore.inventory.length && !appStore.inventoryLoading) {
+  if (!appStore.inventory.length && !appStore.status.inventory.loading) {
     appStore.fetchInventory();
   }
 });
@@ -27,7 +27,7 @@ const getReportData = () => inventory.value.map(item => ({
     Nombre: item.name,
     Tipo: item.type,
     Cantidad: item.quantity,
-    'Stock Mínimo': item.umbral,
+    'Stock Mínimo': item.minStock,
     'Costo Unitario (USD)': item.unitCost
 }));
 
@@ -50,7 +50,7 @@ const alertByItemId = computed(() => {
 const reorderRouteFor = (item) => ({
   path: '/technician/supply-requisition',
   query: {
-    insumoId: item.id,
+    supplyId: item.id,
     quantity: suggestReorderQuantity(item),
     auto: '1',
   },
@@ -121,10 +121,10 @@ const hasStockAlert = (item) => {
               <td>{{ item.quantity }} uds.</td>
               <td>
                 <input
-                  v-model.number="item.umbral"
+                  v-model.number="item.minStock"
                   type="number"
                   min="1"
-                  class="input inventory-umbral-input"
+                  class="input inventory-min-stock-input"
                   title="Nivel mínimo de existencias"
                 />
               </td>
@@ -186,7 +186,7 @@ const hasStockAlert = (item) => {
   color: #94a3b8;
 }
 
-.inventory-umbral-input {
+.inventory-min-stock-input {
   width: 4.5rem;
   padding: 6px 8px;
 }

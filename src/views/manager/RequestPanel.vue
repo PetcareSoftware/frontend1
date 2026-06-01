@@ -9,8 +9,8 @@ import { formatMoney } from '@/lib/petcare';
 const appStore = useAppStore();
 const toastStore = useToastStore();
 
-const requisitionsLoading = computed(() => appStore.requisitionsLoading);
-const purchaseOrderUpdatingId = computed(() => appStore.purchaseOrderUpdatingId);
+const requisitionsLoading = computed(() => appStore.status.requisition.loading);
+const requisitionUpdatingId = computed(() => appStore.status.requisition.submitting);
 
 onMounted(() => {
   appStore.fetchRequisitions();
@@ -29,13 +29,13 @@ const formatTotal = (value) =>
   formatMoney(value, { locale: 'en-US', currency: 'USD', maximumFractionDigits: 2 });
 
 // Auxiliar para obtener el nombre del insumo original desde el inventario
-const obtenerNombreInsumo = (insumoId) => {
-  const insumo = appStore.inventory.find(i => Number(i.id) === Number(insumoId));
-  return insumo ? insumo.name : `Insumo ID #${insumoId}`;
+const obtenerNombreInsumo = (supplyId) => {
+  const insumo = appStore.inventory.find(i => Number(i.id) === Number(supplyId));
+  return insumo ? insumo.name : `Insumo ID #${supplyId}`;
 };
 
 const procesarSolicitud = async (id, nuevoEstado) => {
-  if (purchaseOrderUpdatingId.value) return;
+  if (requisitionUpdatingId.value) return;
 
   try {
     await appStore.updateRequisitionStatus(id, nuevoEstado);
@@ -84,8 +84,8 @@ const procesarSolicitud = async (id, nuevoEstado) => {
           <section class="request-card__body">
             <h4>Detalle del Pedido:</h4>
             <ul class="items-list">
-              <li v-for="item in solicitud.items" :key="item.insumoId" class="item-row">
-                <span>• {{ obtenerNombreInsumo(item.insumoId) }}</span>
+              <li v-for="item in solicitud.items" :key="item.supplyId" class="item-row">
+                <span>• {{ obtenerNombreInsumo(item.supplyId) }}</span>
                 <span class="item-quantity">Cantidad: <strong>{{ item.quantity }} uds.</strong></span>
               </li>
             </ul>
@@ -101,18 +101,18 @@ const procesarSolicitud = async (id, nuevoEstado) => {
               <button 
                 type="button" 
                 class="btn btn--danger-action" 
-                :disabled="purchaseOrderUpdatingId === solicitud.id"
+                :disabled="requisitionUpdatingId === solicitud.id"
                 @click="procesarSolicitud(solicitud.id, 'Rechazada')"
               >
-                {{ purchaseOrderUpdatingId === solicitud.id ? 'Procesando…' : 'Rechazar' }}
+                {{ requisitionUpdatingId === solicitud.id ? 'Procesando…' : 'Rechazar' }}
               </button>
               <button 
                 type="button" 
                 class="btn btn--success-action" 
-                :disabled="purchaseOrderUpdatingId === solicitud.id"
+                :disabled="requisitionUpdatingId === solicitud.id"
                 @click="procesarSolicitud(solicitud.id, 'Aprobada')"
               >
-                {{ purchaseOrderUpdatingId === solicitud.id ? 'Procesando…' : 'Aprobar Solicitud' }}
+                {{ requisitionUpdatingId === solicitud.id ? 'Procesando…' : 'Aprobar Solicitud' }}
               </button>
             </div>
           </footer>

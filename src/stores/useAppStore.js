@@ -7,12 +7,12 @@ import {
   mapPurchaseOrderToRequisition,
   mapRequisitionStatusToApi,
 } from '@/lib/apiMappers';
-import { listSupplies, createBatch } from '@/services/inventoryService';
+import { listSupplies, createBatch } from '@/services/api/v1/inventoryService';
 import {
   listPurchaseOrders,
   createPurchaseOrder,
   updatePurchaseOrderStatus,
-} from '@/services/purchaseService';
+} from '@/services/api/v1/purchaseService';
 import {
   vets as seedVets,
   owners as seedOwners,
@@ -20,9 +20,11 @@ import {
   appointments as seedAppointments,
   consultations as seedConsultations,
   vaccines as seedVaccines,
-  insumos as seedInsumos,
   dewormings as seedDewormings,
+  supplies as seedSupplies,
 } from '@/data/mockData';
+
+const USE_MOCK_DATA = true;
 
 const clone = (value) => value.map((item) => ({ ...item }));
 
@@ -30,20 +32,23 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     role: 'owner',
     currentUserId: 'o1',
-    vets: clone(seedVets),
-    owners: clone(seedOwners),
-    pets: clone(seedPets),
-    appointments: clone(seedAppointments),
-    consultations: clone(seedConsultations),
-    vaccines: clone(seedVaccines),
-    dewormings: clone(seedDewormings),
-    inventory: [],
+    vets: USE_MOCK_DATA ? clone(seedVets) : [],
+    owners: USE_MOCK_DATA ? clone(seedOwners) : [],
+    pets: USE_MOCK_DATA ? clone(seedPets) : [],
+    appointments: USE_MOCK_DATA ? clone(seedAppointments) : [],
+    consultations: USE_MOCK_DATA ? clone(seedConsultations) : [],
+    vaccines: USE_MOCK_DATA ? clone(seedVaccines) : [],
+    dewormings: USE_MOCK_DATA ? clone(seedDewormings) : [],
+    inventory: USE_MOCK_DATA ? clone(seedSupplies) : [],
     requisitions: [],
-    inventoryLoading: false,
-    inventoryError: null,
-    batchLoading: false,
-    requisitionsLoading: false,
-    requisitionSubmitting: false,
+    status: {
+      inventory: { loading: false },
+      batch: { loading: false },
+      requisition: { loading: false, submitting: false },
+    },
+    errors: {
+      inventory: null,
+    },
     purchaseOrderUpdatingId: null,
   }),
   getters: {
@@ -101,37 +106,29 @@ export const useAppStore = defineStore('app', {
     normalizeInventory() {
       normalizeInventory(this.inventory);
     },
-    _applyInventoryFallback() {
-      this.inventory = clone(seedInsumos);
-      normalizeInventory(this.inventory);
-    },
     async fetchInventory() {
-      this.inventoryLoading = true;
-      this.inventoryError = null;
+      this.status.inventory.loading = true;
+      this.errors.inventory = null;
+
       try {
         const data = await listSupplies();
         this.inventory = unwrapList(data).map(mapSupplyFromApi);
-        normalizeInventory(this.inventory);
       } catch (error) {
-        this.inventoryError = error?.message ?? 'No se pudo cargar el inventario';
-        this._applyInventoryFallback();
+        this.errors.inventory = error?.message ?? 'No se pudo cargar el inventario';
       } finally {
-        this.inventoryLoading = false;
+        this.status.inventory.loading = false;
       }
     },
     addSupply(supply) {
-      const item = normalizeInventoryItem({
-        ...supply,
-        batches: supply.batches ?? [],
-      });
+      const item = normalizeInventoryItem(supply);
       this.inventory.push(item);
       return item;
     },
-    async submitBatch({ insumoId, batch, expirationDate, quantity, observations }) {
-      this.batchLoading = true;
+    async submitBatch({ supplyId, batch, expirationDate, quantity, observations }) {
+      this.status.batch.loading = true;
       try {
         await createBatch({
-          supply_id: Number(insumoId),
+          supply_id: Number(supplyId),
           lot_number: batch,
           expiry_date: expirationDate,
           quantity: Number(quantity),
@@ -140,7 +137,7 @@ export const useAppStore = defineStore('app', {
         await this.fetchInventory();
         return true;
       } finally {
-        this.batchLoading = false;
+        this.status.batch.loading = false;
       }
     },
     addBatch(supplyId, { batch, expirationDate, quantity }) {
@@ -157,14 +154,14 @@ export const useAppStore = defineStore('app', {
       return true;
     },
     async fetchRequisitions() {
-      this.requisitionsLoading = true;
+      this.status.requisition.loading = true;
       try {
         const data = await listPurchaseOrders();
         this.requisitions = unwrapList(data).map(mapPurchaseOrderToRequisition);
       } catch {
         // Mantiene solicitudes locales si la API no está disponible
       } finally {
-        this.requisitionsLoading = false;
+        this.status.requisition.loading = false;
       }
     },
     addRequisition(requisition) {
@@ -173,11 +170,11 @@ export const useAppStore = defineStore('app', {
     _buildPurchaseOrderPayload(items) {
       const orderItems = items.map((item) => {
         const supply = this.inventory.find(
-          (entry) => Number(entry.id) === Number(item.insumoId)
+          (entry) => Number(entry.id) === Number(item.supplyId)
         );
         const unitCost = supply?.unitCost ?? 0;
         return {
-          supply_id: Number(item.insumoId),
+          supply_id: Number(item.supplyId),
           quantity_requested: Number(item.quantity),
           unit_cost: unitCost,
         };
@@ -197,7 +194,7 @@ export const useAppStore = defineStore('app', {
         throw new Error('La solicitud debe incluir al menos un insumo');
       }
 
-      this.requisitionSubmitting = true;
+      this.status.requisition.submitting = true;
       try {
         const created = await createPurchaseOrder(this._buildPurchaseOrderPayload(items));
         const mapped = mapPurchaseOrderToRequisition(created);
@@ -209,11 +206,11 @@ export const useAppStore = defineStore('app', {
         }
         return mapped;
       } finally {
-        this.requisitionSubmitting = false;
+        this.status.requisition.submitting = false;
       }
     },
     async updateRequisitionStatus(orderId, estado) {
-      this.purchaseOrderUpdatingId = orderId;
+      this.status.requisition.submitting = orderId;
       try {
         await updatePurchaseOrderStatus(orderId, mapRequisitionStatusToApi(estado));
         const solicitud = this.requisitions.find((s) => s.id === orderId);
@@ -221,7 +218,7 @@ export const useAppStore = defineStore('app', {
           solicitud.estado = estado;
         }
       } finally {
-        this.purchaseOrderUpdatingId = null;
+        this.status.requisition.submitting = false;
       }
     },
   },

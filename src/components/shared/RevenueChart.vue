@@ -1,19 +1,3 @@
-<template>
-  <div class="chart-card">
-    <div class="chart-header">
-      <div class="title-indicator"></div>
-      <div class="title-text">
-        <h3>Evolución de Ingresos</h3>
-        <p>Tendencia financiera del período seleccionado</p>
-      </div>
-    </div>
-
-    <div class="chart-container">
-      <Line v-if="chartData" :data="chartData" :options="chartOptions" />
-    </div>
-  </div>
-</template>
-
 <script setup>
   import { computed } from 'vue';
   import { Line } from 'vue-chartjs';
@@ -109,6 +93,22 @@
     },
   };
 </script>
+
+<template>
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="title-indicator"></div>
+      <div class="title-text">
+        <h3>Evolución de Ingresos</h3>
+        <p>Tendencia financiera del período seleccionado</p>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <Line v-if="chartData" :data="chartData" :options="chartOptions" />
+    </div>
+  </div>
+</template>
 
 <style scoped>
   .chart-card {

@@ -22,7 +22,7 @@ export function mapSupplyFromApi(supply) {
     type: supply.category ?? supply.type ?? '',
     quantity: Number(supply.current_stock ?? supply.quantity ?? 0),
     unitCost: Number(supply.unit_cost ?? supply.unitCost ?? 0),
-    umbral: Number(supply.min_stock_alert ?? supply.umbral ?? 10),
+    minStock: Number(supply.min_stock_alert ?? supply.minStock ?? 10),
     batches: Array.isArray(batches) ? batches.map(mapBatchFromApi) : [],
   };
 }
@@ -57,7 +57,7 @@ export function mapPurchaseOrderToRequisition(order) {
     total: Number(order.total_cost ?? order.total ?? 0),
     cantidadProductos,
     items: items.map((item) => ({
-      insumoId: item.supply_id ?? item.supplyId ?? item.supply,
+      supplyId: item.supply_id ?? item.supplyId ?? item.supply,
       quantity: Number(item.quantity_requested ?? item.quantity ?? 0),
     })),
   };

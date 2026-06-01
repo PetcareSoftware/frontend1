@@ -1,16 +1,21 @@
 import * as XLSX from 'xlsx';
+import { jsPDF } from "jspdf";
+import autoTable from 'jspdf-autotable';
+
 
 export const exportToExcel = (data, fileName) => {
   const worksheet = XLSX.utils.json_to_sheet(data);
   
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte");
+
+  if (!fileName) {
+    fileName = 'Reporte';
+  }
   
   XLSX.writeFile(workbook, `${fileName}.xlsx`);
 };
 
-import { jsPDF } from "jspdf";
-import autoTable from 'jspdf-autotable';
 
 export const exportToPDF = (inventory, requisitions = []) => {
   const doc = new jsPDF();

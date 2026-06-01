@@ -1,18 +1,21 @@
-export const DEFAULT_INVENTORY_UMBRAL = 10;
+export const DEFAULT_INVENTORY_MIN_STOCK = 10;
+const DEFAULT_WARNING_THRESHOLD_RATIO = 1.5;
+const DEFAULT_WARNING_DAYS_REMAINING = 30;
+const DEFAULT_CRITICAL_DAYS_REMAINING = 15;
 
-export function getInventoryUmbral(item) {
-  const raw = item?.umbral;
+export function getInventoryMinStock(item) {
+  const raw = item?.minStock;
   if (raw != null && raw !== '' && !Number.isNaN(Number(raw))) {
     return Number(raw);
   }
-  return DEFAULT_INVENTORY_UMBRAL;
+  return 0;
 }
 
 export function normalizeInventoryItem(item) {
   if (!item.batches) {
     item.batches = [];
   }
-  item.umbral = getInventoryUmbral(item);
+  item.minStock = getInventoryMinStock(item);
   return item;
 }
 
@@ -34,8 +37,8 @@ export function evaluateProductAlertState(product) {
   const messages = [];
 
   const stock = product.quantity || 0;
-  const minimum = getInventoryUmbral(product);
-  const warningStockLimit = minimum * 1.5;
+  const minimum = getInventoryMinStock(product);
+  const warningStockLimit = minimum * DEFAULT_WARNING_THRESHOLD_RATIO;
 
   if (stock <= minimum) {
     alertClass = 'critical';
@@ -49,10 +52,10 @@ export function evaluateProductAlertState(product) {
     product.batches.forEach((batch) => {
       const daysRemaining = daysUntilExpiration(batch.expirationDate);
 
-      if (daysRemaining <= 15) {
+      if (daysRemaining <= DEFAULT_CRITICAL_DAYS_REMAINING) {
         alertClass = 'critical';
         messages.push(`Lote #${batch.batch}: vence en ${daysRemaining} días (crítico)`);
-      } else if (daysRemaining <= 45) {
+      } else if (daysRemaining <= DEFAULT_WARNING_DAYS_REMAINING) {
         if (alertClass !== 'critical') alertClass = 'warning';
         messages.push(`Lote #${batch.batch}: vence en ${daysRemaining} días`);
       }
@@ -64,12 +67,12 @@ export function evaluateProductAlertState(product) {
 
 /** Cantidad sugerida para una solicitud de compra según stock actual y umbral. */
 export function suggestReorderQuantity(product) {
-  const minimum = getInventoryUmbral(product);
+  const minimum = getInventoryMinStock(product);
   const stock = product.quantity || 0;
   if (stock <= minimum) {
     return Math.max(minimum * 2 - stock, minimum);
   }
-  const warningLimit = minimum * 1.5;
+  const warningLimit = minimum * DEFAULT_WARNING_THRESHOLD_RATIO;
   if (stock <= warningLimit) {
     return Math.max(Math.ceil(warningLimit - stock), 1);
   }

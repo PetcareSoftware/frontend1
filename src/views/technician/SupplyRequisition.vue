@@ -5,7 +5,7 @@ import { useAppStore } from '@/stores/useAppStore';
 import { useToastStore } from '@/stores/useToastStore';
 import PageHeader from '@/components/shared/PageHeader.vue';
 import DashboardCard from '@/components/shared/DashboardCard.vue';
-import { formatMoney } from '@/lib/petcare';
+import { getSupply as getSupplyById, formatMoney } from '@/lib/petcare';
 import { suggestReorderQuantity } from '@/lib/inventory';
 
 const appStore = useAppStore();
@@ -13,37 +13,36 @@ const toastStore = useToastStore();
 const route = useRoute();
 
 const listaInsumos = computed(() => appStore.inventory);
-const requisitionSubmitting = computed(() => appStore.requisitionSubmitting);
+const requisitionSubmitting = computed(() => appStore.status.requisition.submitting);
 
 const form = ref({
-  insumoId: '',
+  supplyId: '',
   quantity: 1,
 });
 
 const itemsSolicitados = ref([]);
 
-const getSupplyById = (id) =>
-  listaInsumos.value.find((insumo) => Number(insumo.id) === Number(id));
+const getSupply = (supplyId) => getSupplyById(listaInsumos, supplyId);
 
-const getUnitCost = (supply) => (supply ? supply.unitCost ?? 0 : 0);
+const getUnitCost = (insumo) => insumo?.unitCost || 0;
 
 const formatUnitCost = (value) =>
   formatMoney(value, { locale: 'en-US', currency: 'USD', maximumFractionDigits: 2 });
 
 const agregarInsumoALista = () => {
-  if (!form.value.insumoId || form.value.quantity < 1) return;
+  if (!form.value.supplyId || form.value.quantity < 1) return;
 
-  const id = Number(form.value.insumoId);
+  const id = Number(form.value.supplyId);
   const cantidad = Number(form.value.quantity);
-  const existe = itemsSolicitados.value.find((item) => item.insumoId === id);
+  const existe = itemsSolicitados.value.find((item) => item.supplyId === id);
 
   if (existe) {
     existe.quantity += cantidad;
   } else {
-    itemsSolicitados.value.push({ insumoId: id, quantity: cantidad });
+    itemsSolicitados.value.push({ supplyId: id, quantity: cantidad });
   }
 
-  form.value.insumoId = '';
+  form.value.supplyId = '';
   form.value.quantity = 1;
 };
 
@@ -53,23 +52,23 @@ const quitarInsumo = (index) => {
 
 const gastoTotalPrevisto = computed(() =>
   itemsSolicitados.value.reduce((total, item) => {
-    const supply = getSupplyById(item.insumoId);
+    const supply = getSupply(item.supplyId);
     return total + item.quantity * getUnitCost(supply);
   }, 0)
 );
 
 const prefillFromCatalogAlert = () => {
-  const insumoId = route.query.insumoId;
-  if (!insumoId) return;
+  const supplyId = route.query.supplyId;
+  if (!supplyId) return;
 
-  const supply = getSupplyById(insumoId);
+  const supply = getSupply(supplyId);
   if (!supply) return;
 
   const quantity = route.query.quantity
     ? Number(route.query.quantity)
     : suggestReorderQuantity(supply);
 
-  form.value.insumoId = String(supply.id);
+  form.value.supplyId = String(supply.id);
   form.value.quantity = Math.max(quantity, 1);
 
   if (route.query.auto === '1') {
@@ -113,33 +112,32 @@ const enviarAlGerente = async () => {
 
     <DashboardCard title="Nueva solicitud" icon="notebook-pen">
       <div class="stack form-section">
-        <div class="field">
-          <label for="insumo">Seleccionar insumo del catálogo*</label>
-          <select id="insumo" v-model="form.insumoId" class="select" required>
+        <label class="field field--required">
+          <span class="field__label">Seleccionar insumo del catálogo</span>
+          <select v-model="form.supplyId" class="select" required>
             <option value="" disabled>Seleccione un insumo del catálogo...</option>
             <option v-for="insumo in listaInsumos" :key="insumo.id" :value="insumo.id">
               {{ insumo.name }} (Stock: {{ insumo.quantity }} uds. | {{ formatUnitCost(insumo.unitCost) }})
             </option>
           </select>
-        </div>
+        </label>
 
-        <div class="field">
-          <label for="cant">Cantidad deseada*</label>
+        <label class="field">
+          <span class="field__label">Cantidad deseada</span>
           <input
             class="input"
-            id="cant"
             v-model.number="form.quantity"
             type="number"
             min="1"
             required
             placeholder="1"
           />
-        </div>
+        </label>
 
         <button
           class="btn btn--primary"
           type="button"
-          :disabled="!form.insumoId"
+          :disabled="!form.supplyId"
           @click="agregarInsumoALista"
         >
           Agregar a la lista
@@ -161,8 +159,8 @@ const enviarAlGerente = async () => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, index) in itemsSolicitados" :key="item.insumoId" class="table__row">
-                <td>{{ getSupplyById(item.insumoId)?.name }}</td>
+              <tr v-for="(item, index) in itemsSolicitados" :key="item.supplyId" class="table__row">
+                <td>{{ getSupply(item.supplyId)?.name }}</td>
                 <td>
                   <input
                     class="input quantity-input"
@@ -171,10 +169,10 @@ const enviarAlGerente = async () => {
                     min="1"
                   />
                 </td>
-                <td>{{ formatUnitCost(getUnitCost(getSupplyById(item.insumoId))) }}</td>
+                <td>{{ formatUnitCost(getUnitCost(getSupply(item.supplyId))) }}</td>
                 <td>
                   {{
-                    formatUnitCost(item.quantity * getUnitCost(getSupplyById(item.insumoId)))
+                    formatUnitCost(item.quantity * getUnitCost(getSupply(item.supplyId)))
                   }}
                 </td>
                 <td>
