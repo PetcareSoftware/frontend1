@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { appTemplate } from '@/config/appTemplate';
-import { ownerService } from '@/services/owner.service';
+import { OwnerService } from '@/services/api/v1/ownerService';
 import { vetService } from '@/services/api/v1/vetService';
 import { appointmentService } from '@/services/api/v1/appointmentService';
 import { notificationService } from '@/services/api/v1/notificationService';
@@ -101,9 +101,7 @@ export const useAppStore = defineStore('app', {
     async fetchProfile() {
       this.isLoading = true;
       try {
-        const response = await ownerService.getMe();
-        // Assume response.data is the owner profile with a 'pets' array
-        const profile = response.data;
+        const profile = await OwnerService.getMe();
         this.updateOwner(profile);
         if (profile.pets) {
           this.pets = profile.pets;
