@@ -41,7 +41,7 @@ export class Pet {
     if (NEG_NAME_REGEXP.test(this.name)) {
       throw new ValidationError('Nombre inválido', 'name');
     }
-    if (! this.constructor.SPECIES.includes(this.species)) {
+    if (! Object.values(this.constructor.SPECIES).includes(this.species)) {
       throw new ValidationError('Especie inválida', 'species')
     }
     if (NEG_NAME_REGEXP.test(this.breed)) {

@@ -1,10 +1,17 @@
 import api from '@/services/api/v1/api';
 
-export const medicalRecordService = {
-  getSummary(petId) {
-    return api.get(`/pets/${petId}/medical-record/summary/`);
-  },
-  getCompleteRecord(petId) {
-    return api.get(`/pets/${petId}/medical-record/`);
-  },
-};
+export const PETS_BASE = 'pets/';
+
+export class MedicalRecordService {
+  static async getSummary(petId) {
+    const response = await api.get(`${PETS_BASE}${petId}/medical-record/summary/`);
+
+    return response.data;
+  }
+
+  static async get(petId) {
+    const response = await api.get(`${PETS_BASE}${petId}/medical-record/`);
+
+    return response.data;
+  }
+}

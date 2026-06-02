@@ -77,4 +77,47 @@ export class Consultation {
 
     return true;
   }
+
+  toApi() {
+    const data = {
+      diagnosis: this.diagnosis,
+      treatment: this.treatment,
+      symptoms: this.symptoms,
+      weight: this.weight,
+      temperature: this.temperature,
+      prescriptions: Array.isArray(this.prescriptions)
+        ? this.prescriptions.join('\n')
+        : (this.prescriptions ?? ''),
+      notes: this.notes,
+      follow_up_date: this.followUpDate,
+    };
+
+    return data;
+  }
+
+  static fromApi(data, { appointmentId = '', petId = '', vetId = '' } = {}) {
+    return new Consultation({
+      id: data.id ?? '',
+      appointmentId: appointmentId,
+      petId: petId,
+      vetId: vetId,
+      date: data.date ?? '',
+      weight: data.weight != null ? Number(data.weight) : undefined,
+      temperature: data.temperature != null ? Number(data.temperature) : undefined,
+      symptoms: data.symptoms,
+      diagnosis: data.diagnosis,
+      treatment: data.treatment,
+      prescriptions: typeof data.prescriptions === 'string'
+        ? data.prescriptions.split('\n').filter(Boolean)
+        : (data.prescriptions ?? []),
+      followUpDate: data.follow_up_date,
+      notes: data.notes,
+    });
+  }
+
+  equals(other) {
+    return this.id === other.id || (
+      this.appointmentId === other.appointmentId && !!this.appointmentId
+    );
+  }
 }

@@ -29,4 +29,38 @@ export class Vaccination extends Treatment {
 
     return true;
   }
+
+  toApi() {
+    const data = {
+      event_type: 'VACCINE',
+      vaccine_name: this.name,
+      dose: '',
+      applied_date: this.date,
+      sanitary_batch: this.lot,
+      next_due_date: this.nextDate,
+    };
+
+    return data;
+  }
+
+  static fromApi(data, petId = '') {
+    return new Vaccination({
+      id: data.id,
+      petId: petId,
+      name: data.vaccine_name ?? data.event_type ?? '',
+      date: data.applied_date,
+      nextDate: data.next_due_date,
+      appliedBy: data.appliedBy ?? '',
+      lot: data.lot ?? '',
+      notes: data.notes ?? '',
+    });
+  }
+
+  equals(other) {
+    return this.id === other.id || (
+      this.petId === other.petId &&
+      this.name.toLowerCase() === other.name.toLowerCase() &&
+      this.date === other.date
+    );
+  }
 }

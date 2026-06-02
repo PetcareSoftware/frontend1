@@ -1,14 +1,22 @@
 import api from '@/services/api/v1/api';
 
-export const vetService = {
-  getSlots(vetId, date) {
+export const VETS_BASE = 'vets/';
+export const SCHEDULES_BASE = 'schedules/';
+
+export class VetService {
+  static async getSlots(vetId, date) {
     const params = date ? { date } : {};
-    return api.get(`/vets/${vetId}/slots/`, { params });
-  },
-  getCalendar(from, to) {
+    const response = await api.get(`${VETS_BASE}${vetId}/slots/`, { params });
+
+    return response.data;
+  }
+
+  static async getCalendar(from, to) {
     const params = {};
     if (from) params.from = from;
     if (to) params.to = to;
-    return api.get('/schedules/calendar/', { params });
-  },
-};
+    const response = await api.get(`${SCHEDULES_BASE}calendar/`, { params });
+
+    return response.data;
+  }
+}

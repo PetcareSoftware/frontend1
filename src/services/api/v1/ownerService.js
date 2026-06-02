@@ -9,7 +9,7 @@ export class OwnerService {
     const response = await api.get(OWNERS_BASE);
     const data = response.data;
     return Array.isArray(data) ?
-      data.map(owner => new Owner(owner)) :
+      data.map(owner => Owner.fromApi(owner)) :
       data;
   }
 
