@@ -46,13 +46,15 @@ export class Vaccination extends Treatment {
   }
 
   toApiCreate() {
+    const data = this.toApi();
+
     return {
       event_type: 'VACCINE',
-      vaccine_name: this.name,
+      vaccine_name: data.name,
       dose: '',
-      applied_date: this.date,
-      sanitary_batch: this.lot,
-      next_due_date: this.nextDate,
+      applied_date: data.date,
+      sanitary_batch: data.lot,
+      next_due_date: data.next_date,
     };
   }
 

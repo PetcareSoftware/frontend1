@@ -99,17 +99,19 @@ export class Consultation {
   }
 
   toApiCreate() {
+    const data = this.toApi();
+
     return {
-      diagnosis: this.diagnosis,
-      treatment: this.treatment,
-      symptoms: this.symptoms,
-      weight: this.weight,
-      temperature: this.temperature,
-      prescriptions: Array.isArray(this.prescriptions)
-        ? this.prescriptions.join('\n')
-        : (this.prescriptions ?? ''),
-      notes: this.notes,
-      follow_up_date: this.followUpDate,
+      diagnosis: data.diagnosis,
+      treatment: data.treatment,
+      symptoms: data.symptoms,
+      weight: data.weight,
+      temperature: data.temperature,
+      prescriptions: Array.isArray(data.prescriptions)
+        ? data.prescriptions.join('\n')
+        : (data.prescriptions ?? ''),
+      notes: data.notes,
+      follow_up_date: data.follow_up_date,
     };
   }
 

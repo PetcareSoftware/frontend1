@@ -40,13 +40,15 @@ export class Deworming extends Treatment {
   }
 
   toApiCreate() {
+    const data = this.toApi();
+
     return {
       event_type: 'DEWORMING',
-      vaccine_name: this.product,
+      vaccine_name: data.product,
       dose: '',
-      applied_date: this.date,
+      applied_date: data.date,
       sanitary_batch: '',
-      next_due_date: this.nextDate,
+      next_due_date: data.next_date,
     };
   }
 

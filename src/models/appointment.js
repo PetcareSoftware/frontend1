@@ -92,10 +92,12 @@ export class Appointment {
   }
 
   toApiCreate() {
+    const data = this.toApi();
+
     return {
-      slot_id: this.slotId,
-      patient_id: this.petId,
-      reason: this.reason,
+      slot_id: data.slot_id,
+      patient_id: data.pet_id,
+      reason: data.reason,
     };
   }
 
