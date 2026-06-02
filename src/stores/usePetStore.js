@@ -74,7 +74,7 @@ export const usePetStore = defineStore('pet', () => {
 
   async function add(newPet) {
     if (USE_MOCK_DATA) {
-      if (seedPets.find(p => p.equals ? p.equals(newPet) : p.id === newPet.id)) {
+      if (seedPets.find(p => p.equals(newPet))) {
         throw new Error('Esta mascota ya existe');
       }
       seedPets.push(newPet);
