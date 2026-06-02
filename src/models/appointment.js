@@ -91,16 +91,6 @@ export class Appointment {
     return data;
   }
 
-  toApiCreate() {
-    const data = this.toApi();
-
-    return {
-      slot_id: data.slot_id,
-      patient_id: data.pet_id,
-      reason: data.reason,
-    };
-  }
-
   static fromApi(data) {
     return new Appointment({
       id: data.id,
@@ -113,6 +103,16 @@ export class Appointment {
       reason: data.reason,
       status: Appointment.API_STATUS_MAP[data.status] ?? data.status?.toLowerCase() ?? '',
     });
+  }
+
+  toApiCreate() {
+    const data = this.toApi();
+
+    return {
+      slot_id: data.slot_id,
+      patient_id: data.pet_id,
+      reason: data.reason,
+    };
   }
 
   toApiStatus() {

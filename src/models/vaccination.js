@@ -45,19 +45,6 @@ export class Vaccination extends Treatment {
     return data;
   }
 
-  toApiCreate() {
-    const data = this.toApi();
-
-    return {
-      event_type: 'VACCINE',
-      vaccine_name: data.name,
-      dose: '',
-      applied_date: data.date,
-      sanitary_batch: data.lot,
-      next_due_date: data.next_date,
-    };
-  }
-
   static fromApi(data, petId = '') {
     return new Vaccination({
       id: data.id,
@@ -69,6 +56,19 @@ export class Vaccination extends Treatment {
       lot: data.lot ?? '',
       notes: data.notes ?? '',
     });
+  }
+
+  toApiCreate() {
+    const data = this.toApi();
+
+    return {
+      event_type: 'VACCINE',
+      vaccine_name: data.name,
+      dose: '',
+      applied_date: data.date,
+      sanitary_batch: data.lot,
+      next_due_date: data.next_date,
+    };
   }
 
   equals(other) {

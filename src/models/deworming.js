@@ -39,6 +39,18 @@ export class Deworming extends Treatment {
     return data;
   }
 
+  static fromApi(data, petId = '') {
+    return new Deworming({
+      id: data.id,
+      petId: petId,
+      product: data.vaccine_name ?? data.event_type ?? '',
+      date: data.applied_date,
+      nextDate: data.next_due_date,
+      appliedBy: data.appliedBy ?? '',
+      weight: data.weight ?? 0,
+    });
+  }
+
   toApiCreate() {
     const data = this.toApi();
 
@@ -50,18 +62,6 @@ export class Deworming extends Treatment {
       sanitary_batch: '',
       next_due_date: data.next_date,
     };
-  }
-
-  static fromApi(data, petId = '') {
-    return new Deworming({
-      id: data.id,
-      petId: petId,
-      product: data.vaccine_name ?? data.event_type ?? '',
-      date: data.applied_date,
-      nextDate: data.next_due_date,
-      appliedBy: data.appliedBy ?? '',
-      weight: data.weight ?? 0,
-    });
   }
 
   equals(other) {

@@ -98,23 +98,6 @@ export class Consultation {
     return data;
   }
 
-  toApiCreate() {
-    const data = this.toApi();
-
-    return {
-      diagnosis: data.diagnosis,
-      treatment: data.treatment,
-      symptoms: data.symptoms,
-      weight: data.weight,
-      temperature: data.temperature,
-      prescriptions: Array.isArray(data.prescriptions)
-        ? data.prescriptions.join('\n')
-        : (data.prescriptions ?? ''),
-      notes: data.notes,
-      follow_up_date: data.follow_up_date,
-    };
-  }
-
   static fromApi(data, { appointmentId = '', petId = '', vetId = '' } = {}) {
     return new Consultation({
       id: data.id ?? '',
@@ -133,6 +116,23 @@ export class Consultation {
       followUpDate: data.follow_up_date,
       notes: data.notes,
     });
+  }
+
+  toApiCreate() {
+    const data = this.toApi();
+
+    return {
+      diagnosis: data.diagnosis,
+      treatment: data.treatment,
+      symptoms: data.symptoms,
+      weight: data.weight,
+      temperature: data.temperature,
+      prescriptions: Array.isArray(data.prescriptions)
+        ? data.prescriptions.join('\n')
+        : (data.prescriptions ?? ''),
+      notes: data.notes,
+      follow_up_date: data.follow_up_date,
+    };
   }
 
   equals(other) {
