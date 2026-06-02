@@ -64,11 +64,45 @@ export const useDewormingStore = defineStore('deworming', () => {
     }
   }
 
-  async function fetchAll(petId) {
+  async function fetchAll() {
     status.value.loading = true;
     try {
       const newDewormings = USE_MOCK_DATA
-        ? (petId ? seedDewormings.filter(d => d.petId === petId) : seedDewormings)
+        ? seedDewormings
+        : null;
+
+      if (!newDewormings) return;
+
+      dewormings.value = newDewormings;
+
+      return newDewormings;
+    } finally {
+      status.value.loading = false;
+    }
+  }
+
+  async function fetchAllByPet(petId) {
+    status.value.loading = true;
+    try {
+      const newDewormings = USE_MOCK_DATA
+        ? seedDewormings.filter(d => d.petId === petId)
+        : null;
+
+      if (!newDewormings) return;
+
+      dewormings.value = newDewormings;
+
+      return newDewormings;
+    } finally {
+      status.value.loading = false;
+    }
+  }
+
+  async function fetchAllByVet(vetId) {
+    status.value.loading = true;
+    try {
+      const newDewormings = USE_MOCK_DATA
+        ? seedDewormings.filter(d => d.appliedBy === vetId)
         : null;
 
       if (!newDewormings) return;
@@ -114,6 +148,6 @@ export const useDewormingStore = defineStore('deworming', () => {
   return {
     dewormings, selectedId, status, lock,
     selected, locked,
-    get, fetchOne, fetchAll, add, getFromStore, saveInStore,
+    get, fetchOne, fetchAll, fetchAllByPet, fetchAllByVet, add, getFromStore, saveInStore,
   };
 });

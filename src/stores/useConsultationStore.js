@@ -63,11 +63,45 @@ export const useConsultationStore = defineStore('consultation', () => {
     }
   }
 
-  async function fetchAll(petId) {
+  async function fetchAll() {
     status.value.loading = true;
     try {
       const newConsultations = USE_MOCK_DATA
-        ? (petId ? seedConsultations.filter(c => c.petId === petId) : seedConsultations)
+        ? seedConsultations
+        : null;
+
+      if (!newConsultations) return;
+
+      consultations.value = newConsultations;
+
+      return newConsultations;
+    } finally {
+      status.value.loading = false;
+    }
+  }
+
+  async function fetchAllByPet(petId) {
+    status.value.loading = true;
+    try {
+      const newConsultations = USE_MOCK_DATA
+        ? seedConsultations.filter(c => c.petId === petId)
+        : null;
+
+      if (!newConsultations) return;
+
+      consultations.value = newConsultations;
+
+      return newConsultations;
+    } finally {
+      status.value.loading = false;
+    }
+  }
+
+  async function fetchAllByVet(vetId) {
+    status.value.loading = true;
+    try {
+      const newConsultations = USE_MOCK_DATA
+        ? seedConsultations.filter(c => c.vetId === vetId)
         : null;
 
       if (!newConsultations) return;
@@ -116,6 +150,6 @@ export const useConsultationStore = defineStore('consultation', () => {
   return {
     consultations, selectedId, status, lock,
     selected, locked,
-    get, fetchOne, fetchAll, add, getFromStore, saveInStore,
+    get, fetchOne, fetchAll, fetchAllByPet, fetchAllByVet, add, getFromStore, saveInStore,
   };
 });

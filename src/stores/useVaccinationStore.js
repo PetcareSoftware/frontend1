@@ -63,12 +63,46 @@ export const useVaccinationStore = defineStore('vaccination', () => {
     }
   }
 
-  async function fetchAll(petId) {
+  async function fetchAll() {
     status.value.loading = true;
     try {
       const newVaccines = USE_MOCK_DATA
-        ? (petId ? seedVaccines.filter(v => v.petId === petId) : seedVaccines)
+        ? seedVaccines
+        : null;
+
+      if (!newVaccines) return;
+
+      vaccines.value = newVaccines;
+
+      return newVaccines;
+    } finally {
+      status.value.loading = false;
+    }
+  }
+
+  async function fetchAllByPet(petId) {
+    status.value.loading = true;
+    try {
+      const newVaccines = USE_MOCK_DATA
+        ? seedVaccines.filter(v => v.petId === petId)
         : await VaccinationService.list(petId);
+
+      if (!newVaccines) return;
+
+      vaccines.value = newVaccines;
+
+      return newVaccines;
+    } finally {
+      status.value.loading = false;
+    }
+  }
+
+  async function fetchAllByVet(vetId) {
+    status.value.loading = true;
+    try {
+      const newVaccines = USE_MOCK_DATA
+        ? seedVaccines.filter(v => v.appliedBy === vetId)
+        : null;
 
       if (!newVaccines) return;
 
@@ -112,6 +146,6 @@ export const useVaccinationStore = defineStore('vaccination', () => {
   return {
     vaccines, selectedId, status, lock,
     selected, locked,
-    get, fetchOne, fetchAll, add, getFromStore, saveInStore,
+    get, fetchOne, fetchAll, fetchAllByPet, fetchAllByVet, add, getFromStore, saveInStore,
   };
 });
