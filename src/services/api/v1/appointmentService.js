@@ -20,7 +20,7 @@ export class AppointmentService {
   }
 
   static async create(appointment) {
-    const response = await api.post(APPOINTMENTS_BASE, appointment.toApi());
+    const response = await api.post(APPOINTMENTS_BASE, appointment.toApiCreate());
 
     return Appointment.fromApi(response.data);
   }

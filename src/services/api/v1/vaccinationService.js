@@ -14,7 +14,7 @@ export class VaccinationService {
   }
 
   static async create(petId, vaccination) {
-    const response = await api.post(`${PETS_BASE}${petId}/vaccination-events/`, vaccination.toApi());
+    const response = await api.post(`${PETS_BASE}${petId}/vaccination-events/`, vaccination.toApiCreate());
 
     return Vaccination.fromApi(response.data, petId);
   }

@@ -8,7 +8,7 @@ export class ConsultationService {
   static async create(appointmentId, consultation) {
     const response = await api.post(
       `${APPOINTMENTS_BASE}${appointmentId}/consultations/`,
-      consultation.toApi()
+      consultation.toApiCreate()
     );
 
     return Consultation.fromApi(response.data, { appointmentId });

@@ -27,6 +27,20 @@ export class Deworming extends Treatment {
 
   toApi() {
     const data = {
+      id: this.id,
+      pet_id: this.petId,
+      product: this.product,
+      date: this.date,
+      next_date: this.nextDate,
+      applied_by: this.appliedBy,
+      weight: this.weight,
+    };
+
+    return data;
+  }
+
+  toApiCreate() {
+    return {
       event_type: 'DEWORMING',
       vaccine_name: this.product,
       dose: '',
@@ -34,8 +48,6 @@ export class Deworming extends Treatment {
       sanitary_batch: '',
       next_due_date: this.nextDate,
     };
-
-    return data;
   }
 
   static fromApi(data, petId = '') {

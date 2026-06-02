@@ -80,6 +80,26 @@ export class Consultation {
 
   toApi() {
     const data = {
+      id: this.id,
+      appointment_id: this.appointmentId,
+      pet_id: this.petId,
+      vet_id: this.vetId,
+      date: this.date,
+      weight: this.weight,
+      temperature: this.temperature,
+      symptoms: this.symptoms,
+      diagnosis: this.diagnosis,
+      treatment: this.treatment,
+      prescriptions: this.prescriptions,
+      follow_up_date: this.followUpDate,
+      notes: this.notes,
+    };
+
+    return data;
+  }
+
+  toApiCreate() {
+    return {
       diagnosis: this.diagnosis,
       treatment: this.treatment,
       symptoms: this.symptoms,
@@ -91,8 +111,6 @@ export class Consultation {
       notes: this.notes,
       follow_up_date: this.followUpDate,
     };
-
-    return data;
   }
 
   static fromApi(data, { appointmentId = '', petId = '', vetId = '' } = {}) {

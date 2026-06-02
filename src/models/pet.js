@@ -9,6 +9,7 @@ export class Pet {
   name = '';
   species = '';
   breed = '';
+  sex = 'M';
   birthDate = '';
   weight = 0;
   color = '';
@@ -22,12 +23,13 @@ export class Pet {
     other: 'other',
   };
 
-  constructor({ id, ownerId, name, species, breed, birthDate, weight, color, microchip }) {
+  constructor({ id, ownerId, name, species, breed, sex, birthDate, weight, color, microchip }) {
     this.id = id;
     this.ownerId = ownerId || this.ownerId;
     this.name = name || this.name;
     this.species = species || this.species;
     this.breed = breed || this.breed;
+    this.sex = sex || this.sex;
     this.birthDate = birthDate || this.birthDate;
     this.weight = weight;
     this.color = color;
@@ -67,9 +69,11 @@ export class Pet {
       name: this.name,
       species: this.species,
       breed: this.breed,
+      sex: this.sex,
       date_of_birth: this.birthDate,
-      sex: 'M',
       weight_kg: this.weight,
+      color: this.color,
+      microchip_id: this.microchip,
       created_at: new Date().toISOString(),
     };
 
@@ -83,16 +87,25 @@ export class Pet {
       name: data.name,
       species: data.species,
       breed: data.breed,
+      sex: data.sex,
       birthDate: data.date_of_birth,
       weight: data.weight_kg,
+      color: data.color,
+      microchip: data.microchip_id,
     });
   }
 
   toApiUpdate() {
     let data = this.toApi();
-    delete data.id;
-    delete data.owner_id;
-    delete data.created_at;
+    data = {
+      name: data.name,
+      species: data.species,
+      breed: data.breed,
+      sex: data.sex,
+      date_of_birth: data.date_of_birth,
+      weight_kg: data.weight_kg,
+      color: data.color,
+    };
 
     return data;
   }

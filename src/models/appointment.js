@@ -77,12 +77,26 @@ export class Appointment {
 
   toApi() {
     const data = {
+      id: this.id,
+      pet_id: this.petId,
+      owner_id: this.ownerId,
+      vet_id: this.vetId,
+      slot_id: this.slotId,
+      date: this.date,
+      time: this.time,
+      reason: this.reason,
+      status: this.status,
+    };
+
+    return data;
+  }
+
+  toApiCreate() {
+    return {
       slot_id: this.slotId,
       patient_id: this.petId,
       reason: this.reason,
     };
-
-    return data;
   }
 
   static fromApi(data) {

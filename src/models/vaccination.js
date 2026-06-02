@@ -32,6 +32,21 @@ export class Vaccination extends Treatment {
 
   toApi() {
     const data = {
+      id: this.id,
+      pet_id: this.petId,
+      name: this.name,
+      date: this.date,
+      next_date: this.nextDate,
+      applied_by: this.appliedBy,
+      lot: this.lot,
+      notes: this.notes,
+    };
+
+    return data;
+  }
+
+  toApiCreate() {
+    return {
       event_type: 'VACCINE',
       vaccine_name: this.name,
       dose: '',
@@ -39,8 +54,6 @@ export class Vaccination extends Treatment {
       sanitary_batch: this.lot,
       next_due_date: this.nextDate,
     };
-
-    return data;
   }
 
   static fromApi(data, petId = '') {
