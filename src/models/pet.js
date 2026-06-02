@@ -97,15 +97,10 @@ export class Pet {
 
   toApiUpdate() {
     let data = this.toApi();
-    data = {
-      name: data.name,
-      species: data.species,
-      breed: data.breed,
-      sex: data.sex,
-      date_of_birth: data.date_of_birth,
-      weight_kg: data.weight_kg,
-      color: data.color,
-    };
+    delete data.id;
+    delete data.owner_id;
+    delete data.created_at;
+    delete data.microchip_id;
 
     return data;
   }
