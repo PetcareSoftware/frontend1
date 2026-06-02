@@ -86,6 +86,9 @@ export const useAppointmentStore = defineStore('appointment', () => {
 
   async function add(newAppointment) {
     if (USE_MOCK_DATA) {
+      if (seedAppointments.find(a => a.equals ? a.equals(newAppointment) : false)) {
+        throw new Error('Esta cita ya existe');
+      }
       seedAppointments.push(newAppointment);
     } else {
       newAppointment = await AppointmentService.create(newAppointment);

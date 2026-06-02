@@ -120,6 +120,11 @@ export class Appointment {
   }
 
   equals(other) {
-    return this.id === other.id;
+    return this.id === other.id || (
+      this.petId === other.petId && (
+        (this.slotId && this.slotId === other.slotId) ||
+        (this.date === other.date && this.time === other.time)
+      )
+    );
   }
 }
