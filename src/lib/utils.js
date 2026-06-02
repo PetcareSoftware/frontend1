@@ -17,6 +17,14 @@ export function findReplace(obj, test, newValue) {
   }
 }
 
+export function equalsByProperties(first, second, props, mode = 'and') {
+  if (!props) return true;
+  if (!first || !second) return false;
+
+  const reducer = (mode === 'and' ? props.every : props.some).bind(props);
+  return reducer(key => first[key] === second[key]);
+}
+
 
 // Fechas
 

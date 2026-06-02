@@ -71,4 +71,8 @@ export class Owner extends User {
 
     return data;
   }
+
+  equals(other) {
+    return super.equals(other);
+  }
 }

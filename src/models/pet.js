@@ -96,4 +96,9 @@ export class Pet {
 
     return data;
   }
+
+  equals(other) {
+    return this.id === other.id || (
+      this.ownerId === other.owner_id && this.name.toLowerCase() === other.name.toLowerCase() );
+  }
 }

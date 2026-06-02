@@ -44,4 +44,9 @@ export class User {
       email: data?.email,
     });
   }
+
+  equals(other) {
+    return this.id === other.id || this.email === other.email || (
+      this.name.toLowerCase() === other.name.toLowerCase() );
+  }
 }
