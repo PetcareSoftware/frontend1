@@ -15,7 +15,7 @@ export class OwnerService {
 
   static async get(id) {
     const response = await api.get(`${OWNERS_BASE}${id}/`);
-    return new Owner(response.data);
+    return Owner.fromApi(response.data);
   }
 
   static async create(owner) {
@@ -25,11 +25,11 @@ export class OwnerService {
 
   static async getMe() {
     const response = await api.get(`${OWNERS_BASE}me/`);
-    return new Owner(response.data);
+    return Owner.fromApi(response.data);
   }
 
   static async updateMe(owner) {
     const response = await api.patch(`${OWNERS_BASE}me/`, owner);
-    return new Owner(response.data);
+    return Owner.fromApi(response.data);
   }
 }
