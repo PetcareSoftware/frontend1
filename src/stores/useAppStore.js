@@ -19,6 +19,7 @@ import {
   updatePurchaseOrderStatus,
 } from '@/services/api/v1/purchaseService';
 import {
+  cloneMock,
   vets as seedVets,
   owners as seedOwners,
   pets as seedPets,
@@ -31,41 +32,18 @@ import {
 
 const USE_MOCK_DATA = true;
 
-const shiftDate = (dateStr) => {
-  if (!dateStr) return dateStr;
-  const base = new Date('2026-05-08T12:00:00').getTime();
-  const today = new Date();
-  today.setHours(12, 0, 0, 0);
-  const diff = today.getTime() - base;
-  const d = new Date(dateStr + 'T12:00:00');
-  d.setTime(d.getTime() + diff);
-  return d.toISOString().slice(0, 10);
-};
-
-const mapDates = (item) => {
-  const newItem = { ...item };
-  if (newItem.date) newItem.date = shiftDate(newItem.date);
-  if (newItem.nextDate) newItem.nextDate = shiftDate(newItem.nextDate);
-  if (newItem.birthDate) newItem.birthDate = shiftDate(newItem.birthDate);
-  if (newItem.createdAt) newItem.createdAt = shiftDate(newItem.createdAt);
-  if (newItem.followUpDate) newItem.followUpDate = shiftDate(newItem.followUpDate);
-  return newItem;
-};
-
-const clone = (value) => value.map((item) => mapDates({ ...item }));
-
 export const useAppStore = defineStore('app', {
   state: () => ({
     role: 'owner',
     currentUserId: 'o1',
-    vets: USE_MOCK_DATA ? clone(seedVets) : [],
-    owners: USE_MOCK_DATA ? clone(seedOwners) : [],
-    pets: USE_MOCK_DATA ? clone(seedPets) : [],
-    appointments: USE_MOCK_DATA ? clone(seedAppointments) : [],
-    consultations: USE_MOCK_DATA ? clone(seedConsultations) : [],
-    vaccines: USE_MOCK_DATA ? clone(seedVaccines) : [],
-    dewormings: USE_MOCK_DATA ? clone(seedDewormings) : [],
-    inventory: USE_MOCK_DATA ? clone(seedSupplies) : [],
+    vets: USE_MOCK_DATA ? cloneMock(seedVets) : [],
+    owners: USE_MOCK_DATA ? cloneMock(seedOwners) : [],
+    pets: USE_MOCK_DATA ? cloneMock(seedPets) : [],
+    appointments: USE_MOCK_DATA ? cloneMock(seedAppointments) : [],
+    consultations: USE_MOCK_DATA ? cloneMock(seedConsultations) : [],
+    vaccines: USE_MOCK_DATA ? cloneMock(seedVaccines) : [],
+    dewormings: USE_MOCK_DATA ? cloneMock(seedDewormings) : [],
+    inventory: USE_MOCK_DATA ? cloneMock(seedSupplies) : [],
     requisitions: [],
     notifications: [],
     status: {

@@ -2,32 +2,11 @@ import { defineStore } from 'pinia';
 import { useAppStore } from './useAppStore';
 import { OwnerService } from '@/services/api/v1/ownerService';
 import { owners as seedOwners } from '@/data/mockData';
+import { findReplace } from '@/lib/utils';
 
 const USE_MOCK_DATA = true;
 const appStore = useAppStore();
 
-function clone(obj) {
-  return Array.isArray(obj) ?
-    obj.map(item => ({ ...item })) :
-    { ...obj };
-}
-
-function findReplace(obj, test, newValue) {
-  if (Array.isArray(obj)) {
-    const i = obj.findIndex(test);
-    if (i >= 0) {
-      obj[i] = newValue;
-    }
-    return i;
-  }
-
-  for (const key in obj) {
-    if (test(obj)) {
-      obj[key] = newValue;
-      return key;
-    }
-  }
-}
 
 export const useOwnerStore = defineStore('owner', {
   state: () => ({

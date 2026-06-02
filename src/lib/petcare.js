@@ -1,6 +1,7 @@
 import { timeSlots as seedTimeSlots } from '@/data/mockData';
 import { ref } from 'vue';
-
+import { daysFromNow, getTodayDate, getTodayShortDate } from './utils';
+export { daysFromNow , getTodayDate, getTodayShortDate };
 
 export const statusMeta = {
   scheduled: { label: 'Programada', className: 'chip--brand' },
@@ -56,18 +57,6 @@ export function getSpeciesLabel(codename) {
   const species = speciesMeta[codename];
   return species && species.label || 'Otro';
 }
-
-export function daysFromNow(days = 0) {
-  const date = new Date();
-  date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
-}
-
-export function getTodayDate() {
-  return daysFromNow(0);
-}
-
-export const getTodayShortDate = getTodayDate;
 
 export function formatDate(value, locale = 'es-VE') {
   return new Intl.DateTimeFormat(locale, {

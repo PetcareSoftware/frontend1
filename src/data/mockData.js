@@ -1,10 +1,30 @@
+import { shiftDate } from "@/lib/utils";
+
+export function shiftMockDate(dateStr) {
+  return shiftDate(dateStr, '2026-05-08');
+}
+
+export function mapMockDates(item) {
+  const newItem = { ...item };
+  if (newItem.date) newItem.date = shiftMockDate(newItem.date);
+  if (newItem.nextDate) newItem.nextDate = shiftMockDate(newItem.nextDate);
+  if (newItem.birthDate) newItem.birthDate = shiftMockDate(newItem.birthDate);
+  if (newItem.createdAt) newItem.createdAt = shiftMockDate(newItem.createdAt);
+  if (newItem.followUpDate) newItem.followUpDate = shiftMockDate(newItem.followUpDate);
+  return newItem;
+};
+
+export function cloneMock(value) {
+  return value.map((item) => mapMockDates({ ...item }));
+}
+
 export const vets = [
   { id: 'v1', name: 'Dra. Valentina Torres', specialty: 'Medicina General', avatar: '' },
   { id: 'v2', name: 'Dr. Marcos Herrera', specialty: 'Cirugía', avatar: '' },
   { id: 'v3', name: 'Dra. Camila Ruiz', specialty: 'Dermatología', avatar: '' },
 ];
 
-export const owners = [
+export const owners = cloneMock([
   {
     id: 'o1',
     name: 'Ana García',
@@ -69,9 +89,9 @@ export const owners = [
     address: 'Av. Valencia 678, valencia',
     createdAt: '2026-05-12',
   }
-];
+]);
 
-export const pets = [
+export const pets = cloneMock([
   {
     id: 'p1',
     ownerId: 'o1',
@@ -166,9 +186,9 @@ export const pets = [
     weight: 25,
     color: 'Negro',
   }
-];
+]);
 
-export const appointments = [
+export const appointments = cloneMock([
   {
     id: 'a1',
     petId: 'p1',
@@ -379,9 +399,9 @@ export const appointments = [
     reason: 'Consulta general',
     status: 'completed',
   },
-];
+]);
 
-export const consultations = [
+export const consultations = cloneMock([
   {
     id: 'c1',
     appointmentId: 'a9',
@@ -415,9 +435,9 @@ export const consultations = [
     followUpDate: '2026-03-30',
     notes: 'Mejoría esperada en 5-7 días.',
   },
-];
+]);
 
-export const vaccines = [
+export const vaccines = cloneMock([
   {
     id: 'vac1',
     petId: 'p1',
@@ -464,9 +484,9 @@ export const vaccines = [
     appliedBy: 'v2',
     lot: 'LOT2025E',
   },
-];
+]);
 
-export const dewormings = [
+export const dewormings = cloneMock([
   {
     id: 'd1',
     petId: 'p1',
@@ -503,7 +523,7 @@ export const dewormings = [
     appliedBy: 'v2',
     weight: 12,
   },
-];
+]);
 
 export const timeSlots = [
   '09:00',
