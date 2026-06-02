@@ -23,7 +23,7 @@ export class Appointment {
     cancelled: 'cancelled',
   }
 
-  static #API_STATUS_MAP = {
+  static API_STATUS_MAP = {
     SCHEDULED: 'scheduled',
     CONFIRMED: 'confirmed',
     CHECKED_IN: 'waiting',
@@ -31,7 +31,7 @@ export class Appointment {
     CANCELLED: 'cancelled',
   };
 
-  static #FRONTEND_STATUS_MAP = {
+  static FRONTEND_STATUS_MAP = {
     scheduled: 'SCHEDULED',
     confirmed: 'CONFIRMED',
     waiting: 'CHECKED_IN',
@@ -95,12 +95,12 @@ export class Appointment {
       date: data.date,
       time: data.time?.substring(0, 5) ?? data.time,
       reason: data.reason,
-      status: Appointment.#API_STATUS_MAP[data.status] ?? data.status?.toLowerCase() ?? '',
+      status: Appointment.API_STATUS_MAP[data.status] ?? data.status?.toLowerCase() ?? '',
     });
   }
 
   toApiStatus() {
-    return Appointment.#FRONTEND_STATUS_MAP[this.status] ?? this.status?.toUpperCase() ?? '';
+    return Appointment.FRONTEND_STATUS_MAP[this.status] ?? this.status?.toUpperCase() ?? '';
   }
 
   equals(other) {
