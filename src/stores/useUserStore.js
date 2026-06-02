@@ -1,33 +1,41 @@
+import { computed } from 'vue';
 import { defineStore } from 'pinia';
 import { useAppStore } from './useAppStore';
 import { useOwnerStore } from './useOwnerStore';
 
 const USE_MOCK_DATA = true;
-const appStore = useAppStore();
-const ownerStore = useOwnerStore();
 
-export const useUserStore = defineStore('user', {
-  state: () => ({
-  }),
+export const useUserStore = defineStore('user', () => {
+  const appStore = useAppStore();
+  const ownerStore = useOwnerStore();
 
-  getters: {
-    current() {
-      const currentId = appStore.currentUserId;
-      return currentId != null ? this.getFromStore(currentId) : undefined;
-    },
 
-    users() {
-      return [].concat(ownerStore.owners);
-    },
-  },
+// Getters
 
-  actions: {
-    async add(newUser) {
-      return ownerStore.add(newUser);
-    },
+  const current = computed(() => {
+    const currentId = appStore.currentUserId;
+    return currentId != null ? getFromStore(currentId) : undefined;
+  });
 
-    getFromStore(id) {
-      return this.users.find(user => user.id === id);
-    },
-  },
+  const users = computed(() => {
+    return [].concat(ownerStore.owners);
+  });
+
+
+  // Actions
+
+  async function add(newUser) {
+    return ownerStore.add(newUser);
+  }
+
+  function getFromStore(id) {
+    return users.value.find(user => user.id === id);
+  }
+
+
+  return {
+    lock: ownerStore.lock,
+    current, users, locked: ownerStore.locked,
+    add, getFromStore,
+  }
 });
