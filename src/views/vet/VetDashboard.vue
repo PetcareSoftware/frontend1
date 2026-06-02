@@ -68,8 +68,8 @@
               <div class="list__item-main">
                 <p class="list__title">
                   {{ appointment.time }} · {{ getPet(appStore.pets, appointment.petId)?.name }}
-                  <span v-if="appointment.type === 'Emergencia'" class="chip chip--danger" style="margin-left: 8px; padding: 0.2rem 0.5rem; font-size: 0.7rem;">
-                    Emergencia ({{ appointment.priority }})
+                  <span v-if="appointment.type === 'Emergencia'" class="chip chip--danger chip--sm chip--shift-up" style="margin-left: 8px;">
+                    Emergencia{{appointment.priority ? ` (${appointment.priority})`: ''}}
                   </span>
                 </p>
                 <p class="list__subtitle">{{ appointment.reason }}</p>
@@ -92,16 +92,16 @@
             </p>
           </div>
           <div class="summary-grid">
-            <article class="card">
-              <p class="eyebrow">Agenda</p>
+            <article class="summary-grid__item card">
+              <p class="summary-grid__item-title eyebrow">Agenda</p>
               <strong>{{ vetAppointments.length }}</strong>
             </article>
-            <article class="card">
-              <p class="eyebrow">Hoy</p>
+            <article class="summary-grid__item card">
+              <p class="summary-grid__item-title eyebrow">Hoy</p>
               <strong>{{ todayAppointments.length }}</strong>
             </article>
-            <article class="card">
-              <p class="eyebrow">Fecha</p>
+            <article class="summary-grid__item card">
+              <p class="summary-grid__item-title eyebrow">Fecha</p>
               <strong>{{ formatDate(getTodayShortDate()) }}</strong>
             </article>
           </div>

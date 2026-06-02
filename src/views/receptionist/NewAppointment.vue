@@ -40,7 +40,7 @@
   );
 
   function saveAppointment() {
-    if (!form.ownerId || !form.petId || !form.reason) {
+    if (!form.ownerId || !form.petId || !form.reason || !form.date || !form.time) {
       toastStore.push({ title: 'Completa los campos requeridos', type: 'error' });
       return;
     }
@@ -75,8 +75,8 @@
     <section class="card">
       <div class="input-row">
         <div class="input-grid">
-          <label class="field">
-            <span>Propietario</span>
+          <label class="field field--required">
+            <span class="field__label">Propietario</span>
             <select v-model="form.ownerId" class="select">
               <option v-for="owner in appStore.owners" :key="owner.id" :value="owner.id">
                 {{ owner.name }}
@@ -84,7 +84,7 @@
             </select>
           </label>
           <label class="field">
-            <span>Mascota</span>
+            <span class="field__label">Mascota</span>
             <select v-model="form.petId" class="select">
               <option v-for="pet in ownerPets" :key="pet.id" :value="pet.id">
                 {{ pet.name }} · {{ pet.breed }}
@@ -95,42 +95,42 @@
 
         <div class="input-grid">
           <label class="field">
-            <span>Veterinario</span>
+            <span class="field__label">Veterinario</span>
             <select v-model="form.vetId" class="select">
               <option v-for="vet in appStore.vets" :key="vet.id" :value="vet.id">
                 {{ vet.name }} · {{ vet.specialty }}
               </option>
             </select>
           </label>
-          <label class="field">
-            <span>Fecha</span>
+          <label class="field field--required">
+            <span class="field__label">Fecha</span>
             <input v-model="form.date" class="input" type="date" />
           </label>
         </div>
 
         <div class="input-grid">
-          <label class="field">
-            <span>Hora</span>
+          <label class="field field--required">
+            <span class="field__label">Hora</span>
             <select v-model="form.time" class="select">
               <option v-for="slot in timeSlots" :key="slot" :value="slot">{{ slot }}</option>
             </select>
           </label>
-          <label class="field">
-            <span>Motivo</span>
+          <label class="field field--required">
+            <span class="field__label">Motivo</span>
             <input v-model="form.reason" class="input" type="text" placeholder="Control anual" />
           </label>
         </div>
 
         <div class="input-grid">
           <label class="field">
-            <span>Tipo de consulta</span>
+            <span class="field__label">Tipo de consulta</span>
             <select v-model="form.type" class="select">
               <option value="Normal">Normal</option>
               <option value="Emergencia">Emergencia</option>
             </select>
           </label>
           <label class="field" v-if="form.type === 'Emergencia'">
-            <span>Prioridad</span>
+            <span class="field__label">Prioridad</span>
             <select v-model="form.priority" class="select">
               <option value="Baja">Baja</option>
               <option value="Media">Media</option>
@@ -141,7 +141,7 @@
         </div>
 
         <label class="field">
-          <span>Notas</span>
+          <span class="field__label">Notas</span>
           <textarea v-model="form.notes" class="textarea" rows="4" />
         </label>
 

@@ -2,7 +2,7 @@
   import { appTemplate } from '@/config/appTemplate';
   import { useAppStore } from '@/stores/useAppStore';
   import { useRouter } from 'vue-router';
-  import { switchRole as switchRoleAction } from '@/lib/petcare';
+  import { switchRoleLocal as switchRoleAction } from '@/lib/petcare';
 
   const appStore = useAppStore();
   const router = useRouter();
@@ -38,8 +38,7 @@
 
       <button
         type="button"
-        class="role-chip"
-        style="background: rgba(178, 60, 60, 0.12); color: var(--danger); border-color: rgba(178, 60, 60, 0.2);"
+        class="role-chip btn-logout"
         @click="logout"
       >
         Cerrar sesión
@@ -47,3 +46,11 @@
     </div>
   </aside>
 </template>
+
+<style scoped>
+.btn-logout {
+  background: rgba(178, 60, 60, 0.12);
+  color: var(--danger);
+  border-color: rgba(178, 60, 60, 0.2);
+}
+</style>

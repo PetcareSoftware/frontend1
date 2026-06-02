@@ -1,4 +1,4 @@
-import api from '@/lib/api';
+import api from '@/services/api/v1/api';
 
 export const appointmentService = {
   scheduleAppointment(data) {

@@ -59,7 +59,7 @@
     });
     appStore.addNotification({
       title: 'Cita agendada',
-      message: `Cita programada para el ${formatDate(form.date)} a las ${form.time}.`,
+      description: `Cita programada para el ${formatDate(form.date)} a las ${form.time}.`,
       type: 'success',
       date: new Date().toISOString()
     });

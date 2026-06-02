@@ -1,10 +1,30 @@
+import { shiftDate } from "@/lib/utils";
+
+export function shiftMockDate(dateStr) {
+  return shiftDate(dateStr, '2026-05-08');
+}
+
+export function mapMockDates(item) {
+  const newItem = { ...item };
+  if (newItem.date) newItem.date = shiftMockDate(newItem.date);
+  if (newItem.nextDate) newItem.nextDate = shiftMockDate(newItem.nextDate);
+  if (newItem.birthDate) newItem.birthDate = shiftMockDate(newItem.birthDate);
+  if (newItem.createdAt) newItem.createdAt = shiftMockDate(newItem.createdAt);
+  if (newItem.followUpDate) newItem.followUpDate = shiftMockDate(newItem.followUpDate);
+  return newItem;
+};
+
+export function cloneMock(value) {
+  return value.map((item) => mapMockDates({ ...item }));
+}
+
 export const vets = [
   { id: 'v1', name: 'Dra. Valentina Torres', specialty: 'Medicina General', avatar: '' },
   { id: 'v2', name: 'Dr. Marcos Herrera', specialty: 'Cirugía', avatar: '' },
   { id: 'v3', name: 'Dra. Camila Ruiz', specialty: 'Dermatología', avatar: '' },
 ];
 
-export const owners = [
+export const owners = cloneMock([
   {
     id: 'o1',
     name: 'Ana García',
@@ -63,15 +83,15 @@ export const owners = [
   },
   {
     id: 'o8',
-  name: 'Eduardo Perez',
-  email: 'eduardo@email.com',
-  phone: '555-0106',
-  address: 'Av. Valencia 678, valencia',
-  createdAt: '2026-05-12',
+    name: 'Eduardo Perez',
+    email: 'eduardo@email.com',
+    phone: '555-0106',
+    address: 'Av. Valencia 678, valencia',
+    createdAt: '2026-05-12',
   }
-];
+]);
 
-export const pets = [
+export const pets = cloneMock([
   {
     id: 'p1',
     ownerId: 'o1',
@@ -165,10 +185,10 @@ export const pets = [
     birthDate: '2024-07-20',
     weight: 25,
     color: 'Negro',
-    }
-];
+  }
+]);
 
-export const appointments = [
+export const appointments = cloneMock([
   {
     id: 'a1',
     petId: 'p1',
@@ -277,7 +297,7 @@ export const appointments = [
     date: '2026-05-08',
     time: '14:00',
     reason: 'Control peso',
-    status: 'scheduled',
+    status: 'completed',
   },
   {
     id: 'a12',
@@ -348,6 +368,7 @@ export const appointments = [
     time: '15:30',
     reason: 'Primer control cachorro',
     status: 'scheduled',
+    type: 'Emergencia',
   },
   {
     id: 'a19',
@@ -368,10 +389,19 @@ export const appointments = [
     time: '11:00',
     reason: 'Seguimiento post-operatorio',
     status: 'scheduled',
-  }
-];
+  },
+  {
+    petId: 'p6',
+    ownerId: 'o5',
+    vetId: 'v1',
+    date: '2026-05-26',
+    time: '10:00',
+    reason: 'Consulta general',
+    status: 'completed',
+  },
+]);
 
-export const consultations = [
+export const consultations = cloneMock([
   {
     id: 'c1',
     appointmentId: 'a9',
@@ -405,9 +435,9 @@ export const consultations = [
     followUpDate: '2026-03-30',
     notes: 'Mejoría esperada en 5-7 días.',
   },
-];
+]);
 
-export const vaccines = [
+export const vaccines = cloneMock([
   {
     id: 'vac1',
     petId: 'p1',
@@ -454,9 +484,9 @@ export const vaccines = [
     appliedBy: 'v2',
     lot: 'LOT2025E',
   },
-];
+]);
 
-export const dewormings = [
+export const dewormings = cloneMock([
   {
     id: 'd1',
     petId: 'p1',
@@ -493,7 +523,7 @@ export const dewormings = [
     appliedBy: 'v2',
     weight: 12,
   },
-];
+]);
 
 export const timeSlots = [
   '09:00',
@@ -510,3 +540,59 @@ export const timeSlots = [
   '16:30',
   '17:00',
 ];
+
+export const supplies = [
+  {
+    id: 1,
+    name: 'Paracetamol 500mg',
+    type: 'Medicamento',
+    quantity: 50,
+    unitCost: 8,
+    minStock: 10,
+    batches: [{ batch: 'Lote A-12', expirationDate: '2026-12-31' }],
+  },
+  {
+    id: 2,
+    name: 'Gasa Estéril',
+    type: 'Insumo',
+    quantity: 8,
+    unitCost: 1.2,
+    minStock: 15,
+    batches: [{ batch: 'Lote B-24', expirationDate: '2027-01-15' }],
+  },
+  {
+    id: 3,
+    name: 'Acetaminofen',
+    type: 'Medicamento',
+    quantity: 19,
+    unitCost: 5,
+    minStock: 15,
+    batches: [{ batch: 'Lote B-26', expirationDate: '2027-03-20' }],
+  },
+];
+
+export const revenueHistory = {
+  today: [
+    { label: '08:00', amount: 0 },
+    { label: '10:00', amount: 150 },
+    { label: '12:00', amount: 300 },
+    { label: '14:00', amount: 150 },
+    { label: '16:00', amount: 450 },
+    { label: '18:00', amount: 0 },
+  ],
+  currentWeek: [
+    { label: 'Lun', amount: 450 },
+    { label: 'Mar', amount: 600 },
+    { label: 'Mié', amount: 300 },
+    { label: 'Jue', amount: 900 },
+    { label: 'Vie', amount: 750 },
+    { label: 'Sáb', amount: 1200 },
+    { label: 'Dom', amount: 0 },
+  ],
+  currentMonth: [
+    { label: 'Sem 1', amount: 2100 },
+    { label: 'Sem 2', amount: 3400 },
+    { label: 'Sem 3', amount: 2800 },
+    { label: 'Sem 4', amount: 4200 },
+  ],
+};

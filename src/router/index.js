@@ -23,6 +23,13 @@ import ClinicalRecords from '@/views/vet/ClinicalRecords.vue';
 import RegisterConsultation from '@/views/vet/RegisterConsultation.vue';
 import VaccineManager from '@/views/vet/VaccineManager.vue';
 import DewormingManager from '@/views/vet/DewormingManager.vue';
+import RegisterSupply from '@/views/technician/RegisterSupply.vue';
+import InventoryCatalog from '@/views/technician/InventoryCatalog.vue';
+import RepositionStock from '@/views/technician/RepositionStock.vue';
+import SupplyRequisition from '@/views/technician/SupplyRequisition.vue';
+import RequestDashboard from '@/views/technician/RequestDashboard.vue';
+import RequestPanel from '@/views/manager/RequestPanel.vue';
+import DashboardView from '@/views/manager/DashboardView.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -105,6 +112,27 @@ export const router = createRouter({
         { path: 'consultations', component: RegisterConsultation },
         { path: 'vaccines', component: VaccineManager },
         { path: 'dewormings', component: DewormingManager },
+      ],
+    },
+    {
+      path: '/technician',
+      component: AppLayout,
+      children: [
+        { path: 'inventory', component: InventoryCatalog },
+        { path: 'register-supply', component: RegisterSupply },
+        { path: 'form', redirect: '/technician/register-supply' },
+        { path: 'reposition', component: RepositionStock },
+        { path: 'supply-requisition', component: SupplyRequisition },
+        { path: 'interface', redirect: '/technician/supply-requisition' },
+        { path: 'tracking', component: RequestDashboard },
+      ],
+    },
+    {
+      path: '/manager',
+      component: AppLayout,
+      children: [
+        { path: 'dashboard', name: 'ManagerDashboard', component: DashboardView },
+        { path: 'requests', component: RequestPanel },
       ],
     },
     { path: '/:pathMatch(.*)*', redirect: '/portal/dashboard' },

@@ -39,12 +39,10 @@
     </div>
 
     <form class="auth-form" @submit.prevent="handleRecover" v-if="!isSubmitted">
-      <div class="field">
-        <label class="field__label">Correo electrónico</label>
-        <div class="input-wrapper">
-          <input v-model="form.email" class="input input--auth" type="email" placeholder="ejemplo@email.com" />
-        </div>
-      </div>
+      <label class="field">
+        <span class="field__label">Correo electrónico</span>
+        <input v-model="form.email" class="input input--auth" type="email" placeholder="ejemplo@email.com" />
+      </label>
 
       <button class="btn btn--primary btn--block" type="submit">Enviar instrucciones</button>
     </form>
@@ -113,14 +111,12 @@
   transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid transparent;
 }
 
 .input--auth:focus {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(194, 167, 105, 0.15);
   outline: none;
-  border-color: var(--brand);
 }
 
 .btn--block {

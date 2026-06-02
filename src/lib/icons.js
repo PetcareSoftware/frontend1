@@ -8,6 +8,7 @@ import {
   ClipboardPenLine,
   Clock3,
   Dog,
+  FileText,
   House,
   Hourglass,
   LayoutDashboard,
@@ -24,7 +25,7 @@ import {
   Bell,
   X,
   Check,
-} from 'lucide-vue-next';
+} from '@lucide/vue';
 
 export const iconRegistry = {
   bird: Bird,
@@ -37,6 +38,7 @@ export const iconRegistry = {
   'clipboard-pen-line': ClipboardPenLine,
   'clock-3': Clock3,
   dog: Dog,
+  'file-text': FileText,
   house: House,
   hourglass: Hourglass,
   'layout-dashboard': LayoutDashboard,

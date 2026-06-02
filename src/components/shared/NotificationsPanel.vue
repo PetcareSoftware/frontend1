@@ -24,7 +24,7 @@ function markAsRead(id) {
       <AppIcon name="bell" :size="20" />
       <span v-if="unreadCount > 0" class="notifications__badge">{{ unreadCount }}</span>
     </button>
-    
+
     <div v-if="isOpen" class="notifications__dropdown card notifications__dropdown-panel">
       <div class="toolbar notifications__toolbar">
         <h3 class="notifications__header">Notificaciones</h3>
@@ -36,7 +36,7 @@ function markAsRead(id) {
         No tienes notificaciones
       </div>
       <div v-else class="notifications__list">
-        <div v-for="notif in notifications" :key="notif.id" 
+        <div v-for="notif in notifications" :key="notif.id"
              class="notifications__item"
              :style="{ opacity: notif.read ? 0.6 : 1 }">
           <p class="notifications__item-title">{{ notif.title }}</p>

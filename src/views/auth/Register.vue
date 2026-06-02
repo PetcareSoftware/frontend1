@@ -55,31 +55,31 @@
     </div>
 
     <form class="auth-form" @submit.prevent="handleRegister">
-      <div class="field">
-        <label class="field__label">Nombre completo *</label>
+      <label class="field field--required">
+        <span class="field__label">Nombre completo</span>
         <input v-model="form.name" class="input input--auth" type="text" placeholder="Ana García" />
-      </div>
+      </label>
 
       <div class="input-grid">
-        <div class="field">
-          <label class="field__label">Correo electrónico *</label>
+        <label class="field field--required">
+          <span class="field__label">Correo electrónico</span>
           <input v-model="form.email" class="input input--auth" type="email" placeholder="ana@email.com" />
-        </div>
-        <div class="field">
-          <label class="field__label">Contraseña *</label>
+        </label>
+        <label class="field field--required">
+          <span class="field__label">Contraseña</span>
           <input v-model="form.password" class="input input--auth" type="password" placeholder="••••••••" />
-        </div>
+        </label>
       </div>
 
       <div class="input-grid">
-        <div class="field">
-          <label class="field__label">Teléfono</label>
+        <label class="field">
+          <span class="field__label">Teléfono</span>
           <input v-model="form.phone" class="input input--auth" type="text" placeholder="555-0000" />
-        </div>
-        <div class="field">
-          <label class="field__label">Dirección</label>
+        </label>
+        <label class="field">
+          <span class="field__label">Dirección</span>
           <input v-model="form.address" class="input input--auth" type="text" placeholder="Av. Libertad 123" />
-        </div>
+        </label>
       </div>
 
       <button class="btn btn--primary btn--block" type="submit">Crear cuenta</button>
@@ -88,7 +88,7 @@
     <p class="terms muted">Al registrarte aceptas los términos y condiciones de PetCare.</p>
 
     <div class="auth-footer">
-      <p class="muted">¿Ya tienes cuenta? 
+      <p class="muted">¿Ya tienes cuenta?
         <router-link to="/login" class="link">Inicia sesión</router-link>
       </p>
     </div>

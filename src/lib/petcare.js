@@ -1,12 +1,15 @@
 import { timeSlots as seedTimeSlots } from '@/data/mockData';
+import { ref } from 'vue';
+import { daysFromNow, getTodayDate, getTodayShortDate } from './utils';
+export { daysFromNow , getTodayDate, getTodayShortDate };
 
 export const statusMeta = {
   scheduled: { label: 'Programada', className: 'chip--brand' },
   confirmed: { label: 'Confirmada', className: 'chip--success' },
+  waiting: { label: 'En Espera', className: 'chip--cream' },
   in_progress: { label: 'En Consulta', className: 'chip--warning' },
   completed: { label: 'Completada', className: 'chip--sage' },
   cancelled: { label: 'Cancelada', className: 'chip--danger' },
-  waiting: { label: 'En Espera', className: 'chip--cream' },
 };
 
 export const speciesMeta = {
@@ -17,20 +20,45 @@ export const speciesMeta = {
   other: { label: 'Otro', icon: 'paw-print', className: 'chip--brand' },
 };
 
-export function getTodayDate() {
-  const today = new Date();
-  today.setHours(12, 0, 0, 0);
-  return today.toISOString().slice(0, 10);
+export const breedsBySpecies = {
+  dog: ['Golden Retriever', 'Bulldog Francés', 'Pastor Alemán', 'Labrador', 'Boxer', 'Mestizo', 'Otro'],
+  cat: ['Persa', 'Siamés', 'Bengala', 'Mestizo', 'Otro'],
+  bird: ['Canario', 'Loro', 'Otro'],
+  rabbit: ['Enano', 'Belier', 'Otro'],
+  other: ['Otro'],
+};
+
+export const petFormTemplate = {
+  name: '',
+  species: 'dog',
+  breed: 'Golden Retriever',
+  sex: 'M',
+  birthDate: '',
+  weight: '',
+  color: '',
+  notes: '',
+};
+
+export const sexCodeToName = {
+  M: 'Macho',
+  F: 'Hembra',
 }
 
-export function daysFromNow(days) {
-  const date = new Date();
-  date.setHours(12, 0, 0, 0);
-  date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
+export const appointmentTransitions = {
+  scheduled: ["scheduled", "confirmed", "waiting", "in_progress", "cancelled"],
+  confirmed: ["scheduled", "confirmed", "waiting", "in_progress", "cancelled"],
+  waiting: ["confirmed", "waiting", "in_progress", "cancelled"],
+  in_progress: ["confirmed", "waiting", "in_progress", "completed", "cancelled"],
+  completed: ["in_progress", "completed"],
+  cancelled: ["scheduled", "in_progress", "cancelled"],
+};
+
+export function getSpeciesLabel(codename) {
+  const species = speciesMeta[codename];
+  return species && species.label || 'Otro';
 }
 
-export function formatDate(value, locale = 'es-AR') {
+export function formatDate(value, locale = 'es-VE') {
   return new Intl.DateTimeFormat(locale, {
     day: '2-digit',
     month: 'short',
@@ -38,17 +66,20 @@ export function formatDate(value, locale = 'es-AR') {
   }).format(new Date(`${value}T12:00:00`));
 }
 
-export function formatDateLong(value, locale = 'es-AR') {
+export function formatDateLong(value, locale = 'es-VE') {
   return new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' }).format(
     new Date(`${value}T12:00:00`)
   );
 }
 
-export function formatMoney(value) {
-  return new Intl.NumberFormat('es-AR', {
+export function formatMoney(
+  value,
+  { locale = 'en-US', currency = 'USD', maximumFractionDigits = 0 } = {}
+) {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'ARS',
-    maximumFractionDigits: 0,
+    currency,
+    maximumFractionDigits,
   }).format(value);
 }
 
@@ -171,23 +202,43 @@ export function getLatestDeworming(dewormings, petId) {
   return getPetDewormings(dewormings, petId)[0] || null;
 }
 
-
 export const timeSlots = seedTimeSlots;
 
-export function getTodayShortDate() {
-  return new Date().toISOString().split('T')[0];
-}
-
-export function switchRole(item, appStore, router) {
+export function switchRoleLocal(item, appStore, router) {
   appStore.setRole(item.key, item.userId || undefined);
-  
+
   const baseRoutes = {
     owner: '/portal/dashboard',
     vet: '/vet/dashboard',
     receptionist: '/reception/dashboard',
   };
-  
+
   if (baseRoutes[item.key]) {
     router.push(baseRoutes[item.key]);
   }
 }
+
+export function getSupply(supplies, supplyId) {
+  return supplies.find((supply) => supply.id === supplyId);
+}
+
+export function throttle(fn, delay = 250) {
+  let wait = false;
+  return function(...args) {
+    if (!wait) {
+      fn(...args);
+
+      wait = true;
+      setTimeout(() => { wait = false; }, delay);
+    }
+  }
+}
+
+export const viewSize = {
+  width: ref(window.innerWidth),
+  height: ref(window.innerHeight),
+};
+window.addEventListener("resize", throttle(() => {
+  viewSize.width.value = window.innerWidth;
+  viewSize.height.value = window.innerHeight;
+}));

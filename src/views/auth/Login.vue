@@ -22,10 +22,10 @@
 
     // Lógica de simulación de login
     // En un proyecto real, aquí llamarías a una API
-    
+
     // Buscamos si es un dueño
     const owner = appStore.owners.find(o => o.email === form.email);
-    
+
     if (owner) {
       appStore.setRole('owner', owner.id);
       toastStore.push({
@@ -70,28 +70,24 @@
     </div>
 
     <form class="auth-form" @submit.prevent="handleLogin">
-      <div class="field">
-        <label class="field__label">Correo electrónico</label>
-        <div class="input-wrapper">
-          <input v-model="form.email" class="input input--auth" type="email" placeholder="ejemplo@email.com" />
-        </div>
-      </div>
-      
+      <label class="field">
+        <span class="field__label">Correo electrónico</span>
+        <input v-model="form.email" class="input input--auth" type="email" placeholder="ejemplo@email.com" />
+      </label>
+
       <div class="field">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
           <label class="field__label" style="margin-bottom: 0;">Contraseña</label>
           <router-link to="/recover-password" class="link" style="font-size: 0.85rem; font-weight: normal;">¿Olvidaste tu contraseña?</router-link>
         </div>
-        <div class="input-wrapper">
-          <input v-model="form.password" class="input input--auth" type="password" placeholder="••••••••" />
-        </div>
+        <input v-model="form.password" class="input input--auth" type="password" placeholder="••••••••" />
       </div>
 
       <button class="btn btn--primary btn--block" type="submit">Entrar a mi cuenta</button>
     </form>
 
     <div class="auth-footer">
-      <p class="muted">¿No tienes una cuenta? 
+      <p class="muted">¿No tienes una cuenta?
         <router-link to="/register" class="link">Regístrate aquí</router-link>
       </p>
     </div>
