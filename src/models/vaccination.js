@@ -34,9 +34,9 @@ export class Vaccination extends Treatment {
     const data = {
       id: this.id,
       pet_id: this.petId,
-      name: this.name,
-      date: this.date,
-      next_date: this.nextDate,
+      vaccine_name: this.name,
+      applied_date: this.date,
+      next_due_date: this.nextDate,
       applied_by: this.appliedBy,
       lot: this.lot,
       notes: this.notes,
@@ -63,11 +63,11 @@ export class Vaccination extends Treatment {
 
     return {
       event_type: 'VACCINE',
-      vaccine_name: data.name,
+      vaccine_name: data.vaccine_name,
       dose: '',
-      applied_date: data.date,
+      applied_date: data.applied_date,
       sanitary_batch: data.lot,
-      next_due_date: data.next_date,
+      next_due_date: data.next_due_date,
     };
   }
 

@@ -30,8 +30,8 @@ export class Deworming extends Treatment {
       id: this.id,
       pet_id: this.petId,
       product: this.product,
-      date: this.date,
-      next_date: this.nextDate,
+      applied_date: this.date,
+      next_due_date: this.nextDate,
       applied_by: this.appliedBy,
       weight: this.weight,
     };
@@ -58,9 +58,9 @@ export class Deworming extends Treatment {
       event_type: 'DEWORMING',
       vaccine_name: data.product,
       dose: '',
-      applied_date: data.date,
+      applied_date: data.applied_date,
       sanitary_batch: '',
-      next_due_date: data.next_date,
+      next_due_date: data.next_due_date,
     };
   }
 
