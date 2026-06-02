@@ -1,13 +1,23 @@
 import api from '@/services/api/v1/api';
 
-export const notificationService = {
-  getNotifications(params) {
-    return api.get('/notifications/', { params });
-  },
-  markAsRead(id) {
-    return api.patch(`/notifications/${id}/read/`);
-  },
-  markAllAsRead() {
-    return api.patch('/notifications/read-all/');
-  },
-};
+export const NOTIFICATIONS_BASE = 'notifications/';
+
+export class NotificationService {
+  static async list(params) {
+    const response = await api.get(NOTIFICATIONS_BASE, { params });
+
+    return response.data;
+  }
+
+  static async markAsRead(id) {
+    const response = await api.patch(`${NOTIFICATIONS_BASE}${id}/read/`);
+
+    return response.data;
+  }
+
+  static async markAllAsRead() {
+    const response = await api.patch(`${NOTIFICATIONS_BASE}read-all/`);
+
+    return response.data;
+  }
+}

@@ -26,4 +26,29 @@ export class Veterinarian {
 
     return true;
   }
+
+  toApi() {
+    const data = {
+      id: this.id,
+      name: this.name,
+      specialty: this.specialty,
+      avatar: this.avatar,
+    };
+
+    return data;
+  }
+
+  static fromApi(data) {
+    return new Veterinarian({
+      id: data.vet_id ?? data.id,
+      name: data.vet_name ?? data.name ?? '',
+      specialty: data.specialty ?? '',
+      avatar: data.avatar ?? '',
+    });
+  }
+
+  equals(other) {
+    return this.id === other.id ||
+      this.name.toLowerCase() === other.name.toLowerCase();
+  }
 }

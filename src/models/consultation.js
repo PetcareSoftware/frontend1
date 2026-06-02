@@ -77,4 +77,67 @@ export class Consultation {
 
     return true;
   }
+
+  toApi() {
+    const data = {
+      id: this.id,
+      appointment_id: this.appointmentId,
+      pet_id: this.petId,
+      vet_id: this.vetId,
+      date: this.date,
+      weight: this.weight,
+      temperature: this.temperature,
+      symptoms: this.symptoms,
+      diagnosis: this.diagnosis,
+      treatment: this.treatment,
+      prescriptions: this.prescriptions,
+      follow_up_date: this.followUpDate,
+      notes: this.notes,
+    };
+
+    return data;
+  }
+
+  static fromApi(data, { appointmentId = '', petId = '', vetId = '' } = {}) {
+    return new Consultation({
+      id: data.id ?? '',
+      appointmentId: appointmentId,
+      petId: petId,
+      vetId: vetId,
+      date: data.date ?? '',
+      weight: data.weight != null ? Number(data.weight) : undefined,
+      temperature: data.temperature != null ? Number(data.temperature) : undefined,
+      symptoms: data.symptoms,
+      diagnosis: data.diagnosis,
+      treatment: data.treatment,
+      prescriptions: typeof data.prescriptions === 'string'
+        ? data.prescriptions.split('\n').filter(Boolean)
+        : (data.prescriptions ?? []),
+      followUpDate: data.follow_up_date,
+      notes: data.notes,
+    });
+  }
+
+  toApiCreate() {
+    const data = this.toApi();
+
+    return {
+      diagnosis: data.diagnosis,
+      treatment: data.treatment,
+      symptoms: data.symptoms,
+      weight: data.weight,
+      temperature: data.temperature,
+      prescriptions: Array.isArray(data.prescriptions)
+        ? data.prescriptions.join('\n')
+        : (data.prescriptions ?? ''),
+      notes: data.notes,
+      follow_up_date: data.follow_up_date,
+    };
+  }
+
+  equals(other) {
+    return this.id === other.id || (
+      this.appointmentId === other.appointmentId && !!this.appointmentId
+    );
+  }
 }

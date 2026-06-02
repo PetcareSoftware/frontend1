@@ -8,6 +8,7 @@ export class Appointment {
   petId = '';
   ownerId = '';
   vetId = '';
+  slotId = null;
   date = '';
   time = '';
   reason = '';
@@ -22,11 +23,29 @@ export class Appointment {
     cancelled: 'cancelled',
   }
 
-  constructor({ id, petId, ownerId, vetId, date , time , reason , status }) {
+  static API_STATUS_MAP = {
+    SCHEDULED: 'scheduled',
+    CONFIRMED: 'confirmed',
+    CHECKED_IN: 'waiting',
+    COMPLETED: 'completed',
+    CANCELLED: 'cancelled',
+  };
+
+  static FRONTEND_STATUS_MAP = {
+    scheduled: 'SCHEDULED',
+    confirmed: 'CONFIRMED',
+    waiting: 'CHECKED_IN',
+    in_progress: 'CHECKED_IN',
+    completed: 'COMPLETED',
+    cancelled: 'CANCELLED',
+  };
+
+  constructor({ id, petId, ownerId, vetId, slotId, date, time, reason, status }) {
     this.id = id;
     this.petId = petId || this.petId;
     this.ownerId = ownerId || this.ownerId;
     this.vetId = vetId;
+    this.slotId = slotId;
     this.date = date || this.date;
     this.time = time || this.time;
     this.reason = reason || this.reason;
@@ -54,5 +73,58 @@ export class Appointment {
     }
 
     return true;
+  }
+
+  toApi() {
+    const data = {
+      id: this.id,
+      pet_id: this.petId,
+      owner_id: this.ownerId,
+      vet_id: this.vetId,
+      slot_id: this.slotId,
+      date: this.date,
+      time: this.time,
+      reason: this.reason,
+      status: this.status,
+    };
+
+    return data;
+  }
+
+  static fromApi(data) {
+    return new Appointment({
+      id: data.id,
+      petId: data.pet_id,
+      ownerId: data.owner_id,
+      vetId: data.vet_id,
+      slotId: data.slot_id ?? null,
+      date: data.date,
+      time: data.time?.substring(0, 5) ?? data.time,
+      reason: data.reason,
+      status: Appointment.API_STATUS_MAP[data.status] ?? data.status?.toLowerCase() ?? '',
+    });
+  }
+
+  toApiCreate() {
+    const data = this.toApi();
+
+    return {
+      slot_id: data.slot_id,
+      patient_id: data.pet_id,
+      reason: data.reason,
+    };
+  }
+
+  toApiStatus() {
+    return Appointment.FRONTEND_STATUS_MAP[this.status] ?? this.status?.toUpperCase() ?? '';
+  }
+
+  equals(other) {
+    return this.id === other.id || (
+      this.petId === other.petId && (
+        (this.slotId && this.slotId === other.slotId) ||
+        (this.date === other.date && this.time === other.time)
+      )
+    );
   }
 }
