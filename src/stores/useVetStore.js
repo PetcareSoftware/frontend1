@@ -48,40 +48,55 @@ export const useVetStore = defineStore('vet', () => {
   }
 
   async function fetchOne(id) {
-    const found = USE_MOCK_DATA
-      ? seedVets.find(v => v.id === id)
-      : null;
+    status.value.loadingOne = true;
+    try {
+      const found = USE_MOCK_DATA
+        ? seedVets.find(v => v.id === id)
+        : null;
 
-    if (!found) return;
+      if (!found) return;
 
-    saveInStore(found);
+      saveInStore(found);
 
-    return found;
+      return found;
+    } finally {
+      status.value.loadingOne = false;
+    }
   }
 
   async function fetchAll() {
-    const newVets = USE_MOCK_DATA
-      ? seedVets
-      : null;
+    status.value.loading = true;
+    try {
+      const newVets = USE_MOCK_DATA
+        ? seedVets
+        : null;
 
-    if (!newVets) return;
+      if (!newVets) return;
 
-    vets.value = newVets;
+      vets.value = newVets;
 
-    return newVets;
+      return newVets;
+    } finally {
+      status.value.loading = false;
+    }
   }
 
   async function fetchSlots(vetId, date) {
-    if (USE_MOCK_DATA) {
-      slots.value = [];
+    status.value.loading = true;
+    try {
+      if (USE_MOCK_DATA) {
+        slots.value = [];
+
+        return slots.value;
+      }
+
+      const data = await VetService.getSlots(vetId, date);
+      slots.value = data ?? [];
 
       return slots.value;
+    } finally {
+      status.value.loading = false;
     }
-
-    const data = await VetService.getSlots(vetId, date);
-    slots.value = data ?? [];
-
-    return slots.value;
   }
 
   function getFromStore(id) {

@@ -49,65 +49,88 @@ export const useOwnerStore = defineStore('owner', () => {
   }
 
   async function fetchOne(id) {
-    const newOwner = USE_MOCK_DATA ?
-      seedOwners.find(owner => owner.id === id) :
-      await OwnerService.get(id);
+    status.value.loadingOne = true;
+    try {
+      const newOwner = USE_MOCK_DATA ?
+        seedOwners.find(owner => owner.id === id) :
+        await OwnerService.get(id);
 
-    if (!newOwner) return;
+      if (!newOwner) return;
 
-    saveInStore(newOwner);
-    return newOwner;
+      saveInStore(newOwner);
+
+      return newOwner;
+    } finally {
+      status.value.loadingOne = false;
+    }
   }
 
   async function fetchAll() {
-    const newOwners = USE_MOCK_DATA ?
-      seedOwners :
-      await OwnerService.list();
+    status.value.loading = true;
+    try {
+      const newOwners = USE_MOCK_DATA ?
+        seedOwners :
+        await OwnerService.list();
 
-    if (!newOwners) return;
+      if (!newOwners) return;
 
-    owners.value = newOwners;
-    return newOwners;
+      owners.value = newOwners;
+
+      return newOwners;
+    } finally {
+      status.value.loading = false;
+    }
   }
 
   async function add(newOwner) {
-    if (USE_MOCK_DATA) {
-      if (seedOwners.find(owner => owner.equals(newOwner)) ) {
-        throw new Error('Esta cuenta ya existe');
-      }
-      seedOwners.push(newOwner);
-    } else {
-      await OwnerService.create(newOwner);
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        if (seedOwners.find(owner => owner.equals(newOwner))) {
+          throw new Error('Esta cuenta ya existe');
+        }
+        seedOwners.push(newOwner);
+      } else {
+        await OwnerService.create(newOwner);
 
-      try {
-        newOwner = await OwnerService.getMe();
-      } catch (e) {
-        const newError = Error(
-          'Hubo un problema. La cuenta puede haberse creado o no. Por favor, recargue la página');
-        newError.cause = e;
-        throw newError;
+        try {
+          newOwner = await OwnerService.getMe();
+        } catch (e) {
+          const newError = Error(
+            'Hubo un problema. La cuenta puede haberse creado o no. Por favor, recargue la página');
+          newError.cause = e;
+          throw newError;
+        }
       }
+
+      return newOwner;
+    } finally {
+      status.value.sendingOne = false;
     }
-
-    return newOwner;
   }
 
   async function update(newOwner) {
-    if (USE_MOCK_DATA) {
-      const oldIndex = findReplace(seedOwners, (old) => old.id === newOwner.id, newOwner);
-      if (oldIndex < 0) {
-        throw new Error('Esta cuenta no existe');
-      }
-    } else {
-      if (newOwner.id === appStore.currentUserId) {
-        newOwner = await OwnerService.updateMe(newOwner);
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        const oldIndex = findReplace(seedOwners, (old) => old.id === newOwner.id, newOwner);
+        if (oldIndex < 0) {
+          throw new Error('Esta cuenta no existe');
+        }
       } else {
-        throw new Error('No se puede actualizar la cuenta de otro propietario');
+        if (newOwner.id === appStore.currentUserId) {
+          newOwner = await OwnerService.updateMe(newOwner);
+        } else {
+          throw new Error('No se puede actualizar la cuenta de otro propietario');
+        }
       }
-    }
 
-    saveInStore(newOwner);
-    return newOwner;
+      saveInStore(newOwner);
+
+      return newOwner;
+    } finally {
+      status.value.sendingOne = false;
+    }
   }
 
   function getFromStore(id) {

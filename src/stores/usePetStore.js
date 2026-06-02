@@ -49,57 +49,77 @@ export const usePetStore = defineStore('pet', () => {
   }
 
   async function fetchOne(id) {
-    const newPet = USE_MOCK_DATA
-      ? seedPets.find(p => p.id === id)
-      : await PetService.get(id);
+    status.value.loadingOne = true;
+    try {
+      const newPet = USE_MOCK_DATA
+        ? seedPets.find(p => p.id === id)
+        : await PetService.get(id);
 
-    if (!newPet) return;
+      if (!newPet) return;
 
-    saveInStore(newPet);
+      saveInStore(newPet);
 
-    return newPet;
+      return newPet;
+    } finally {
+      status.value.loadingOne = false;
+    }
   }
 
   async function fetchAll() {
-    const newPets = USE_MOCK_DATA
-      ? seedPets.filter(p => p.ownerId === appStore.currentUserId)
-      : await PetService.list();
+    status.value.loading = true;
+    try {
+      const newPets = USE_MOCK_DATA
+        ? seedPets.filter(p => p.ownerId === appStore.currentUserId)
+        : await PetService.list();
 
-    if (!newPets) return;
+      if (!newPets) return;
 
-    pets.value = newPets;
+      pets.value = newPets;
 
-    return newPets;
+      return newPets;
+    } finally {
+      status.value.loading = false;
+    }
   }
 
   async function add(newPet) {
-    if (USE_MOCK_DATA) {
-      if (seedPets.find(p => p.equals(newPet))) {
-        throw new Error('Esta mascota ya existe');
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        if (seedPets.find(p => p.equals(newPet))) {
+          throw new Error('Esta mascota ya existe');
+        }
+        seedPets.push(newPet);
+      } else {
+        newPet = await PetService.create(newPet);
       }
-      seedPets.push(newPet);
-    } else {
-      newPet = await PetService.create(newPet);
+
+      saveInStore(newPet);
+
+      return newPet;
+    } finally {
+      status.value.sendingOne = false;
     }
-
-    saveInStore(newPet);
-
-    return newPet;
   }
 
   async function update(newPet) {
-    if (USE_MOCK_DATA) {
-      const oldIndex = findReplace(seedPets, p => p.id === newPet.id, newPet);
-      if (oldIndex < 0) {
-        throw new Error('Esta mascota no existe');
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        const oldIndex = findReplace(seedPets, p => p.id === newPet.id, newPet);
+        if (oldIndex < 0) {
+          throw new Error('Esta mascota no existe');
+        }
+      } else {
+        newPet = await PetService.update(newPet);
       }
-    } else {
-      newPet = await PetService.update(newPet);
+
+      saveInStore(newPet);
+
+      return newPet;
+    } finally {
+      status.value.sendingOne = false;
     }
-
-    saveInStore(newPet);
-
-    return newPet;
   }
 
   function getFromStore(id) {

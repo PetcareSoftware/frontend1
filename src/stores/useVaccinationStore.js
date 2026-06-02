@@ -47,39 +47,54 @@ export const useVaccinationStore = defineStore('vaccination', () => {
   }
 
   async function fetchOne(id) {
-    const found = USE_MOCK_DATA
-      ? seedVaccines.find(v => v.id === id)
-      : null;
+    status.value.loadingOne = true;
+    try {
+      const found = USE_MOCK_DATA
+        ? seedVaccines.find(v => v.id === id)
+        : null;
 
-    if (!found) return;
+      if (!found) return;
 
-    saveInStore(found);
+      saveInStore(found);
 
-    return found;
+      return found;
+    } finally {
+      status.value.loadingOne = false;
+    }
   }
 
   async function fetchAll(petId) {
-    const newVaccines = USE_MOCK_DATA
-      ? (petId ? seedVaccines.filter(v => v.petId === petId) : seedVaccines)
-      : await VaccinationService.list(petId);
+    status.value.loading = true;
+    try {
+      const newVaccines = USE_MOCK_DATA
+        ? (petId ? seedVaccines.filter(v => v.petId === petId) : seedVaccines)
+        : await VaccinationService.list(petId);
 
-    if (!newVaccines) return;
+      if (!newVaccines) return;
 
-    vaccines.value = newVaccines;
+      vaccines.value = newVaccines;
 
-    return newVaccines;
+      return newVaccines;
+    } finally {
+      status.value.loading = false;
+    }
   }
 
   async function add(petId, newVaccine) {
-    if (USE_MOCK_DATA) {
-      seedVaccines.push(newVaccine);
-    } else {
-      newVaccine = await VaccinationService.create(petId, newVaccine);
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        seedVaccines.push(newVaccine);
+      } else {
+        newVaccine = await VaccinationService.create(petId, newVaccine);
+      }
+
+      saveInStore(newVaccine);
+
+      return newVaccine;
+    } finally {
+      status.value.sendingOne = false;
     }
-
-    saveInStore(newVaccine);
-
-    return newVaccine;
   }
 
   function getFromStore(id) {

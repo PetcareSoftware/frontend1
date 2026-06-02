@@ -49,107 +49,147 @@ export const useAppointmentStore = defineStore('appointment', () => {
   }
 
   async function fetchOne(id) {
-    const newAppointment = USE_MOCK_DATA
-      ? seedAppointments.find(a => a.id === id)
-      : await AppointmentService.get(id);
+    status.value.loadingOne = true;
+    try {
+      const newAppointment = USE_MOCK_DATA
+        ? seedAppointments.find(a => a.id === id)
+        : await AppointmentService.get(id);
 
-    if (!newAppointment) return;
+      if (!newAppointment) return;
 
-    saveInStore(newAppointment);
+      saveInStore(newAppointment);
 
-    return newAppointment;
+      return newAppointment;
+    } finally {
+      status.value.loadingOne = false;
+    }
   }
 
   async function fetchAll() {
-    const newAppointments = USE_MOCK_DATA
-      ? seedAppointments.filter(a => a.ownerId === appStore.currentUserId)
-      : await AppointmentService.list();
+    status.value.loading = true;
+    try {
+      const newAppointments = USE_MOCK_DATA
+        ? seedAppointments.filter(a => a.ownerId === appStore.currentUserId)
+        : await AppointmentService.list();
 
-    if (!newAppointments) return;
+      if (!newAppointments) return;
 
-    appointments.value = newAppointments;
+      appointments.value = newAppointments;
 
-    return newAppointments;
+      return newAppointments;
+    } finally {
+      status.value.loading = false;
+    }
   }
 
   async function fetchToday() {
-    const newAppointments = USE_MOCK_DATA
-      ? seedAppointments
-      : await AppointmentService.listToday();
+    status.value.loading = true;
+    try {
+      const newAppointments = USE_MOCK_DATA
+        ? seedAppointments
+        : await AppointmentService.listToday();
 
-    if (!newAppointments) return;
+      if (!newAppointments) return;
 
-    appointments.value = newAppointments;
+      appointments.value = newAppointments;
 
-    return newAppointments;
+      return newAppointments;
+    } finally {
+      status.value.loading = false;
+    }
   }
 
   async function add(newAppointment) {
-    if (USE_MOCK_DATA) {
-      if (seedAppointments.find(a => a.equals(newAppointment))) {
-        throw new Error('Esta cita ya existe');
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        if (seedAppointments.find(a => a.equals(newAppointment))) {
+          throw new Error('Esta cita ya existe');
+        }
+        seedAppointments.push(newAppointment);
+      } else {
+        newAppointment = await AppointmentService.create(newAppointment);
       }
-      seedAppointments.push(newAppointment);
-    } else {
-      newAppointment = await AppointmentService.create(newAppointment);
+
+      saveInStore(newAppointment);
+
+      return newAppointment;
+    } finally {
+      status.value.sendingOne = false;
     }
-
-    saveInStore(newAppointment);
-
-    return newAppointment;
   }
 
   async function update(newAppointment) {
-    if (USE_MOCK_DATA) {
-      const oldIndex = findReplace(seedAppointments, a => a.id === newAppointment.id, newAppointment);
-      if (oldIndex < 0) {
-        throw new Error('Esta cita no existe');
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        const oldIndex = findReplace(seedAppointments, a => a.id === newAppointment.id, newAppointment);
+        if (oldIndex < 0) {
+          throw new Error('Esta cita no existe');
+        }
+      } else {
+        await AppointmentService.confirm(newAppointment.id);
       }
-    } else {
-      await AppointmentService.confirm(newAppointment.id);
+
+      saveInStore(newAppointment);
+
+      return newAppointment;
+    } finally {
+      status.value.sendingOne = false;
     }
-
-    saveInStore(newAppointment);
-
-    return newAppointment;
   }
 
   async function cancel(id) {
-    if (USE_MOCK_DATA) {
-      const appointment = seedAppointments.find(a => a.id === id);
-      if (!appointment) throw new Error('Esta cita no existe');
-      appointment.status = 'cancelled';
-      saveInStore({ ...appointment });
-    } else {
-      await AppointmentService.cancel(id);
-      const appointment = getFromStore(id);
-      if (appointment) saveInStore({ ...appointment, status: 'cancelled' });
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        const appointment = seedAppointments.find(a => a.id === id);
+        if (!appointment) throw new Error('Esta cita no existe');
+        appointment.status = 'cancelled';
+        saveInStore({ ...appointment });
+      } else {
+        await AppointmentService.cancel(id);
+        const appointment = getFromStore(id);
+        if (appointment) saveInStore({ ...appointment, status: 'cancelled' });
+      }
+    } finally {
+      status.value.sendingOne = false;
     }
   }
 
   async function confirm(id) {
-    if (USE_MOCK_DATA) {
-      const appointment = seedAppointments.find(a => a.id === id);
-      if (!appointment) throw new Error('Esta cita no existe');
-      appointment.status = 'confirmed';
-      saveInStore({ ...appointment });
-    } else {
-      await AppointmentService.confirm(id);
-      const appointment = getFromStore(id);
-      if (appointment) saveInStore({ ...appointment, status: 'confirmed' });
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        const appointment = seedAppointments.find(a => a.id === id);
+        if (!appointment) throw new Error('Esta cita no existe');
+        appointment.status = 'confirmed';
+        saveInStore({ ...appointment });
+      } else {
+        await AppointmentService.confirm(id);
+        const appointment = getFromStore(id);
+        if (appointment) saveInStore({ ...appointment, status: 'confirmed' });
+      }
+    } finally {
+      status.value.sendingOne = false;
     }
   }
 
   async function checkIn(id) {
-    if (USE_MOCK_DATA) {
-      const appointment = seedAppointments.find(a => a.id === id);
-      if (!appointment) throw new Error('Esta cita no existe');
-      appointment.status = 'waiting';
-      saveInStore({ ...appointment });
-    } else {
-      await AppointmentService.checkIn(id);
-      const appointment = getFromStore(id);
-      if (appointment) saveInStore({ ...appointment, status: 'waiting' });
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        const appointment = seedAppointments.find(a => a.id === id);
+        if (!appointment) throw new Error('Esta cita no existe');
+        appointment.status = 'waiting';
+        saveInStore({ ...appointment });
+      } else {
+        await AppointmentService.checkIn(id);
+        const appointment = getFromStore(id);
+        if (appointment) saveInStore({ ...appointment, status: 'waiting' });
+      }
+    } finally {
+      status.value.sendingOne = false;
     }
   }
 

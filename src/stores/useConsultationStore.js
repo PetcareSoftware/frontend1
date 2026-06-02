@@ -47,39 +47,54 @@ export const useConsultationStore = defineStore('consultation', () => {
   }
 
   async function fetchOne(id) {
-    const found = USE_MOCK_DATA
-      ? seedConsultations.find(c => c.id === id)
-      : null;
+    status.value.loadingOne = true;
+    try {
+      const found = USE_MOCK_DATA
+        ? seedConsultations.find(c => c.id === id)
+        : null;
 
-    if (!found) return;
+      if (!found) return;
 
-    saveInStore(found);
+      saveInStore(found);
 
-    return found;
+      return found;
+    } finally {
+      status.value.loadingOne = false;
+    }
   }
 
   async function fetchAll(petId) {
-    const newConsultations = USE_MOCK_DATA
-      ? (petId ? seedConsultations.filter(c => c.petId === petId) : seedConsultations)
-      : null;
+    status.value.loading = true;
+    try {
+      const newConsultations = USE_MOCK_DATA
+        ? (petId ? seedConsultations.filter(c => c.petId === petId) : seedConsultations)
+        : null;
 
-    if (!newConsultations) return;
+      if (!newConsultations) return;
 
-    consultations.value = newConsultations;
+      consultations.value = newConsultations;
 
-    return newConsultations;
+      return newConsultations;
+    } finally {
+      status.value.loading = false;
+    }
   }
 
   async function add(appointmentId, newConsultation) {
-    if (USE_MOCK_DATA) {
-      seedConsultations.push(newConsultation);
-    } else {
-      newConsultation = await ConsultationService.create(appointmentId, newConsultation);
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        seedConsultations.push(newConsultation);
+      } else {
+        newConsultation = await ConsultationService.create(appointmentId, newConsultation);
+      }
+
+      saveInStore(newConsultation);
+
+      return newConsultation;
+    } finally {
+      status.value.sendingOne = false;
     }
-
-    saveInStore(newConsultation);
-
-    return newConsultation;
   }
 
   function getFromStore(id) {

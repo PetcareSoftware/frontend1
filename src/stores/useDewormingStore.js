@@ -48,40 +48,55 @@ export const useDewormingStore = defineStore('deworming', () => {
   }
 
   async function fetchOne(id) {
-    const found = USE_MOCK_DATA
-      ? seedDewormings.find(d => d.id === id)
-      : null;
+    status.value.loadingOne = true;
+    try {
+      const found = USE_MOCK_DATA
+        ? seedDewormings.find(d => d.id === id)
+        : null;
 
-    if (!found) return;
+      if (!found) return;
 
-    saveInStore(found);
+      saveInStore(found);
 
-    return found;
+      return found;
+    } finally {
+      status.value.loadingOne = false;
+    }
   }
 
   async function fetchAll(petId) {
-    const newDewormings = USE_MOCK_DATA
-      ? (petId ? seedDewormings.filter(d => d.petId === petId) : seedDewormings)
-      : null;
+    status.value.loading = true;
+    try {
+      const newDewormings = USE_MOCK_DATA
+        ? (petId ? seedDewormings.filter(d => d.petId === petId) : seedDewormings)
+        : null;
 
-    if (!newDewormings) return;
+      if (!newDewormings) return;
 
-    dewormings.value = newDewormings;
+      dewormings.value = newDewormings;
 
-    return newDewormings;
+      return newDewormings;
+    } finally {
+      status.value.loading = false;
+    }
   }
 
   async function add(petId, newDeworming) {
-    if (USE_MOCK_DATA) {
-      seedDewormings.push(newDeworming);
-    } else {
-      const apiData = await VaccinationService.create(petId, newDeworming);
-      newDeworming = Deworming.fromApi(apiData, petId);
+    status.value.sendingOne = true;
+    try {
+      if (USE_MOCK_DATA) {
+        seedDewormings.push(newDeworming);
+      } else {
+        const apiData = await VaccinationService.create(petId, newDeworming);
+        newDeworming = Deworming.fromApi(apiData, petId);
+      }
+
+      saveInStore(newDeworming);
+
+      return newDeworming;
+    } finally {
+      status.value.sendingOne = false;
     }
-
-    saveInStore(newDeworming);
-
-    return newDeworming;
   }
 
   function getFromStore(id) {
